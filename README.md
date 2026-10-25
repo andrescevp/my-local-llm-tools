@@ -14,7 +14,7 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | Skill | What it does | Local dependency |
 |---|---|---|
 | `image-analysis` | Describe, compare, and inspect images with a local vision model | Ollama + `minicpm-v4.6` |
-| `ocr` | Extract text/tables/structure from screenshots and documents | Ollama + `PaddleOCR-VL` |
+| `ocr` | Extract text/tables/structure from documents; Tesseract-assisted corrections | Ollama + `PaddleOCR-VL`, optional Tesseract |
 | `autoskills` | Analyze a project, propose skills, author them via `create-skill` | local FS + Node |
 | `create-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
 | `create-agent` | Create, optimize, and validate agent profiles | local FS |
@@ -76,6 +76,7 @@ pnpm qa          # lint + deps + duplication + tests + validate + security
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
 | ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
 | Piper | `~/.local/bin/piper` + `es_MX-laura-high.onnx` |
+| Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
 
 No Python runtime is required: all skill tooling is Node.js.
 

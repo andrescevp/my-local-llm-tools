@@ -28,7 +28,7 @@
     {
       "id": "ocr",
       "name": "ocr",
-      "description": "Use this skill when extracting text or structure from documents, reports, tables, forms, screenshots, or scanned pages with a local OCR vision model — producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Use it directly for documents/tables/reports or explicit OCR requests; for general image understanding start with image-analysis, then run ocr for the text-heavy detail. Defaults to MedAIBase/PaddleOCR-VL:0.9b on local Ollama."
+      "description": "Use this skill when extracting text or structure from documents, reports, tables, forms, or scans with a local OCR vision model — producing markdown or JSON from text, tables, labels, annotations, with prompt templates and confidence notes. Use it directly for documents/tables/reports or explicit OCR requests; for general image understanding start with image-analysis. Runs MedAIBase/PaddleOCR-VL:0.9b on local Ollama, with Tesseract as complementary evidence for correction passes."
     },
     {
       "id": "openai-api-usage",
