@@ -1,0 +1,40 @@
+{
+  "skill": "image-analysis",
+  "version": 1,
+  "models": {
+    "analyze": "minicpm-v4.6:latest",
+    "ocr": "MedAIBase/PaddleOCR-VL:0.9b"
+  },
+  "cases": [
+    {
+      "id": "analyze-default",
+      "input": "analyze this screenshot and summarize what it shows",
+      "prompt": "Describe the content of this UI screenshot's window layout",
+      "should_trigger": true,
+      "expected_model": "minicpm-v4.6:latest"
+    },
+    {
+      "id": "ocr-delegation",
+      "input": "extract all text from this scanned invoice",
+      "should_trigger": true,
+      "expected_model": "MedAIBase/PaddleOCR-VL:0.9b",
+      "note": "pure text extraction may route to the ocr skill instead"
+    },
+    {
+      "id": "compare",
+      "input": "compare these two design mockups and tell me which is better",
+      "should_trigger": true,
+      "expected": "multi-image --image flags"
+    },
+    {
+      "id": "no-trigger-code",
+      "input": "refactor this Python function for performance",
+      "should_trigger": false
+    },
+    {
+      "id": "no-trigger-math",
+      "input": "solve this algebra problem step by step",
+      "should_trigger": false
+    }
+  ]
+}

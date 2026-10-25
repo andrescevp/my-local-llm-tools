@@ -1,0 +1,10 @@
+- [] todos los scripts deben ser en jsvascript, para qa usar biome, osv-scanner y semgrep
+- [] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
+- [] Nueva skill `setup` que debe encargarse de comprobar que las dependencias estan instalas y crear un manifest file con la informacion:
+    - local ollama server -> If not installed install it browsing to https://ollama.com/download, models used are CPU peformant, so if the user do not have GPU should not be a big issue
+        - url
+        - modelos para analisis de imagen y ocr
+        - tesseract (fallback del ocr)
+        - pipper tts
+    - comfyui -> If not installed, check if the user have at least a GPU with 8GB of VRAM and install from https://comfy.org/download , if the user do not have 8GB VRAM skip installation and warn user that the system would not support properly local image generation
+        - [] Extraer de comfyui-server el setup de la instancia a la skill general `setup` , modelos, workflows etc, hacer `intance_facts.json` sea ignorado y recreado en la maquina.
