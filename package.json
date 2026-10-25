@@ -1,7 +1,7 @@
 {
   "name": "cheap-ai-winth-local-tools",
   "version": "1.0.0",
-  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image analysis, TTS, skill generation, ComfyUI, Ollama, and llama.cpp skills.",
+  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image analysis, TTS, skill generation, ComfyUI, and OpenAI-compatible API guidance.",
   "type": "module",
   "private": true,
   "exports": {

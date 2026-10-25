@@ -14,9 +14,8 @@ const EXPECTED_SKILLS = [
   "create-agent",
   "create-skill",
   "image-analysis",
-  "llamacpp-server",
   "ocr",
-  "ollama-server",
+  "openai-api-usage",
   "speak",
 ]
 const REPO_SCRIPTS = ["install.mjs", "build_manifest.mjs", "validate.mjs"]

@@ -4,13 +4,11 @@
 // Usage: node src/cli.mjs <command> [args...]
 import { comfy } from "./commands/comfy.mjs"
 import { image } from "./commands/image.mjs"
-import { llamacpp } from "./commands/llamacpp.mjs"
 import { ocr } from "./commands/ocr.mjs"
-import { ollama } from "./commands/ollama.mjs"
 import { skill } from "./commands/skill.mjs"
 import { speak } from "./commands/speak.mjs"
 
-const COMMANDS = { comfy, image, llamacpp, ocr, ollama, skill, speak }
+const COMMANDS = { comfy, image, ocr, skill, speak }
 
 const HELP = `Usage: node src/cli.mjs <command> [args...]
 
@@ -19,8 +17,6 @@ Commands:
   skill triggers <queries.json> <skill> [runs]      measure trigger rates
   skill evals <evals.json> <SKILL.md> <dir> [--baseline]
                                                     run skill evaluations
-  ollama <command> [args...]                        manage/query local Ollama
-  llamacpp <command> [args...]                      manage local llama.cpp server
   comfy <command> [args...]                         drive the local ComfyUI server
   image --image PATH [options]                      analyze images locally
   ocr --image PATH [options]                        extract text from images

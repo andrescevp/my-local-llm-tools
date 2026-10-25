@@ -26,19 +26,14 @@
       "description": "Use this skill to analyze, describe, or understand images with a local Ollama vision model — screenshots, photos, charts, diagrams, scanned pages, or image pairs, with multi-image analysis, model auto-detection, deterministic output, and markdown/json/raw formats. Trigger on \"analyze this image\", \"describe what's in this picture\", \"what does this screenshot show\", or \"read this chart/diagram\", or when visual content must stay local. Uses minicpm-v4.6; prefer ocr for pure text extraction."
     },
     {
-      "id": "llamacpp-server",
-      "name": "llamacpp-server",
-      "description": "Use this skill to run or query a local llama.cpp HTTP server (llama-server) with GGUF models — detect the binary, list local .gguf files, start a managed server on port 8080 with GPU offload and context settings, check health/logs, send OpenAI-compatible chat/completion requests, and stop only the process this skill started. Trigger on \"run llama.cpp\", \"start llama-server\", \"serve this GGUF\", \"use a local GGUF model\", \"llama.cpp OpenAI endpoint\", or \"stop the local llama server\"."
-    },
-    {
       "id": "ocr",
       "name": "ocr",
       "description": "Use this skill when extracting text or structure from screenshots, scanned pages, PDF page images, whiteboards, charts, diagrams, or UI captures with a local OCR-capable vision model — producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Trigger on \"extract text from this screenshot\", \"read this chart and list percentages\", \"OCR this scanned invoice\", or \"parse labels from a chart\". Uses Ollama with MedAIBase/PaddleOCR-VL:0.9b."
     },
     {
-      "id": "ollama-server",
-      "name": "ollama-server",
-      "description": "Use this skill when managing or querying the local Ollama server — checking health/version, listing installed or loaded models, generating text or vision answers, chatting, computing embeddings, pulling or inspecting models, and unloading from VRAM. Trigger on \"is Ollama up?\", \"list Ollama models\", \"run a local model\", \"ask minicpm about this image\", \"embed this text locally\", \"pull this model\", or \"unload the model\". Uses 127.0.0.1:11434 and never sends data to a cloud provider."
+      "id": "openai-api-usage",
+      "name": "openai-api-usage",
+      "description": "Use this skill when calling OpenAI or OpenAI-compatible APIs — OpenAI, llama.cpp, Ollama, vLLM, or LM Studio — covering base URLs, auth, chat/embeddings payloads, streaming, vision, tools, and error handling. Trigger on \"call the OpenAI API\", \"/v1/chat/completions\", \"connect Ollama or llama.cpp through the OpenAI API\", \"which endpoints are compatible\", or \"why does this client fail against my local server?\" — check the compatibility matrix first."
     },
     {
       "id": "speak",

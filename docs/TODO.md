@@ -1,6 +1,6 @@
-- [] todos los scripts deben ser en jsvascript, para qa usar biome, osv-scanner y semgrep
-- [] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
-- [] unificar ocr y image-analysis
+- [x] todos los scripts deben ser en jsvascript, para qa usar biome, dependency-cruiser, jscpd, osv-scanner y semgrep (pnpm)
+- [x] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
+- [] unificar ocr y image-analysis -> utilizar minicpm para un analisis general, si la imagen contiene tables o es un documento usar seguidamente MedAIBase/PaddleOCR-VL:0.9b para obtener todos los detalles
 - [] Nueva skill `setup` que debe encargarse de comprobar que las dependencias estan instalas y crear un manifest file con la informacion:
     - docker
     - local ollama server (direct installation) -> ask user for url if he has already an insance. If not installed install it browsing to https://ollama.com/download, models used are CPU peformant, so if the user do not have GPU should not be a big issue

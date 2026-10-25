@@ -1,12 +1,12 @@
 # cheap-ai-winth-local-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Nine skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Eight skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
 
 ```
-Ollama :11434   ComfyUI :8188   llama.cpp :8080 (managed)
+Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 ```
 
 ## Skills
@@ -18,10 +18,9 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (managed)
 | `autoskills` | Analyze a project, propose skills, author them via `create-skill` | local FS + Node |
 | `create-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
 | `create-agent` | Create, optimize, and validate agent profiles | local FS |
+| `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
 | `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
-| `ollama-server` | Manage/query Ollama: status, models, generate, chat, embed, unload | Ollama on `:11434` |
-| `llamacpp-server` | Run/query a managed `llama-server` with local GGUF files | `llama-server` binary (optional) |
 
 Skill tooling lives in one CLI: `src/cli.mjs`. `autoskills` delegates naming,
 frontmatter, description limits, and validation to `create-skill`.
@@ -76,7 +75,6 @@ pnpm qa          # lint + deps + duplication + tests + validate + security
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
 | ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
 | Piper | `~/.local/bin/piper` + `es_MX-laura-high.onnx` |
-| llama.cpp | **not installed**; `llamacpp-server doctor` reports it and `install` prints options |
 
 No Python runtime is required: all skill tooling is Node.js.
 
@@ -87,15 +85,13 @@ No Python runtime is required: all skill tooling is Node.js.
 pnpm cli skill validate skills/create-skill/SKILL.md
 pnpm cli speak "Hola, soy Laura"
 
-# Ollama
-pnpm cli ollama status
-pnpm cli ollama models
-pnpm cli ollama generate minicpm-v4.6:latest \
-  --prompt "Describe this screenshot" --image /abs/shot.png
-
-# llama.cpp (after installing llama-server)
-pnpm cli llamacpp doctor
-pnpm cli llamacpp start ~/models/model.gguf --ctx 8192 --ngl 99 --jinja
+# OpenAI-compatible API (OpenAI, Ollama, llama.cpp, vLLM)
+export OPENAI_BASE_URL="http://127.0.0.1:11434/v1"
+export OPENAI_API_KEY="ollama"   # ignored by Ollama
+curl -sS "$OPENAI_BASE_URL/chat/completions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -d '{"model":"minicpm-v4.6:latest","messages":[{"role":"user","content":"Hola"}]}'
 
 # Vision / OCR
 pnpm cli image --image /abs/shot.png
@@ -124,9 +120,8 @@ loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
 │   ├── create-agent/
 │   ├── create-skill/
 │   ├── image-analysis/
-│   ├── llamacpp-server/
 │   ├── ocr/
-│   ├── ollama-server/
+│   ├── openai-api-usage/
 │   └── speak/
 ├── scripts/
 │   ├── build_manifest.mjs    # regenerate skills/manifest.json
@@ -151,11 +146,10 @@ loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
 
 ## Safety
 
-- Models are never deleted automatically; `ollama-server rm` requires `--yes`.
+- Model deletion is never automatic; ask before removing anything.
 - Multi-GB downloads only on explicit request.
-- `llamacpp-server stop` verifies the recorded PID/cmdline before signalling;
-  unknown processes are never killed.
-- API keys are not persisted to state files. Prefer localhost binds.
+- API keys are read from the environment and never persisted or logged.
+- Prefer localhost binds; local servers need no auth only on loopback.
 - Never read or print `.env*`, credentials, or tokens.
 
 ## Ports
@@ -164,4 +158,4 @@ loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
 |---|---|---|
 | Ollama | `127.0.0.1:11434` | systemd system service |
 | ComfyUI | `127.0.0.1:8188` | single owner; user service |
-| llama.cpp | `127.0.0.1:8080` | started/stopped by `llamacpp-server` |
+| llama.cpp | `127.0.0.1:8080` | optional OpenAI-compatible server |

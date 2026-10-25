@@ -1,5 +1,4 @@
-/** Minimal non-interactive flag parser. */
-export function parseFlags(argv, spec) {
+/** Minimal non-interactive flag parser. */ export function parseFlags(argv, spec) {
   const values = {}
   const positionals = []
   let index = 0
@@ -50,25 +49,4 @@ export function parseFlags(argv, spec) {
   }
 
   return { values, positionals }
-}
-
-/** Split `--url` / `--json` globals from anywhere in the argv. */
-export function splitGlobals(argv) {
-  const rest = []
-  let url
-  let json = false
-  for (let index = 0; index < argv.length; index += 1) {
-    const token = argv[index]
-    if (token === "--url") {
-      index += 1
-      url = argv[index]
-    } else if (token.startsWith("--url=")) {
-      url = token.slice("--url=".length)
-    } else if (token === "--json") {
-      json = true
-    } else {
-      rest.push(token)
-    }
-  }
-  return { rest, url, json }
 }

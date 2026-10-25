@@ -18,10 +18,9 @@ const SUMMARIES: Record<string, string> = {
   autoskills: "analyze a project and propose skills, authored via create-skill",
   "create-skill": "create, update, and evaluate agent skills",
   "create-agent": "create, optimize, and validate custom agents",
+  "openai-api-usage": "call OpenAI and OpenAI-compatible APIs (llama.cpp, Ollama, vLLM)",
   speak: "text-to-speech in Spanish via local piper-tts",
   "comfyui-server": "generate video/image/music/voice with local ComfyUI",
-  "llamacpp-server": "run and query a local llama.cpp GGUF server",
-  "ollama-server": "manage and query the local Ollama server",
 }
 
 interface SkillMeta {
