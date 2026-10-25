@@ -8,12 +8,6 @@ description: >
   permissions, refining a workflow, or debugging why an agent is not selected,
   including "create an agent for X" or "my agent is ignored" — ask clarifying
   questions if scope is ambiguous.
-license: MIT
-compatibility: opencode, copilot, antigravity
-allowed-tools: bash, read, write
-metadata:
-  audience: developers
-  workflow: agent-creation
 ---
 
 ## Agent naming rules
@@ -39,9 +33,6 @@ Every agent file should include clear frontmatter fields used by the host platfo
 name: <agent-name>
 description: >
   <when this agent should be used, with trigger phrases and intent>
-tools:
-  - <allowed-tool-or-group>
-model: <optional model selector>
 ---
 ```
 

@@ -17,6 +17,7 @@ const EXPECTED_SKILLS = [
   "ocr",
   "openai-api-usage",
   "speak",
+  "video-analysis",
 ]
 const REPO_SCRIPTS = ["install.mjs", "build_manifest.mjs", "validate.mjs"]
 const TEXT_EXTENSIONS = new Set([".md", ".py", ".sh", ".mjs", ".ts"])

@@ -1,6 +1,6 @@
 # cheap-ai-winth-local-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Eight skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Nine skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -19,6 +19,7 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `create-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
 | `create-agent` | Create, optimize, and validate agent profiles | local FS |
 | `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
+| `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
 
@@ -97,6 +98,9 @@ curl -sS "$OPENAI_BASE_URL/chat/completions" \
 pnpm cli image --image /abs/shot.png
 pnpm cli ocr --image /abs/page.png
 
+# Video
+pnpm cli video --input /abs/clip.mp4 --frames 12 --summary
+
 # ComfyUI
 pnpm cli comfy status
 pnpm cli comfy run ltxv_t2v_8gb.json 20.seed=12345
@@ -122,7 +126,8 @@ loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
 │   ├── image-analysis/
 │   ├── ocr/
 │   ├── openai-api-usage/
-│   └── speak/
+│   ├── speak/
+│   └── video-analysis/
 ├── scripts/
 │   ├── build_manifest.mjs    # regenerate skills/manifest.json
 │   ├── install.mjs           # symlink plugin into OpenCode

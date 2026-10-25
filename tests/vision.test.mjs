@@ -95,6 +95,11 @@ test("formatOutput supports markdown/json/raw", () => {
   assert.equal(parsed.model, "m")
 })
 
+test("formatOutput strips thinking markers", () => {
+  const raw = "thinking...\n</think>\n\nThe image shows a cat."
+  assert.equal(formatOutput({ response: raw }, "markdown"), "The image shows a cat.")
+})
+
 test("callOllama posts the expected payload", async () => {
   const original = globalThis.fetch
   let captured

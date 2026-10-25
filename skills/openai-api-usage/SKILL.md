@@ -174,7 +174,6 @@ body as one object.
 - [ ] Streaming parser handles SSE and `[DONE]`
 - [ ] Unsupported fields removed for local targets
 - [ ] Keys never logged, committed, or passed in process args
-- [ ] Main `SKILL.md` stays under 250 lines
 
 ## Reference triggers
 

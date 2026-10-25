@@ -54,10 +54,10 @@ export async function callOllama({ ollamaUrl, model, prompt, encodedImages, time
   const payload = {
     model,
     prompt,
-    images: encodedImages,
     stream: false,
     options: { temperature: 0 },
   }
+  if (encodedImages?.length) payload.images = encodedImages
   let response
   try {
     response = await fetch(`${ollamaUrl.replace(/\/+$/, "")}/api/generate`, {
@@ -93,9 +93,16 @@ export async function runWithFallback(options, call = callOllama) {
   }
 }
 
+export function cleanResponse(value) {
+  const text = String(value ?? "")
+  const marker = text.lastIndexOf("</think>")
+  return (marker >= 0 ? text.slice(marker + "</think>".length) : text).trim()
+}
+
 export function formatOutput(data, format) {
-  const text = data.response ?? ""
-  if (format === "raw") return text
+  const raw = String(data.response ?? "")
+  const text = cleanResponse(raw)
+  if (format === "raw") return raw
   if (format === "json") {
     return JSON.stringify(
       {
@@ -109,7 +116,7 @@ export function formatOutput(data, format) {
       2,
     )
   }
-  return text.trim()
+  return text
 }
 
 export function encodeImages(paths) {

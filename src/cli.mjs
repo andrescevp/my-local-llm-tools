@@ -7,8 +7,9 @@ import { image } from "./commands/image.mjs"
 import { ocr } from "./commands/ocr.mjs"
 import { skill } from "./commands/skill.mjs"
 import { speak } from "./commands/speak.mjs"
+import { video } from "./commands/video.mjs"
 
-const COMMANDS = { comfy, image, ocr, skill, speak }
+const COMMANDS = { comfy, image, ocr, skill, speak, video }
 
 const HELP = `Usage: node src/cli.mjs <command> [args...]
 
@@ -20,6 +21,7 @@ Commands:
   comfy <command> [args...]                         drive the local ComfyUI server
   image --image PATH [options]                      analyze images locally
   ocr --image PATH [options]                        extract text from images
+  video --input PATH [options]                      analyze a local video
   speak [options] [text]                            Spanish TTS via piper
 `
 

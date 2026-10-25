@@ -8,7 +8,7 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All eight skills are canonical here; edit `skills/<name>/` directly.
+- All nine skills are canonical here; edit `skills/<name>/` directly.
 - Never edit `skills/manifest.json` by hand — generate it with
   `pnpm manifest` (`scripts/build_manifest.mjs`).
 - All executable skill tooling lives in the single CLI at `src/`; do not add

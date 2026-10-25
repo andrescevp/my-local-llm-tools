@@ -2,12 +2,12 @@
 name: image-analysis
 description: >
   Use this skill to analyze, describe, or understand images with a local Ollama
-  vision model — screenshots, photos, charts, diagrams, scanned pages, or image
-  pairs, with multi-image analysis, model auto-detection, deterministic output,
-  and markdown/json/raw formats. Trigger on "analyze this image", "describe
-  what's in this picture", "what does this screenshot show", or "read this
-  chart/diagram", or when visual content must stay local. Uses minicpm-v4.6;
-  prefer ocr for pure text extraction.
+  vision model — screenshots, photos, charts, diagrams, or image pairs, with
+  multi-image analysis, model auto-detection, deterministic output, and
+  markdown/json/raw formats. Trigger on "analyze this image", "describe what's
+  in this picture", or "what does this screenshot show". Uses minicpm-v4.6 for
+  general analysis; when the image is a document or contains tables, hand off to
+  ocr for full detail.
 license: MIT
 compatibility: opencode, copilot, antigravity
 allowed-tools: bash, read
@@ -32,16 +32,28 @@ external upload, everything stays on-machine.
 - `temperature=0` for deterministic output
 - Default mode is auto-detected from the model name (analyze vs ocr)
 - **Automatic vision fallback**: if the chosen model cannot accept images
-  (PaddleOCR-VL is currently published without mmproj), the script retries
+  (PaddleOCR-VL is currently published without mmproj), the CLI retries
   with `minicpm-v4.6:latest` and prints a WARN on stderr
 - Image paths must be absolute
+
+## Responsibility split
+
+- **General understanding** (scene, subjects, UI, charts, comparisons) → this
+  skill with `minicpm-v4.6`.
+- **Documents, reports, tables, forms, or explicit text extraction** → the
+  `ocr` skill with `MedAIBase/PaddleOCR-VL:0.9b`.
+- **Mixed image**: run this skill first for the overview, then `ocr` on the same
+  file and merge; say which details came from which pass.
+- `ocr` used directly is correct when the user asks for OCR or the input is
+  clearly a document/table/report — do not force a general pass first.
 
 ## Workflow
 
 Progress:
 - [ ] 1) Confirm image path(s) and requested output (describe/OCR/compare + format)
 - [ ] 2) Verify Ollama service and model availability
-- [ ] 3) Run analysis with the bundled script
+- [ ] 3) Run analysis with the CLI
+- [ ] 3b) If the image is a document or has tables, run `ocr` and merge details
 - [ ] 4) Validate completeness (missing areas, hallucinated details)
 - [ ] 5) Return result + uncertainty notes when applicable
 
@@ -58,16 +70,24 @@ node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/path/image.png"
 ```
 
-### 3) OCR mode (PaddleOCR, falls back to minicpm if vision unsupported)
+### 3) Documents and tables (prefer the `ocr` skill)
+
+For a document, report, or table, use the `ocr` skill/CLI as the primary path:
+
+```bash
+node "$SKILL_DIR/../../src/cli.mjs" ocr --image "/abs/path/page.png"
+```
+
+`image` also has an OCR mode for convenience; it falls back to minicpm if the
+model lacks vision support:
 
 ```bash
 node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/path/page.png" --model "MedAIBase/PaddleOCR-VL:0.9b" --mode ocr
 ```
 
-Note: if the OCR model reports "image input is not supported" (missing
-mmproj), the script automatically retries with minicpm-v4.6 and warns on
-stderr — extraction still succeeds.
+If the OCR model reports "image input is not supported" (missing mmproj), the
+CLI retries with minicpm-v4.6 and warns on stderr — extraction still succeeds.
 
 ### 4) Compare two images
 
@@ -120,4 +140,3 @@ node "$SKILL_DIR/../../src/cli.mjs" image \
 - [ ] Uses local Ollama endpoint (no external image API)
 - [ ] Default model `minicpm-v4.6:latest` with OCR fallback `MedAIBase/PaddleOCR-VL:0.9b`
 - [ ] Tests pass: `pnpm test`
-- [ ] Main `SKILL.md` stays under 250 lines

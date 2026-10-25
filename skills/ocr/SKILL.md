@@ -1,13 +1,13 @@
 ---
 name: ocr
 description: >
-  Use this skill when extracting text or structure from screenshots, scanned
-  pages, PDF page images, whiteboards, charts, diagrams, or UI captures with a
-  local OCR-capable vision model — producing markdown or JSON from text, tables,
-  labels, and annotations, with prompt templates and confidence notes. Trigger on
-  "extract text from this screenshot", "read this chart and list percentages",
-  "OCR this scanned invoice", or "parse labels from a chart". Uses Ollama with
-  MedAIBase/PaddleOCR-VL:0.9b.
+  Use this skill when extracting text or structure from documents, reports,
+  tables, forms, screenshots, or scanned pages with a local OCR vision model —
+  producing markdown or JSON from text, tables, labels, and annotations, with
+  prompt templates and confidence notes. Use it directly for
+  documents/tables/reports or explicit OCR requests; for general image
+  understanding start with image-analysis, then run ocr for the text-heavy
+  detail. Defaults to MedAIBase/PaddleOCR-VL:0.9b on local Ollama.
 license: MIT
 compatibility: opencode, copilot, antigravity
 allowed-tools: bash, read
@@ -24,11 +24,21 @@ metadata:
 
 Extract text and structure from images/documents through a local Ollama instance so agents can "see" technical visuals safely (no external upload).
 
+## Responsibility split
+
+- **Direct use** for documents, reports, tables, forms, invoices, or any
+  explicit "extract text / OCR this" request.
+- **After a general pass** when the user asked what an image *is* but it also
+  contains dense text: `image-analysis` first (minicpm), then this skill for the
+  exact text/tables.
+- Do not use OCR for scene description, photo understanding, or UI layout
+  questions where no text extraction is needed.
+
 ## Core rules
 
 - Default model: `MedAIBase/PaddleOCR-VL:0.9b`
 - Default Ollama endpoint: `http://127.0.0.1:11434`
-- Keep processing local-first; do not upuse user images to third-party APIs
+- Keep processing local-first; do not upload user images to third-party APIs
 - Use deterministic extraction defaults (`temperature=0`)
 - Return source-qualified output:
   - extracted content
@@ -40,7 +50,7 @@ Extract text and structure from images/documents through a local Ollama instance
 Progress:
 - [ ] 1) Confirm input image path(s) and requested output shape (text/markdown/json)
 - [ ] 2) Verify Ollama service and model availability
-- [ ] 3) Run extraction using bundled script
+- [ ] 3) Run extraction with the CLI
 - [ ] 4) Validate completeness (headings, totals, labels, legends, units)
 - [ ] 5) Return result + uncertainty notes
 
@@ -106,4 +116,3 @@ Use these references only when needed:
 - [ ] Uses local Ollama endpoint (no external OCR API)
 - [ ] Model default is `MedAIBase/PaddleOCR-VL:0.9b`
 - [ ] Extraction output includes uncertainty notes when ambiguity exists
-- [ ] Main `SKILL.md` stays under 250 lines

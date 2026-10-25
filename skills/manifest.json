@@ -23,12 +23,12 @@
     {
       "id": "image-analysis",
       "name": "image-analysis",
-      "description": "Use this skill to analyze, describe, or understand images with a local Ollama vision model — screenshots, photos, charts, diagrams, scanned pages, or image pairs, with multi-image analysis, model auto-detection, deterministic output, and markdown/json/raw formats. Trigger on \"analyze this image\", \"describe what's in this picture\", \"what does this screenshot show\", or \"read this chart/diagram\", or when visual content must stay local. Uses minicpm-v4.6; prefer ocr for pure text extraction."
+      "description": "Use this skill to analyze, describe, or understand images with a local Ollama vision model — screenshots, photos, charts, diagrams, or image pairs, with multi-image analysis, model auto-detection, deterministic output, and markdown/json/raw formats. Trigger on \"analyze this image\", \"describe what's in this picture\", or \"what does this screenshot show\". Uses minicpm-v4.6 for general analysis; when the image is a document or contains tables, hand off to ocr for full detail."
     },
     {
       "id": "ocr",
       "name": "ocr",
-      "description": "Use this skill when extracting text or structure from screenshots, scanned pages, PDF page images, whiteboards, charts, diagrams, or UI captures with a local OCR-capable vision model — producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Trigger on \"extract text from this screenshot\", \"read this chart and list percentages\", \"OCR this scanned invoice\", or \"parse labels from a chart\". Uses Ollama with MedAIBase/PaddleOCR-VL:0.9b."
+      "description": "Use this skill when extracting text or structure from documents, reports, tables, forms, screenshots, or scanned pages with a local OCR vision model — producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Use it directly for documents/tables/reports or explicit OCR requests; for general image understanding start with image-analysis, then run ocr for the text-heavy detail. Defaults to MedAIBase/PaddleOCR-VL:0.9b on local Ollama."
     },
     {
       "id": "openai-api-usage",
@@ -39,6 +39,11 @@
       "id": "speak",
       "name": "speak",
       "description": "Use this skill when opencode needs to speak text aloud, say something out loud, read output aloud, announce results verbally, or when the user says \"speak\", \"say\", \"read aloud\", \"decir\", \"hablar\", or mentions voice/tts/audio output. Converts text to speech using piper-tts with the Laura (es_MX) voice model. Always speaks in Spanish regardless of conversation language; automatically translates non-Spanish text before speaking."
+    },
+    {
+      "id": "video-analysis",
+      "name": "video-analysis",
+      "description": "Use this skill when analyzing or summarizing a local video — sampling frames with ffmpeg and describing scenes, subjects, actions, on-screen text, and chronology with the local minicpm-v4.6 vision model. Trigger on \"analyze this video\", \"what happens in this clip\", \"summarize the video\", \"extract key frames\", or \"describe the scene\" — hand off to ocr for documents/tables and image-analysis for single images."
     }
   ]
 }
