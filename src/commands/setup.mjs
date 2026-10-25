@@ -45,15 +45,15 @@ function printSummary(manifest, target, factsTarget) {
     manifest.tools.docker.version || "not found (optional)",
   )
   const modelInfo =
-    `${manifest.ollama.reachable ? "reachable" : "unreachable"} ${manifest.ollama.url}` +
-    (manifest.ollama.reachable ? ` (${manifest.ollama.models.length} models)` : "")
+    `${manifest.ollama.reachable ? "reachable" : "unreachable"} ${manifest.ollama.host}` +
+    (manifest.ollama.reachable ? ` (${manifest.ollama.models.available.length} models)` : "")
   statusLine("ollama", manifest.ollama.reachable, modelInfo)
-  if (manifest.ollama.missing.length)
-    console.log(`             missing: ${manifest.ollama.missing.join(", ")}`)
-  const comfyInfo = manifest.comfy.reachable
-    ? `${manifest.comfy.url} ${manifest.comfy.vram_gb} GiB`
-    : `${manifest.comfy.url} unreachable`
-  statusLine("comfyui", manifest.comfy.reachable, comfyInfo)
+  if (manifest.ollama.models.missing.length)
+    console.log(`             missing: ${manifest.ollama.models.missing.join(", ")}`)
+  const comfyInfo = manifest.comfyui.reachable
+    ? `${manifest.comfyui.host} ${manifest.comfyui.vram_gb} GiB`
+    : `${manifest.comfyui.host} unreachable`
+  statusLine("comfyui", manifest.comfyui.reachable, comfyInfo)
   statusLine(
     "tesseract",
     manifest.tools.tesseract.ok,
@@ -104,9 +104,9 @@ export async function setup(argv) {
   const target = writeManifest(manifest)
 
   let factsTarget = ""
-  if (manifest.comfy.reachable) {
+  if (manifest.comfyui.reachable) {
     try {
-      factsTarget = writeFacts(await discoverFacts({ url: manifest.comfy.url }))
+      factsTarget = writeFacts(await discoverFacts({ url: manifest.comfyui.host }))
     } catch (error) {
       process.stderr.write(`WARN: could not write ComfyUI facts: ${error.message}\n`)
     }

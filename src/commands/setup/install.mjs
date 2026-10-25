@@ -23,7 +23,7 @@ function ffmpegHint(platform) {
 
 export function planInstall(manifest, root, platform = process.platform) {
   const actions = []
-  const { tools, ollama, comfy } = manifest
+  const { tools, ollama, comfyui } = manifest
   const add = (action) => actions.push(action)
 
   if (!tools.pnpm.ok) {
@@ -49,11 +49,11 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "ollama",
       kind: "manual",
       description: `Install and start Ollama, or pass --ollama-url if you already have an instance`,
-      detail: `Default URL: ${ollama.url}`,
+      detail: `Default host: ${ollama.host}`,
       url: OLLAMA_URL,
     })
   } else {
-    for (const model of ollama.missing) {
+    for (const model of ollama.models.missing) {
       add({
         id: `model:${model}`,
         kind: "command",
@@ -84,7 +84,7 @@ export function planInstall(manifest, root, platform = process.platform) {
     })
   }
 
-  if (!comfy.reachable) {
+  if (!comfyui.reachable) {
     const gpu = manifest.gpu ?? { ok: false, vram_gb: 0 }
     if (gpu.ok && gpu.vram_gb < 7.5) {
       add({

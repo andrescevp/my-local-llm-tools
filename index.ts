@@ -1,16 +1,16 @@
-// cheap-ai-winth-local-tools — OpenCode V2 plugin.
+// my-local-llm-tools — OpenCode V2 plugin.
 //
 // Registers the bundled skills (skills/*/SKILL.md, metadata from
 // skills/manifest.json) and injects a compact inventory into every session.
 // This harness is skills-only: no agents are installed as files.
 
 import { readFileSync } from "node:fs"
-import { join } from "node:path"
+import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { Plugin } from "@opencode/plugin"
 
-const HARNESS_ID = "cheap-ai-winth-local-tools"
-const CONTEXT_MARKER = "## Cheap AI Local Tools"
+const HARNESS_ID = "my-local-llm-tools"
+const CONTEXT_MARKER = "## my-local-llm-tools"
 
 const SUMMARIES: Record<string, string> = {
   "image-analysis": "describe/compare images with local Ollama vision models",
@@ -36,7 +36,7 @@ interface Manifest {
 }
 
 interface LoadedSkill extends SkillMeta {
-  location: string
+  path: string
   content: string
 }
 
@@ -45,14 +45,14 @@ function loadSkills(root: string): LoadedSkill[] {
   try {
     manifest = JSON.parse(readFileSync(join(root, "skills", "manifest.json"), "utf8")) as Manifest
   } catch {
-    console.warn(`[${HARNESS_ID}] skills/manifest.json missing — run scripts/build_manifest.py`)
+    console.warn(`[${HARNESS_ID}] skills/manifest.json missing — run pnpm manifest`)
     return []
   }
   const entries: LoadedSkill[] = []
   for (const meta of manifest.skills) {
-    const location = join(root, "skills", meta.id, "SKILL.md")
+    const path = join(root, "skills", meta.id, "SKILL.md")
     try {
-      entries.push({ ...meta, location, content: readFileSync(location, "utf8") })
+      entries.push({ ...meta, path, content: readFileSync(path, "utf8") })
     } catch {
       console.warn(`[${HARNESS_ID}] missing SKILL.md for '${meta.id}'`)
     }
@@ -66,17 +66,17 @@ function contextBlock(skills: LoadedSkill[], root: string): string {
     "",
     "Local-first, low-cost AI toolbelt. Everything runs on this machine.",
     "Endpoints: Ollama http://127.0.0.1:11434 · ComfyUI http://127.0.0.1:8188 ·",
-    "llama.cpp http://127.0.0.1:8080 (only while a managed server is running).",
+    "llama.cpp http://127.0.0.1:8080 (optional OpenAI-compatible server).",
     "",
     `Bundled skills (root: ${join(root, "skills")}):`,
   ]
   for (const skill of skills) {
-    lines.push(`- ${skill.id}: ${SUMMARIES[skill.id] ?? "local tool"}`)
+    lines.push(`- ${HARNESS_ID}:${skill.id}: ${SUMMARIES[skill.id] ?? "local tool"}`)
   }
   lines.push(
     "",
-    "Use the skill tool to load full instructions. When running a bundled script,",
-    'set SKILL_DIR to the skill folder reported by the skill loader and use "$SKILL_DIR/...".',
+    "Use the skill tool to load full instructions. For bundled CLI commands,",
+    'set SKILL_DIR to the skill folder reported by the skill loader and run "$SKILL_DIR/../../src/cli.mjs".',
     "Never delete models, pull multi-GB files, or kill local servers without explicit user approval.",
   )
   return lines.join("\n")
@@ -85,12 +85,15 @@ function contextBlock(skills: LoadedSkill[], root: string): string {
 export default Plugin.define({
   id: HARNESS_ID,
   async setup(ctx) {
-    const root = ctx.location.directory ?? fileURLToPath(new URL(".", import.meta.url))
+    const root = dirname(fileURLToPath(import.meta.url))
     const skills = loadSkills(root)
 
     await ctx.skill.transform((editor) => {
       for (const skill of skills) {
-        editor.add(skill)
+        editor.add({
+          ...skill,
+          id: `${HARNESS_ID}:${skill.id}`,
+        } as Parameters<typeof editor.add>[0])
       }
     })
 

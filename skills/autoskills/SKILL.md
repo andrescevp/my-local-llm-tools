@@ -115,7 +115,8 @@ Wait for approval, rejection, or modification before writing any files.
 
 For each approved skill:
 
-1. Load the `create-skill` skill and run its interview and creation workflow.
+1. Load the `my-local-llm-tools:create-skill` skill and run its interview and
+   creation workflow.
 2. Ground content in this project's actual artifacts, not generic knowledge.
 3. Write the approved file to `.agents/skills/<name>/SKILL.md` unless the user chose another scope.
 4. Validate the result with the shared validator:

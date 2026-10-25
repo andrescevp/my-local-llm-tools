@@ -18,11 +18,14 @@ function context(overrides = {}) {
     },
     ollama: {
       reachable: true,
-      url: "http://127.0.0.1:11434",
-      models: ["minicpm-v4.6:latest", "MedAIBase/PaddleOCR-VL:0.9b"],
-      missing: [],
+      host: "http://127.0.0.1:11434",
+      models: {
+        available: ["minicpm-v4.6:latest", "MedAIBase/PaddleOCR-VL:0.9b"],
+        required: ["minicpm-v4.6:latest", "MedAIBase/PaddleOCR-VL:0.9b"],
+        missing: [],
+      },
     },
-    comfy: { reachable: true, url: "http://127.0.0.1:8188", vram_gb: 8, gpu_ok: true },
+    comfyui: { reachable: true, host: "http://127.0.0.1:8188", vram_gb: 8, gpu_ok: true },
     ...overrides,
   }
 }
@@ -39,9 +42,12 @@ test("missing models disable dependent skills", () => {
     context({
       ollama: {
         reachable: true,
-        url: "http://127.0.0.1:11434",
-        models: [],
-        missing: ["minicpm-v4.6:latest"],
+        host: "http://127.0.0.1:11434",
+        models: {
+          available: [],
+          required: ["minicpm-v4.6:latest"],
+          missing: ["minicpm-v4.6:latest"],
+        },
       },
     }),
   )
@@ -70,8 +76,12 @@ test("planInstall skips ComfyUI when VRAM is below 8 GB", () => {
       voice_model: { ok: true },
     },
     gpu: { ok: true, name: "small", vram_gb: 4 },
-    ollama: { reachable: true, url: "http://127.0.0.1:11434", missing: [] },
-    comfy: { reachable: false, url: "http://127.0.0.1:8188" },
+    ollama: {
+      reachable: true,
+      host: "http://127.0.0.1:11434",
+      models: { available: [], required: [], missing: [] },
+    },
+    comfyui: { reachable: false, host: "http://127.0.0.1:8188" },
   }
   const actions = planInstall(manifest, "/tmp/does-not-exist-cheap-ai", "linux")
   assert.ok(actions.some((action) => action.id === "comfyui:skip"))
@@ -88,8 +98,16 @@ test("planInstall lists missing tools and models", () => {
       piper: { ok: false },
       voice_model: { ok: false },
     },
-    ollama: { reachable: true, url: "http://127.0.0.1:11434", missing: ["minicpm-v4.6:latest"] },
-    comfy: { reachable: false, url: "http://127.0.0.1:8188" },
+    ollama: {
+      reachable: true,
+      host: "http://127.0.0.1:11434",
+      models: {
+        available: [],
+        required: ["minicpm-v4.6:latest"],
+        missing: ["minicpm-v4.6:latest"],
+      },
+    },
+    comfyui: { reachable: false, host: "http://127.0.0.1:8188" },
   }
   const actions = planInstall(manifest, "/tmp/does-not-exist-cheap-ai", "linux")
   const ids = actions.map((action) => action.id)

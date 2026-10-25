@@ -21,7 +21,8 @@ const configHome =
     ? (process.env.APPDATA ?? join(homedir(), "AppData", "Roaming"))
     : (process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config"))
 const pluginsDir = process.env.OPENCODE_PLUGINS_DIR ?? join(configHome, "opencode", "plugins")
-const destination = join(pluginsDir, "cheap-ai-winth-local-tools")
+const destination = join(pluginsDir, "my-local-llm-tools")
+const legacy = join(pluginsDir, "cheap-ai-winth-local-tools")
 
 function step(message) {
   console.log(`\n\x1b[1;32m==>\x1b[0m ${message}`)
@@ -39,9 +40,10 @@ if (hasCommand("opencode")) {
 }
 
 if (existsSync(join(pluginsDir, "my-utils-harness"))) {
-  info("note: my-utils-harness is also installed; it registers autoskills,")
-  info("comfyui-server, image-analysis, and ocr too. Duplicate skill ids may")
-  info("conflict — keep only one of the two harnesses enabled if you see it.")
+  info("note: my-utils-harness overlaps autoskills, comfyui-server,")
+  info("image-analysis, and ocr. dev-harness-skills may overlap others.")
+  info("OpenCode resolves duplicate skill IDs by load order — enable only one")
+  info("of the overlapping plugins, or disable the duplicate IDs in opencode.jsonc.")
 }
 
 if (dryRun) {
@@ -51,6 +53,10 @@ if (dryRun) {
 }
 
 mkdirSync(pluginsDir, { recursive: true })
+if (lstatSync(legacy, { throwIfNoEntry: false })?.isSymbolicLink()) {
+  unlinkSync(legacy)
+  info(`removed legacy symlink: ${legacy}`)
+}
 const existing = lstatSync(destination, { throwIfNoEntry: false })
 if (existing?.isSymbolicLink()) {
   unlinkSync(destination)

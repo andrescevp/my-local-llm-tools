@@ -1,10 +1,11 @@
 import { homedir } from "node:os"
 import { join } from "node:path"
 
-const APP = "cheap-ai-tools"
+const APP = "my-local-llm-tools"
 
 /** Per-user config directory (Windows/macOS/Linux). */
 export function configDir(env = process.env, platform = process.platform) {
+  if (env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR) return env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR
   if (env.CHEAP_AI_CONFIG_DIR) return env.CHEAP_AI_CONFIG_DIR
   if (platform === "win32") {
     return join(env.APPDATA ?? join(homedir(), "AppData", "Roaming"), APP)

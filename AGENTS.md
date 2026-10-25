@@ -1,4 +1,4 @@
-# AGENTS.md — cheap-ai-winth-local-tools
+# AGENTS.md — my-local-llm-tools
 
 Local-first AI toolbelt packaged as an OpenCode V2 plugin (skills only).
 
@@ -34,6 +34,8 @@ and dependencies are managed with `pnpm`.
 | `index.ts` | `Plugin.define`: registers skills + context block | static |
 | `src/cli.mjs` | Single CLI dispatcher | static |
 | `src/commands/<domain>.mjs` | One module per skill domain | static |
+| `src/commands/setup.mjs` / `doctor.mjs` | Manifest generation and diagnostics | static |
+| `src/commands/setup/manifest.schema.json` | Formal manifest schema (JSON Schema 2020-12) | static |
 | `skills/<name>/SKILL.md` | Skill instructions | static |
 | `skills/manifest.json` | Registration metadata (id/name/description) | yes — `build_manifest.mjs` |
 | `scripts/build_manifest.mjs` | Regenerate `skills/manifest.json` | static |
@@ -50,8 +52,9 @@ pnpm harness:install   # install/update the OpenCode plugin link
 pnpm cli setup         # detect dependencies + write the machine manifest
 pnpm cli doctor        # diagnose the harness (read-only)
 pnpm validate          # static checks
+pnpm typecheck         # OpenCode plugin API types
 pnpm test              # node:test suites
-pnpm qa                # lint + deps + dup + tests + validate + security
+pnpm qa                # lint + typecheck + deps + dup + tests + validate + security
 ```
 
 QA tools: **Biome** (`biome.json`), **dependency-cruiser**

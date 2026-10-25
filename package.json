@@ -1,7 +1,7 @@
 {
-  "name": "cheap-ai-winth-local-tools",
-  "version": "1.0.0",
-  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image analysis, TTS, skill generation, ComfyUI, and OpenAI-compatible API guidance.",
+  "name": "my-local-llm-tools",
+  "version": "2.0.0",
+  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image/video analysis, TTS, skill generation, ComfyUI, and OpenAI-compatible API guidance.",
   "type": "module",
   "private": true,
   "exports": {
@@ -15,18 +15,21 @@
     "harness:install": "node scripts/install.mjs",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
+    "typecheck": "tsc -p tsconfig.json",
     "format": "biome format --write .",
     "deps": "depcruise src scripts tests index.ts",
     "dup": "jscpd src scripts tests",
     "security": "osv-scanner scan source -r . && semgrep --config .semgrep.yml --error .",
-    "qa": "pnpm lint && pnpm deps && pnpm dup && pnpm test && pnpm validate && pnpm security"
+    "qa": "pnpm lint && pnpm typecheck && pnpm deps && pnpm dup && pnpm test && pnpm validate && pnpm security"
   },
   "dependencies": {
-    "@opencode/plugin": "latest",
+    "@opencode/plugin": "2.1.3",
+    "ajv": "^8.20.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.3",
+    "@types/node": "^26.6.5",
     "dependency-cruiser": "^18.7.0",
     "jscpd": "^5.4.2",
     "typescript": "^6.0.3"

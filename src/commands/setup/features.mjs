@@ -17,10 +17,12 @@ export const FEATURES = {
 }
 
 function satisfied(name, context) {
-  const { tools, ollama, comfy } = context
+  const { tools, ollama, comfyui } = context
   if (name === "ollama") return ollama.reachable
-  if (name.startsWith("model:")) return ollama.models.includes(name.slice("model:".length))
-  if (name === "comfyui") return comfy.reachable
+  if (name.startsWith("model:")) {
+    return ollama.models.available.includes(name.slice("model:".length))
+  }
+  if (name === "comfyui") return comfyui.reachable
   if (name === "voice") return tools.voice_model.ok
   return Boolean(tools[name]?.ok)
 }

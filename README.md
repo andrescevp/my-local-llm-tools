@@ -1,4 +1,4 @@
-# cheap-ai-winth-local-tools
+# my-local-llm-tools
 
 Local-first, low-cost AI toolbelt for OpenCode V2. Ten skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
@@ -24,16 +24,33 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
 
-Skill tooling lives in one CLI: `src/cli.mjs`. `autoskills` delegates naming,
-frontmatter, description limits, and validation to `create-skill`.
+Skill tooling lives in one CLI: `src/cli.mjs`. Registered skill IDs are
+namespaced as `my-local-llm-tools:<skill>` (for example
+`my-local-llm-tools:ocr`). `autoskills` delegates naming, frontmatter,
+description limits, and validation to `create-skill`.
 
 ## Install (OpenCode V2)
 
 ```bash
 pnpm install
-pnpm harness:install          # symlink into ~/.config/opencode/plugins/
+pnpm harness:install          # symlink into the global plugins directory
 # restart OpenCode
 ```
+
+Alternatively, configure the local directory explicitly in `opencode.jsonc`:
+
+```jsonc
+{
+  "plugins": ["/absolute/path/to/my-local-llm-tools"]
+}
+```
+
+Use **one** installation method. Configuring the directory while it is also
+symlinked under `~/.config/opencode/plugins/` loads the plugin twice. A
+`plugins/` directory next to a project `opencode.jsonc` is not auto-discovered;
+point the config at it explicitly. After editing files inside the repo, restart
+OpenCode — local dependencies outside watched config directories may not hot
+reload.
 
 The plugin registers skills from `skills/manifest.json` and injects a compact
 inventory into each session. No agents are installed as files.
@@ -41,18 +58,27 @@ inventory into each session. No agents are installed as files.
 ### Coexistence with `my-utils-harness`
 
 `my-utils-harness` (if installed) also registers `autoskills`,
-`comfyui-server`, `image-analysis`, and `ocr`. OpenCode may see duplicate skill
-ids. Keep only one of the two plugins enabled, or remove the overlapping
-skills from one of them. `install.mjs` prints a reminder when it detects the
-other harness.
+`comfyui-server`, `image-analysis`, and `ocr`. `dev-harness-skills` may register
+other overlapping IDs. OpenCode resolves duplicate skill IDs by plugin load
+order, so the text that wins is not deterministic across machines. Keep only one
+of the overlapping plugins enabled, or disable the duplicate IDs explicitly:
+
+```jsonc
+{
+  "plugins": ["*", "-my-utils-harness"]
+}
+```
+
+`install.mjs` prints a reminder when it detects another harness.
 
 ## Development
 
 ```bash
 pnpm manifest    # regenerate skills/manifest.json
 pnpm validate    # static harness validation
+pnpm typecheck   # OpenCode plugin API types
 pnpm test        # node:test suites
-pnpm qa          # lint + deps + duplication + tests + validate + security
+pnpm qa          # lint + typecheck + deps + duplication + tests + validate + security
 ```
 
 ### Setup and diagnostics
@@ -65,17 +91,20 @@ pnpm cli doctor                 # live diagnostics, writes nothing
 pnpm cli doctor --skill ocr     # exit 1 if the skill cannot run
 ```
 
-The manifest lives in the per-user config directory (`~/.config/cheap-ai-tools`
-on Linux, `~/Library/Application Support/cheap-ai-tools` on macOS,
-`%APPDATA%\cheap-ai-tools` on Windows) and lists tools, Ollama models, ComfyUI
-state, and per-skill readiness. `instance_facts.json` is generated next to it and
-is not tracked in git.
+The manifest lives at `~/.config/my-local-llm-tools/manifest.json` on Linux
+(`~/Library/Application Support/my-local-llm-tools` on macOS,
+`%APPDATA%\my-local-llm-tools` on Windows) and includes the Ollama/ComfyUI
+hosts, available models, and resolved `tesseract`/`ffmpeg`/`ffprobe`/`piper`
+paths, plus per-skill readiness. It is validated against
+`src/commands/setup/manifest.schema.json` on write and read. `instance_facts.json`
+is generated next to it and is not tracked in git.
 
 ### QA toolchain
 
 | Tool | Command | Config |
 |---|---|---|
 | Biome | `pnpm lint` / `pnpm lint:fix` | `biome.json` |
+| TypeScript | `pnpm typecheck` | `tsconfig.json` |
 | dependency-cruiser | `pnpm deps` | `.dependency-cruiser.cjs` |
 | jscpd | `pnpm dup` | `.jscpd.json` |
 | osv-scanner | `osv-scanner scan source -r .` | `pnpm-lock.yaml` |

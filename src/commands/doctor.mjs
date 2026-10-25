@@ -51,9 +51,11 @@ export async function doctor(argv) {
 
   let manifest
   if (values.cached) {
-    manifest = readManifest()
-    if (!manifest) {
-      process.stderr.write(`no manifest at ${manifestPath()}; run: node src/cli.mjs setup\n`)
+    try {
+      manifest = readManifest()
+    } catch (error) {
+      process.stderr.write(`cannot read ${manifestPath()}: ${error.message}\n`)
+      process.stderr.write("run: node src/cli.mjs setup\n")
       return 1
     }
   } else {
@@ -87,20 +89,20 @@ export async function doctor(argv) {
     )
     line(
       "ollama",
-      manifest.ollama.reachable && !manifest.ollama.missing.length,
-      `${manifest.ollama.url} ${manifest.ollama.reachable ? `(${manifest.ollama.models.length} models)` : "unreachable"}`,
+      manifest.ollama.reachable && !manifest.ollama.models.missing.length,
+      `${manifest.ollama.host} ${manifest.ollama.reachable ? `(${manifest.ollama.models.available.length} models)` : "unreachable"}`,
     )
-    if (manifest.ollama.missing.length)
-      console.log(`               missing: ${manifest.ollama.missing.join(", ")}`)
+    if (manifest.ollama.models.missing.length)
+      console.log(`               missing: ${manifest.ollama.models.missing.join(", ")}`)
     line(
       "comfyui",
-      manifest.comfy.reachable,
-      manifest.comfy.reachable
-        ? `${manifest.comfy.url} ${manifest.comfy.vram_gb} GiB (${manifest.comfy.version})`
-        : `${manifest.comfy.url} unreachable`,
+      manifest.comfyui.reachable,
+      manifest.comfyui.reachable
+        ? `${manifest.comfyui.host} ${manifest.comfyui.vram_gb} GiB (${manifest.comfyui.version})`
+        : `${manifest.comfyui.host} unreachable`,
     )
-    if (manifest.comfy.reachable && !manifest.comfy.gpu_ok) {
-      console.log(`               warning: VRAM ${manifest.comfy.vram_gb} GiB < 8 GB`)
+    if (manifest.comfyui.reachable && !manifest.comfyui.gpu_ok) {
+      console.log(`               warning: VRAM ${manifest.comfyui.vram_gb} GiB < 8 GB`)
     }
     line(
       "tesseract",
@@ -131,9 +133,9 @@ export async function doctor(argv) {
   const featuresFailed = Object.values(manifest.features).some((feature) => !feature.ok)
   const strictFailed =
     values.strict &&
-    (manifest.ollama.missing.length > 0 ||
+    (manifest.ollama.models.missing.length > 0 ||
       !manifest.tools.tesseract.ok ||
       !manifest.tools.docker.ok ||
-      !manifest.comfy.reachable)
+      !manifest.comfyui.reachable)
   return coreFailed || featuresFailed || strictFailed ? 1 : 0
 }

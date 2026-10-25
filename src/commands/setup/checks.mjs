@@ -1,10 +1,12 @@
 import { existsSync } from "node:fs"
 import { release } from "node:os"
 
-import { binaryVersion, hasCommand, runCommand } from "../../lib/exec.mjs"
+import { binaryVersion, commandPath, hasCommand, runCommand } from "../../lib/exec.mjs"
 import { voiceModelPath } from "../../lib/piper.mjs"
+import { scanModels } from "./facts.mjs"
 import { evaluateFeatures } from "./features.mjs"
 
+export const PLUGIN_NAME = "my-local-llm-tools"
 export const OLLAMA_MODELS = ["minicpm-v4.6:latest", "MedAIBase/PaddleOCR-VL:0.9b"]
 export const DEFAULT_OLLAMA = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434"
 export const DEFAULT_COMFY = process.env.COMFY_BASE ?? "http://127.0.0.1:8188"
@@ -27,33 +29,37 @@ function tesseractLanguages() {
 
 export function detectTools() {
   const tesseract = binaryVersion("tesseract")
+  const piper = commandPath("piper")
   return {
-    node: { ok: true, version: process.version },
+    node: { ok: true, version: process.version, path: process.execPath },
     pnpm: binaryVersion("pnpm"),
     docker: binaryVersion("docker"),
     tesseract: { ...tesseract, languages: tesseractLanguages() },
     ffmpeg: binaryVersion("ffmpeg", ["-version"]),
     ffprobe: binaryVersion("ffprobe", ["-version"]),
-    piper: { ok: hasCommand("piper"), version: hasCommand("piper") ? "found" : "" },
+    piper: { ok: Boolean(piper), version: piper ? "found" : "", path: piper },
     voice_model: { ok: existsSync(VOICE_MODEL), path: VOICE_MODEL },
   }
 }
 
 export async function detectOllama(url = DEFAULT_OLLAMA) {
-  const base = url.replace(/\/+$/, "")
+  const host = url.replace(/\/+$/, "")
   const result = {
-    url: base,
+    host,
     reachable: false,
     version: "",
-    models: [],
-    missing: [...OLLAMA_MODELS],
+    models: { available: [], required: [...OLLAMA_MODELS], missing: [...OLLAMA_MODELS] },
   }
   try {
-    const version = await fetchJson(`${base}/api/version`)
-    const tags = await fetchJson(`${base}/api/tags`)
+    const version = await fetchJson(`${host}/api/version`)
+    const tags = await fetchJson(`${host}/api/tags`)
     result.version = version.version ?? ""
-    result.models = (tags.models ?? []).map((model) => model.name).filter(Boolean)
-    result.missing = OLLAMA_MODELS.filter((model) => !result.models.includes(model))
+    const available = (tags.models ?? []).map((model) => model.name).filter(Boolean)
+    result.models = {
+      available,
+      required: [...OLLAMA_MODELS],
+      missing: OLLAMA_MODELS.filter((model) => !available.includes(model)),
+    }
     result.reachable = true
   } catch (error) {
     result.error = error.message
@@ -62,9 +68,9 @@ export async function detectOllama(url = DEFAULT_OLLAMA) {
 }
 
 export async function detectComfy(url = DEFAULT_COMFY) {
-  const base = url.replace(/\/+$/, "")
+  const host = url.replace(/\/+$/, "")
   const result = {
-    url: base,
+    host,
     reachable: false,
     version: "",
     python: "",
@@ -73,7 +79,7 @@ export async function detectComfy(url = DEFAULT_COMFY) {
     gpu_ok: false,
   }
   try {
-    const stats = await fetchJson(`${base}/system_stats`)
+    const stats = await fetchJson(`${host}/system_stats`)
     const system = stats.system ?? {}
     const device = (stats.devices ?? [])[0] ?? {}
     result.version = system.comfyui_version ?? ""
@@ -122,30 +128,42 @@ export async function collect({ ollamaUrl = DEFAULT_OLLAMA, comfyUrl = DEFAULT_C
   const tools = detectTools()
   const gpu = detectGpu()
   const ollama = await detectOllama(ollamaUrl)
-  const comfy = await detectComfy(comfyUrl)
-  const features = evaluateFeatures({ tools, ollama, comfy })
+  const comfyui = await detectComfy(comfyUrl)
+  const features = evaluateFeatures({ tools, ollama, comfyui })
   const warnings = []
-  if (!ollama.reachable) warnings.push(`Ollama unreachable at ${ollama.url}`)
-  else if (ollama.missing.length)
-    warnings.push(`Missing Ollama models: ${ollama.missing.join(", ")}`)
-  if (!comfy.reachable) warnings.push(`ComfyUI unreachable at ${comfy.url}`)
-  else if (!comfy.gpu_ok)
-    warnings.push(`ComfyUI VRAM ${comfy.vram_gb} GiB (< 8 GB): image/video generation may fail`)
+  if (!ollama.reachable) warnings.push(`Ollama unreachable at ${ollama.host}`)
+  else if (ollama.models.missing.length)
+    warnings.push(`Missing Ollama models: ${ollama.models.missing.join(", ")}`)
+  if (!comfyui.reachable) warnings.push(`ComfyUI unreachable at ${comfyui.host}`)
+  else if (!comfyui.gpu_ok)
+    warnings.push(`ComfyUI VRAM ${comfyui.vram_gb} GiB (< 8 GB): image/video generation may fail`)
   if (!gpu.ok) warnings.push("GPU not detected; ComfyUI local generation needs at least 8 GB VRAM")
   else if (gpu.vram_gb < 7.5)
     warnings.push(
       `GPU VRAM ${gpu.vram_gb} GiB (< 8 GB): local ComfyUI generation is not recommended`,
     )
   if (!tools.tesseract.ok) warnings.push("Tesseract not found (OCR fallback unavailable)")
+
+  const models = { ollama: ollama.models, comfyui: scanModels() }
+  const paths = {
+    tesseract: tools.tesseract.path ?? "",
+    ffmpeg: tools.ffmpeg.path ?? "",
+    ffprobe: tools.ffprobe.path ?? "",
+    piper: tools.piper.path ?? "",
+  }
   return {
-    schema: 1,
+    schema: 2,
+    plugin: PLUGIN_NAME,
     generated_at: new Date().toISOString(),
     platform: { os: process.platform, arch: process.arch, release: release() },
     ok: tools.node.ok && tools.pnpm.ok,
+    hosts: { ollama: ollama.host, comfyui: comfyui.host },
+    models,
+    paths,
     tools,
     gpu,
     ollama,
-    comfy,
+    comfyui,
     features,
     warnings,
   }

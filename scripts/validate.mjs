@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Static validator for the cheap-ai-winth-local-tools harness.
+// Static validator for the my-local-llm-tools harness.
 //
 // Usage: node scripts/validate.mjs [repo-root]
 import { spawnSync } from "node:child_process"
@@ -125,7 +125,7 @@ function validate(root) {
   // 3. Package + plugin entry
   const pkg = loadJson(join(root, "package.json"), errors)
   if (pkg !== undefined) {
-    check(pkg.name === "cheap-ai-winth-local-tools", "package.json name matches", errors, ok)
+    check(pkg.name === "my-local-llm-tools", "package.json name matches", errors, ok)
     check(Boolean(pkg.version), "package.json has version", errors, ok)
     check(pkg.type === "module", "package.json is ESM (type: module)", errors, ok)
     check(pkg.exports?.["."] === "./index.ts", "package.json exports '.' -> ./index.ts", errors, ok)
@@ -142,7 +142,7 @@ function validate(root) {
   if (existsSync(entry)) {
     const source = readFileSync(entry, "utf8")
     check(
-      source.includes("id: HARNESS_ID") || source.includes('id: "cheap-ai-winth-local-tools"'),
+      source.includes("id: HARNESS_ID") || source.includes('id: "my-local-llm-tools"'),
       "index.ts uses the harness id",
       errors,
       ok,
@@ -151,7 +151,7 @@ function validate(root) {
     check(source.includes("ctx.skill.transform"), "index.ts registers skills", errors, ok)
     check(source.includes("ctx.session.hook"), "index.ts hooks sessions", errors, ok)
     check(
-      source.includes("## Cheap AI Local Tools"),
+      source.includes("## my-local-llm-tools"),
       "index.ts injects the context marker",
       errors,
       ok,

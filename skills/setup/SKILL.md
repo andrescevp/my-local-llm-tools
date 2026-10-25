@@ -42,23 +42,35 @@ Written by `setup` to a per-user config directory:
 
 | OS | Path |
 |---|---|
-| Linux | `${XDG_CONFIG_HOME:-~/.config}/cheap-ai-tools/manifest.json` |
-| macOS | `~/Library/Application Support/cheap-ai-tools/manifest.json` |
-| Windows | `%APPDATA%\cheap-ai-tools\manifest.json` |
+| Linux | `${XDG_CONFIG_HOME:-~/.config}/my-local-llm-tools/manifest.json` |
+| macOS | `~/Library/Application Support/my-local-llm-tools/manifest.json` |
+| Windows | `%APPDATA%\my-local-llm-tools\manifest.json` |
 
-Override with `CHEAP_AI_CONFIG_DIR`. The manifest contains:
+Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 
+- `plugin`: `my-local-llm-tools`; `schema`: manifest version.
 - `platform`: OS, arch, release.
+- `hosts`: `ollama` and `comfyui` base URLs.
+- `models`: `ollama.available/required/missing` and the local ComfyUI model files.
+- `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
-  voice model.
-- `ollama`: URL, reachability, version, installed models, missing models.
-- `comfy`: URL, reachability, version, GPU, VRAM (GiB).
+  voice model, each with its resolved `path`.
+- `ollama`: host, reachability, version, models.
+- `comfyui`: host, reachability, version, GPU, VRAM (GiB).
 - `features`: per-skill `ok` plus the requirements that passed or failed.
 - `warnings`: human-readable gaps.
 
 Skills check `features.<name>.ok` (or run `doctor --skill <name> --cached`)
 before doing work. A stale manifest is diagnostic, not authoritative — `doctor`
 without `--cached` probes live services.
+
+The formal schema is `src/commands/setup/manifest.schema.json` (JSON Schema
+2020-12). `writeManifest` and `readManifest` validate against it; an invalid or
+outdated manifest is rejected with `invalid manifest: …` and must be regenerated
+with `setup`.
+
+Registered skill IDs are namespaced as `my-local-llm-tools:<skill>`; use that
+ID when invoking the skill tool.
 
 ## Skill requirements
 

@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://my-local-llm-tools.local/manifest.schema.json",
+  "title": "my-local-llm-tools manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "plugin",
+    "generated_at",
+    "platform",
+    "ok",
+    "hosts",
+    "models",
+    "paths",
+    "tools",
+    "gpu",
+    "ollama",
+    "comfyui",
+    "features",
+    "warnings"
+  ],
+  "properties": {
+    "schema": { "const": 2 },
+    "plugin": { "const": "my-local-llm-tools" },
+    "generated_at": { "type": "string", "minLength": 1 },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["os", "arch", "release"],
+      "properties": {
+        "os": { "type": "string" },
+        "arch": { "type": "string" },
+        "release": { "type": "string" }
+      }
+    },
+    "ok": { "type": "boolean" },
+    "hosts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ollama", "comfyui"],
+      "properties": {
+        "ollama": { "type": "string", "minLength": 1 },
+        "comfyui": { "type": "string", "minLength": 1 }
+      }
+    },
+    "models": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ollama", "comfyui"],
+      "properties": {
+        "ollama": { "$ref": "#/$defs/modelSet" },
+        "comfyui": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/comfyModel" }
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tesseract", "ffmpeg", "ffprobe", "piper"],
+      "properties": {
+        "tesseract": { "type": "string" },
+        "ffmpeg": { "type": "string" },
+        "ffprobe": { "type": "string" },
+        "piper": { "type": "string" }
+      }
+    },
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "node",
+        "pnpm",
+        "docker",
+        "tesseract",
+        "ffmpeg",
+        "ffprobe",
+        "piper",
+        "voice_model"
+      ],
+      "properties": {
+        "node": { "$ref": "#/$defs/binary" },
+        "pnpm": { "$ref": "#/$defs/binary" },
+        "docker": { "$ref": "#/$defs/binary" },
+        "tesseract": { "$ref": "#/$defs/tesseract" },
+        "ffmpeg": { "$ref": "#/$defs/binary" },
+        "ffprobe": { "$ref": "#/$defs/binary" },
+        "piper": { "$ref": "#/$defs/binary" },
+        "voice_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ok", "path"],
+          "properties": {
+            "ok": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        }
+      }
+    },
+    "gpu": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "name", "vram_gb", "source"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "name": { "type": "string" },
+        "vram_gb": { "type": "number", "minimum": 0 },
+        "source": { "type": "string" }
+      }
+    },
+    "ollama": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "reachable", "version", "models"],
+      "properties": {
+        "host": { "type": "string", "minLength": 1 },
+        "reachable": { "type": "boolean" },
+        "version": { "type": "string" },
+        "models": { "$ref": "#/$defs/modelSet" },
+        "error": { "type": "string" }
+      }
+    },
+    "comfyui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host", "reachable", "version", "python", "gpu", "vram_gb", "gpu_ok"],
+      "properties": {
+        "host": { "type": "string", "minLength": 1 },
+        "reachable": { "type": "boolean" },
+        "version": { "type": "string" },
+        "python": { "type": "string" },
+        "gpu": { "type": "string" },
+        "vram_gb": { "type": "number", "minimum": 0 },
+        "gpu_ok": { "type": "boolean" },
+        "error": { "type": "string" }
+      }
+    },
+    "features": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ok", "requires", "optional"],
+        "properties": {
+          "ok": { "type": "boolean" },
+          "requires": { "$ref": "#/$defs/requirements" },
+          "optional": { "$ref": "#/$defs/requirements" }
+        }
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "binary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "version", "path"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "version": { "type": "string" },
+        "path": { "type": "string" },
+        "error": { "type": "string" }
+      }
+    },
+    "tesseract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "version", "path", "languages"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "version": { "type": "string" },
+        "path": { "type": "string" },
+        "error": { "type": "string" },
+        "languages": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "modelSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["available", "required", "missing"],
+      "properties": {
+        "available": { "type": "array", "items": { "type": "string" } },
+        "required": { "type": "array", "items": { "type": "string" } },
+        "missing": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "comfyModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "subdir", "path", "size_bytes"],
+      "properties": {
+        "name": { "type": "string" },
+        "subdir": { "type": "string" },
+        "path": { "type": "string" },
+        "size_bytes": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement", "ok"],
+        "properties": {
+          "requirement": { "type": "string" },
+          "ok": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
