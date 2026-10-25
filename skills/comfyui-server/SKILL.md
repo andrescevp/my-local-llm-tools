@@ -16,23 +16,26 @@ description: >
 
 # comfyui-server
 
-Consume the **shared local ComfyUI server**. Everything is already installed and
-configured: models, GGUF loaders, custom nodes, and five verified workflows. Read
-`instance_facts.json` in this skill folder first — it is regenerated on every
-sync and lists the exact models, nodes, workflows, versions, and service state.
+Consume the **shared local ComfyUI server**. Before generating, check readiness
+with `node "$SKILL_DIR/../../src/cli.mjs" doctor --skill comfyui-server`.
+`setup` regenerates `instance_facts.json` in the per-user config directory with
+the exact models, nodes, workflows, versions, and device state.
+
+## Requirements
+
+Check `doctor --skill comfyui-server --cached` before generating. It reads the generated
+manifest and probes the server; if it fails, run `setup` (Docker is preferred,
+and local generation needs ≥8 GB VRAM).
 
 ## Instance rules (read before anything else)
 
-- Base URL: `http://127.0.0.1:8188`. If the server is down, the owner installs it as
-  the systemd **user service** `comfyui.service` (`systemctl --user status comfyui.service`).
-  Do **not** spawn your own instance while a service or user instance is running —
-  the port is single-owner. If it is fully down and you have been explicitly asked to
-  operate the server, you may start it once with
-  `~/ComfyUI/.venv/bin/python ~/ComfyUI/main.py --port 8188` and stop only your own process.
+- Base URL: `http://127.0.0.1:8188`, or the URL the user provides. If the server
+  is down, ask the user to start it (or pass `--comfy-url` to setup/doctor); do
+  not spawn a second instance — the port is single-owner.
 - Never kill a process you did not start. Never delete or download model files
-  (~1–7 GiB each; the exact set is fixed for 8 GB VRAM — see facts: `models`).
-- Outputs land in `~/ComfyUI/output/`. Generation is GPU-bound: plan ~1–5 min for
-  video, ~40–90 s for images, 5–15 min for music.
+  (~1–7 GiB each; the exact set is fixed for 8 GB VRAM — see generated facts).
+- Outputs land in `~/ComfyUI/output/` (override with `COMFY_OUTPUT`). Generation
+  is GPU-bound: plan ~1–5 min for video, ~40–90 s for images, 5–15 min for music.
 
 ## Quick start
 
@@ -47,9 +50,9 @@ comfy outputs                # generated files
 comfy fetch ComfyUI_00001_.webm
 ```
 
-The CLI reads workflow facts from `skills/comfyui-server/instance_facts.json` in
-this repository. `comfyui-setup`'s `validate_workflow.py` remains an external
-reference for the same conversion.
+The CLI reads workflow facts from the config directory
+(`instance_facts.json`, written by `setup`). `comfyui-setup`'s
+`validate_workflow.py` remains an external reference for the same conversion.
 
 ## Workflows available (filenames in facts: `workflows`)
 
@@ -123,7 +126,6 @@ converts frontend JSON automatically.
 
 ## Completion
 
-Report: server state (up/down, service), prompt ids + final status, output file
-name/size, and any overrides used. If you changed the setup (saved a workflow, added
-a model, installed the service), run the sync so other agents see it:
-`bash ~/workspace/comfyui-setup/scripts/distribute_skill.sh`.
+Report: server state (up/down), prompt ids + final status, output file name/size,
+and any overrides used. If you changed the setup (saved a workflow, added a model,
+installed the service), rerun `pnpm cli setup` so the generated facts refresh.

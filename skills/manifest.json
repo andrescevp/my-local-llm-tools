@@ -36,6 +36,11 @@
       "description": "Use this skill when calling OpenAI or OpenAI-compatible APIs — OpenAI, llama.cpp, Ollama, vLLM, or LM Studio — covering base URLs, auth, chat/embeddings payloads, streaming, vision, tools, and error handling. Trigger on \"call the OpenAI API\", \"/v1/chat/completions\", \"connect Ollama or llama.cpp through the OpenAI API\", \"which endpoints are compatible\", or \"why does this client fail against my local server?\" — check the compatibility matrix first."
     },
     {
+      "id": "setup",
+      "name": "setup",
+      "description": "Use this skill when installing, checking, or diagnosing the harness — detecting Node/pnpm, Docker, Ollama, ComfyUI, Tesseract, ffmpeg, and piper; writing the per-machine manifest; planning confirmed installs; and reporting which skills can run. Trigger on \"setup this machine\", \"doctor\", \"missing dependency\", \"Ollama or ComfyUI URL\", or \"why can't this skill run?\" — run `pnpm cli doctor --skill <name>` first."
+    },
+    {
       "id": "speak",
       "name": "speak",
       "description": "Use this skill when opencode needs to speak text aloud, say something out loud, read output aloud, announce results verbally, or when the user says \"speak\", \"say\", \"read aloud\", \"decir\", \"hablar\", or mentions voice/tts/audio output. Converts text to speech using piper-tts with the Laura (es_MX) voice model. Always speaks in Spanish regardless of conversation language; automatically translates non-Spanish text before speaking."

@@ -8,7 +8,7 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All nine skills are canonical here; edit `skills/<name>/` directly.
+- All ten skills are canonical here; edit `skills/<name>/` directly.
 - Never edit `skills/manifest.json` by hand — generate it with
   `pnpm manifest` (`scripts/build_manifest.mjs`).
 - All executable skill tooling lives in the single CLI at `src/`; do not add
@@ -22,6 +22,9 @@ and dependencies are managed with `pnpm`.
   the `create-skill` skill.
 - TDD: write or extend the `node:test` suite before implementing logic in
   `src/`, `scripts/`, or `index.ts`.
+- Dependencies are detected by `setup`/`doctor`; skills must not embed install
+  commands. Each runnable skill gates on `doctor --skill <name>` (add `--cached`
+  to read the manifest without probing services).
 
 ## Structure
 
@@ -44,6 +47,8 @@ and dependencies are managed with `pnpm`.
 pnpm install
 pnpm manifest          # regenerate manifest after adding/removing a skill
 pnpm harness:install   # install/update the OpenCode plugin link
+pnpm cli setup         # detect dependencies + write the machine manifest
+pnpm cli doctor        # diagnose the harness (read-only)
 pnpm validate          # static checks
 pnpm test              # node:test suites
 pnpm qa                # lint + deps + dup + tests + validate + security

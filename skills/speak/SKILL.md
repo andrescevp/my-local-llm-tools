@@ -10,9 +10,14 @@ description: >
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Resolve the script/reference paths below against it.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" speak ...`.
 
 Always speak in Spanish. If the input text is not in Spanish, translate it before speaking.
+
+## Requirements
+
+Check `doctor --skill speak --cached` before running (piper + Laura voice model). If it
+fails, run `setup`.
 
 ## Usage
 

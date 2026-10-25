@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs"
 import { resolve } from "node:path"
 
 import { parseFlags } from "../lib/args.mjs"
+import { hasCommand } from "../lib/exec.mjs"
 import {
   DEFAULT_OCR_PROMPT,
   DEFAULT_OLLAMA,
@@ -55,7 +56,7 @@ function clip(text) {
 }
 
 function hasBinary(name) {
-  return spawnSync("which", [name], { encoding: "utf8" }).status === 0
+  return hasCommand(name)
 }
 
 export function shouldUseTesseract(values) {

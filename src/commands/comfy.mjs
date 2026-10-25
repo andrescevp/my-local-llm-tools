@@ -1,13 +1,11 @@
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs"
-import { dirname, join, resolve } from "node:path"
-import { fileURLToPath } from "node:url"
-
+import { join } from "node:path"
 import { parseFlags } from "../lib/args.mjs"
+import { factsPath } from "../lib/config.mjs"
 import { BASE, getBytes, getJson, OUTDIR, postJson } from "./comfy/client.mjs"
 import { applyOverrides, loadPrompt } from "./comfy/workflows.mjs"
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..")
-const FACTS = join(REPO_ROOT, "skills", "comfyui-server", "instance_facts.json")
+const FACTS = factsPath()
 
 const HELP = `Usage: node src/cli.mjs comfy <command> [args...]
 
@@ -128,7 +126,7 @@ export function workflows() {
     entries = []
   }
   if (!entries.length) {
-    console.log("no workflow facts found; run scripts/distribute_skill.sh in comfyui-setup")
+    console.log("no instance facts found; run: node src/cli.mjs setup")
     return 1
   }
   for (const entry of entries) console.log(`  ${entry.name}  (${entry.size_bytes} B)`)

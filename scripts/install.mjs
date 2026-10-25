@@ -7,15 +7,20 @@
 // Usage:
 //   node scripts/install.mjs            install (idempotent symlink)
 //   node scripts/install.mjs --dry-run  preview only
-import { spawnSync } from "node:child_process"
 import { existsSync, lstatSync, mkdirSync, symlinkSync, unlinkSync } from "node:fs"
+import { homedir } from "node:os"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
+import { hasCommand } from "../src/lib/exec.mjs"
+
 const repoRoot = dirname(dirname(fileURLToPath(import.meta.url)))
 const dryRun = process.argv.includes("--dry-run")
-const pluginsDir =
-  process.env.OPENCODE_PLUGINS_DIR ?? join(process.env.HOME ?? "", ".config", "opencode", "plugins")
+const configHome =
+  process.platform === "win32"
+    ? (process.env.APPDATA ?? join(homedir(), "AppData", "Roaming"))
+    : (process.env.XDG_CONFIG_HOME ?? join(homedir(), ".config"))
+const pluginsDir = process.env.OPENCODE_PLUGINS_DIR ?? join(configHome, "opencode", "plugins")
 const destination = join(pluginsDir, "cheap-ai-winth-local-tools")
 
 function step(message) {
@@ -27,9 +32,8 @@ function info(message) {
 }
 
 step("OpenCode")
-const opencode = spawnSync("which", ["opencode"], { encoding: "utf8" })
-if (opencode.status === 0) {
-  info(`opencode found: ${opencode.stdout.trim()}`)
+if (hasCommand("opencode")) {
+  info("opencode found in PATH")
 } else {
   info("opencode not found — install it before restarting the client")
 }
@@ -54,7 +58,7 @@ if (existing?.isSymbolicLink()) {
   console.error(`refusing to replace non-symlink: ${destination}`)
   process.exit(1)
 }
-symlinkSync(repoRoot, destination, "dir")
+symlinkSync(repoRoot, destination, process.platform === "win32" ? "junction" : "dir")
 info(`linked: ${destination} -> ${repoRoot}`)
 
 console.log(`

@@ -47,6 +47,11 @@ external upload, everything stays on-machine.
 - `ocr` used directly is correct when the user asks for OCR or the input is
   clearly a document/table/report — do not force a general pass first.
 
+## Requirements
+
+Check `doctor --skill image-analysis --cached` before running. It reads the generated
+manifest and probes Ollama; if it fails, run `setup`.
+
 ## Workflow
 
 Progress:
@@ -57,11 +62,14 @@ Progress:
 - [ ] 4) Validate completeness (missing areas, hallucinated details)
 - [ ] 5) Return result + uncertainty notes when applicable
 
-### 1) Verify environment
+### 1) Verify readiness
 
 ```bash
-ollama list | rg "minicpm-v4.6|PaddleOCR-VL" || ollama pull minicpm-v4.6:latest
+node "$SKILL_DIR/../../src/cli.mjs" doctor --skill image-analysis
 ```
+
+If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`; see the `setup`
+skill for install options.
 
 ### 2) Analyze an image (minicpm default)
 

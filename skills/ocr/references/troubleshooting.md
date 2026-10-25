@@ -23,9 +23,9 @@ Symptoms:
 
 Fix:
 ```bash
-ollama pull MedAIBase/PaddleOCR-VL:0.9b
-ollama list | rg "MedAIBase/PaddleOCR-VL:0.9b"
+node "$SKILL_DIR/../../src/cli.mjs" doctor --skill ocr
 ```
+`setup --install --yes` pulls the required model, or run `ollama pull` manually.
 
 ## Poor OCR quality
 

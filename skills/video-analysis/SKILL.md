@@ -24,7 +24,8 @@ chronological order.
 ## Core rules
 
 - Model: `minicpm-v4.6:latest` through Ollama at `http://127.0.0.1:11434`.
-- Requires `ffmpeg` and `ffprobe` (Arch: `sudo pacman -S ffmpeg`).
+- Requires `ffmpeg` and `ffprobe`; check `doctor --skill video-analysis` (run
+  `setup` if it fails).
 - Video paths must be absolute; nothing leaves the machine.
 - `temperature=0` for deterministic descriptions.
 - Default 6 frames; use 12–24 for fast cuts, actions, or long clips. The CLI
@@ -35,6 +36,11 @@ chronological order.
   skill; for a single still, use `image-analysis`.
 - On 8 GB VRAM, sample fewer frames and keep `--timeout` generous (cold model
   load can take 30–120 s).
+
+## Requirements
+
+Check `doctor --skill video-analysis --cached` before running. It reads the generated
+manifest and probes Ollama/ffmpeg; if it fails, run `setup`.
 
 ## CLI
 
@@ -70,12 +76,13 @@ Progress:
 - [ ] 5) Validate chronology and call out blind spots (audio, off-screen events)
 - [ ] 6) Hand off to `ocr` for readable documents/tables in frames
 
-### 1) Verify environment
+### 1) Verify readiness
 
 ```bash
-ffmpeg -version | head -1
-ollama list | rg "minicpm-v4.6" || ollama pull minicpm-v4.6:latest
+node "$SKILL_DIR/../../src/cli.mjs" doctor --skill video-analysis
 ```
+
+If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`.
 
 ### 2) Choose the prompt
 

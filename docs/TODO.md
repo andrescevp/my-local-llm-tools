@@ -1,12 +1,7 @@
 - [x] todos los scripts deben ser en jsvascript, para qa usar biome, dependency-cruiser, jscpd, osv-scanner y semgrep (pnpm)
 - [x] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
 - [x] vincular responsabilidades de ocr e image-analysis (minicpm general; documentos/tablas → PaddleOCR-VL; ocr directo para documentos/informes) y crear `video-analysis` con minicpm
-- [] Nueva skill `setup` que debe encargarse de comprobar que las dependencias estan instalas y crear un manifest file con la informacion:
-    - docker
-    - local ollama server (direct installation) -> ask user for url if he has already an insance. If not installed install it browsing to https://ollama.com/download, models used are CPU peformant, so if the user do not have GPU should not be a big issue
-        - url
-        - modelos para analisis de imagen y ocr MedAIBase/PaddleOCR-VL:0.9b minicpm-v4.6:latest
-        - tesseract (fallback del ocr)
-    - comfyui (docker installation as prefference, otherwise local offer it providing advantages and disvantages) -> sk user for url if he has already an insance. If not installed, check if the user have at least a GPU with 8GB of VRAM and install from https://comfy.org/download , if the user do not have 8GB VRAM skip installation and warn user that the system would not support properly local image generation
-        - [] Extraer de comfyui-server el setup de la instancia a la skill general `setup` , modelos, workflows etc, hacer `intance_facts.json` sea ignorado y recreado en la maquina. Usitilizar la ocnfiguracion del comfyui instalado en este sisytema comoreferencias de modelos templats etc.
+- [x] Nueva skill `setup` + comandos `setup`/`doctor`, manifest multiplataforma, hechos de ComfyUI generados en config y skills leyendo requisitos
+    - [x] Extraer de comfyui-server el setup de la instancia a `setup` (modelos, workflows, custom nodes); `instance_facts.json` ignorado y recreado en la máquina
+    - [x] Instalaciones informadas + confirmación (`--install` / `--yes`); instalación manual con URLs oficiales
 - crear `local-image-generation`, `local-video-generation`, `local-audio-generation`, skills usando comfyui

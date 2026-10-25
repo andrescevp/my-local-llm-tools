@@ -2,9 +2,11 @@ import { spawnSync } from "node:child_process"
 import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { hasCommand } from "../lib/exec.mjs"
+import { voiceModelPath } from "../lib/piper.mjs"
 
-const MODEL = join(process.env.HOME ?? "", ".local/share/piper-voices/es_MX-laura-high.onnx")
-const PLAY_WAV = "/tmp/speak_output.wav"
+const MODEL = voiceModelPath()
+const PLAY_WAV = join(tmpdir(), "speak_output.wav")
 
 const USAGE = `Usage: node src/cli.mjs speak [options] [text]
 
@@ -72,12 +74,8 @@ export function parseArgs(argv) {
   return options
 }
 
-function which(name) {
-  const result = spawnSync("which", [name], { encoding: "utf8" })
-  return result.status === 0 ? result.stdout.trim() : ""
-}
-
 function audioEnv() {
+  if (process.platform !== "linux") return process.env
   const runtime = process.env.XDG_RUNTIME_DIR ?? `/run/user/${process.getuid?.() ?? 1000}`
   return {
     ...process.env,
@@ -89,13 +87,25 @@ function audioEnv() {
 }
 
 function findPlayer(env) {
-  if (which("pw-play") && existsSync(`${env.XDG_RUNTIME_DIR}/pipewire-0`)) return "pw-play"
-  if (which("paplay")) return "paplay"
-  if (which("aplay")) return "aplay"
+  if (process.platform === "darwin") return hasCommand("afplay") ? "afplay" : ""
+  if (process.platform === "win32") return hasCommand("powershell") ? "powershell" : ""
+  if (hasCommand("pw-play") && existsSync(`${env.XDG_RUNTIME_DIR}/pipewire-0`)) return "pw-play"
+  if (hasCommand("paplay")) return "paplay"
+  if (hasCommand("aplay")) return "aplay"
   return ""
 }
 
 function play(wav, player, env) {
+  if (player === "afplay") {
+    return spawnSync("afplay", [wav], { env, stdio: "ignore" }).status === 0
+  }
+  if (player === "powershell") {
+    const command = `(New-Object Media.SoundPlayer '${wav.replaceAll("'", "''")}').PlaySync()`
+    return (
+      spawnSync("powershell", ["-NoProfile", "-Command", command], { env, stdio: "ignore" })
+        .status === 0
+    )
+  }
   const candidates = []
   if (player === "pw-play") candidates.push(["pw-play", [wav]])
   candidates.push(
@@ -105,7 +115,7 @@ function play(wav, player, env) {
     ["aplay", ["-q", "-D", "hw:0,0", wav]],
   )
   for (const [command, args] of candidates) {
-    if (!which(command)) continue
+    if (!hasCommand(command)) continue
     const result = spawnSync(command, args, { env, stdio: "ignore" })
     if (result.status === 0) return true
   }
@@ -126,25 +136,30 @@ export function speak(argv) {
   }
 
   if (!existsSync(MODEL)) {
-    process.stderr.write(`ERROR: Model not found at ${MODEL}\n`)
-    process.stderr.write("Download it with:\n")
-    process.stderr.write("  mkdir -p ~/.local/share/piper-voices\n")
-    process.stderr.write(
-      "  curl -L -o ~/.local/share/piper-voices/es_MX-laura-high.onnx https://huggingface.co/HirCoir/Piper-TTS-Laura/resolve/main/es_MX-laura-high.onnx\n",
-    )
+    process.stderr.write(`ERROR: voice model not found at ${MODEL}\n`)
+    process.stderr.write("Run 'node src/cli.mjs setup' to see what is missing.\n")
     return 1
   }
 
-  const piper = which("piper") || which("/opt/piper-tts/piper")
+  const piper =
+    (process.env.PIPER_BIN && existsSync(process.env.PIPER_BIN) ? process.env.PIPER_BIN : "") ||
+    (hasCommand("piper") ? "piper" : "") ||
+    (process.platform === "linux" && existsSync("/opt/piper-tts/piper")
+      ? "/opt/piper-tts/piper"
+      : "")
   if (!piper) {
-    process.stderr.write("ERROR: piper not found. Install it via: yay -S piper-tts-bin\n")
+    process.stderr.write(
+      "ERROR: piper not found. Run 'node src/cli.mjs setup' to see install options.\n",
+    )
     return 1
   }
 
   const env = audioEnv()
   const player = options.output ? "" : findPlayer(env)
   if (!options.output && !player) {
-    process.stderr.write("ERROR: no audio player found (pw-play, paplay, or aplay)\n")
+    process.stderr.write(
+      "ERROR: no audio player found. Run 'node src/cli.mjs doctor' for diagnostics.\n",
+    )
     return 1
   }
 

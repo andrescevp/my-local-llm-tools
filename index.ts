@@ -19,6 +19,7 @@ const SUMMARIES: Record<string, string> = {
   "create-skill": "create, update, and evaluate agent skills",
   "create-agent": "create, optimize, and validate custom agents",
   "openai-api-usage": "call OpenAI and OpenAI-compatible APIs (llama.cpp, Ollama, vLLM)",
+  setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
   speak: "text-to-speech in Spanish via local piper-tts",
   "comfyui-server": "generate video/image/music/voice with local ComfyUI",

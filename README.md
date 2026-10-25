@@ -1,6 +1,6 @@
 # cheap-ai-winth-local-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Nine skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Ten skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -19,6 +19,7 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `create-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
 | `create-agent` | Create, optimize, and validate agent profiles | local FS |
 | `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
+| `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
@@ -54,6 +55,22 @@ pnpm test        # node:test suites
 pnpm qa          # lint + deps + duplication + tests + validate + security
 ```
 
+### Setup and diagnostics
+
+```bash
+pnpm cli setup                  # detect deps + write the machine manifest
+pnpm cli setup --install        # show the install plan (no changes)
+pnpm cli setup --install --yes  # run pnpm install / ollama pull
+pnpm cli doctor                 # live diagnostics, writes nothing
+pnpm cli doctor --skill ocr     # exit 1 if the skill cannot run
+```
+
+The manifest lives in the per-user config directory (`~/.config/cheap-ai-tools`
+on Linux, `~/Library/Application Support/cheap-ai-tools` on macOS,
+`%APPDATA%\cheap-ai-tools` on Windows) and lists tools, Ollama models, ComfyUI
+state, and per-skill readiness. `instance_facts.json` is generated next to it and
+is not tracked in git.
+
 ### QA toolchain
 
 | Tool | Command | Config |
@@ -72,6 +89,7 @@ pnpm qa          # lint + deps + duplication + tests + validate + security
 |---|---|
 | Node.js | `24.18.0` (via `nvm`) |
 | pnpm | `11.9.0` |
+| Supported OS | Linux, macOS, Windows (Node paths and audio backends adapt) |
 | Ollama | `0.40.10`, systemd `ollama.service`, `127.0.0.1:11434` |
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
 | ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
@@ -127,6 +145,7 @@ loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
 │   ├── image-analysis/
 │   ├── ocr/
 │   ├── openai-api-usage/
+│   ├── setup/
 │   ├── speak/
 │   └── video-analysis/
 ├── scripts/

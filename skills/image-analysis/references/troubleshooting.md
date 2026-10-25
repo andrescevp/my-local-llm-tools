@@ -13,20 +13,14 @@ model behaves unexpectedly.
 ERROR: Cannot reach Ollama at http://127.0.0.1:11434
 ```
 
-Check/start:
+Run the harness diagnostic:
 
 ```bash
-systemctl --user status ollama      # or: pgrep -a ollama
-ollama serve                        # foreground start if missing
-ollama list                         # confirm models present
+node "$SKILL_DIR/../../src/cli.mjs" doctor --skill image-analysis
 ```
 
-Models required:
-
-```bash
-ollama pull minicpm-v4.6:latest
-ollama pull MedAIBase/PaddleOCR-VL:0.9b
-```
+If Ollama is down, start it or tell `setup`/`doctor` the URL with
+`--ollama-url`; see the `setup` skill for install options.
 
 ## Model not found / pulled partially
 
@@ -34,9 +28,8 @@ ollama pull MedAIBase/PaddleOCR-VL:0.9b
 ERROR: Ollama HTTP 404: {"error":"model '...' not found"}
 ```
 
-```bash
-ollama pull <model> && ollama list | rg "minicpm-v4.6|PaddleOCR"
-```
+Run `doctor --skill image-analysis`; `setup --install --yes` pulls the required
+models, or pull them manually with `ollama pull <model>`.
 
 ## Model lacks vision support (mmproj missing)
 
@@ -48,7 +41,7 @@ Known issue: `MedAIBase/PaddleOCR-VL:0.9b` is published on the Ollama registry
 with only `completion` capability (its manifest has no projector layer), so it
 rejects image input.
 
-Behavior: the script detects this error and falls back to `minicpm-v4.6:latest`
+Behavior: the CLI detects this error and falls back to `minicpm-v4.6:latest`
 automatically (prints `WARN: ... falling back to ...` on stderr).
 
 If you want true OCR-only hardware efficiency, check for a newer/updated
@@ -56,9 +49,10 @@ publication of the model:
 
 ```bash
 ollama show MedAIBase/PaddleOCR-VL:0.9b --modelfile   # must include a VISION line
-ollama pull MedAIBase/PaddleOCR-VL:0.9b               # re-pull after upstream fix
 ollama show MedAIBase/PaddleOCR-VL:0.9b --verbose     # Capabilities must list vision
 ```
+
+If the upstream model is fixed, refresh it via `setup`.
 
 ## Blank or truncated response
 

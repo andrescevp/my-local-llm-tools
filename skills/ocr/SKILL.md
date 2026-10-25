@@ -47,6 +47,11 @@ Extract text and structure from images/documents through a local Ollama instance
   - uncertain segments / low-confidence interpretation notes
   - optional normalized JSON when requested
 
+## Requirements
+
+Check `doctor --skill ocr --cached` before running. It reads the generated manifest and
+probes Ollama/Tesseract; if it fails, run `setup`.
+
 ## Workflow
 
 Progress:
@@ -58,12 +63,14 @@ Progress:
 - [ ] 4) Validate completeness (headings, totals, labels, legends, units)
 - [ ] 5) Return result + uncertainty notes
 
-### 1) Verify environment
+### 1) Verify readiness
 
 ```bash
-ollama --version
-ollama list | rg "MedAIBase/PaddleOCR-VL:0.9b" || ollama pull MedAIBase/PaddleOCR-VL:0.9b
+node "$SKILL_DIR/../../src/cli.mjs" doctor --skill ocr
 ```
+
+If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`; Tesseract is
+optional and only affects correction passes.
 
 ### 2) Run OCR extraction
 
@@ -104,10 +111,10 @@ node "$SKILL_DIR/../../src/cli.mjs" ocr \
 
 ## Tesseract complementary pass
 
-Install (Arch/CachyOS):
+Tesseract is optional; `doctor --skill ocr` reports it as an optional gap. If it
+is missing, run `setup` for the platform-specific install hint.
 
 ```bash
-sudo pacman -S tesseract tesseract-data-eng tesseract-data-spa
 tesseract --list-langs
 ```
 

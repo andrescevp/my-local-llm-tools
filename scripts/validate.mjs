@@ -16,6 +16,7 @@ const EXPECTED_SKILLS = [
   "image-analysis",
   "ocr",
   "openai-api-usage",
+  "setup",
   "speak",
   "video-analysis",
 ]
@@ -193,14 +194,18 @@ function validate(root) {
       }
     }
   }
-  const shellScripts = [
-    ...readdirSync(join(root, "scripts")).filter((name) => name.endsWith(".sh")),
-    ...walk(skillsDir).filter((path) => path.endsWith(".sh")),
-  ]
+  const shellScripts =
+    process.platform === "win32"
+      ? []
+      : [
+          ...readdirSync(join(root, "scripts"))
+            .filter((name) => name.endsWith(".sh"))
+            .map((name) => join(root, "scripts", name)),
+          ...walk(skillsDir).filter((path) => path.endsWith(".sh")),
+        ]
   for (const path of shellScripts) {
-    const full = path.startsWith(root) ? path : join(root, "scripts", path)
-    const proc = spawnSync("bash", ["-n", full], { encoding: "utf8" })
-    check(proc.status === 0, `${relative(root, full)}: bash syntax OK`, errors, ok)
+    const proc = spawnSync("bash", ["-n", path], { encoding: "utf8" })
+    check(proc.status === 0, `${relative(root, path)}: bash syntax OK`, errors, ok)
   }
 
   // 6. Repo docs
