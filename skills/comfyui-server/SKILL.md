@@ -12,7 +12,7 @@ description: >
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Resolve the script/reference paths below against it.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" comfy ...`.
 
 # comfyui-server
 
@@ -37,21 +37,19 @@ sync and lists the exact models, nodes, workflows, versions, and service state.
 ## Quick start
 
 ```bash
-CLIENT="$(dirname "$(realpath /dev/stdin)" 2>/dev/null)"  # or locate comfy_client.py
-# simplest: it ships next to this SKILL.md
-py=$(readlink -f "$SKILL_DIR/comfy_client.py" 2>/dev/null) || py="$PWD/comfy_client.py"
+comfy() { node "$SKILL_DIR/../../src/cli.mjs" comfy "$@"; }
 
-python3 "$py" status                 # is it up? versions? queue?
-python3 "$py" workflows              # what can I generate today?
-python3 "$py" run /path/to/ltxv_t2v_8gb.json
-python3 "$py" run /path/to/ltxv_t2v_8gb.json 20.seed=12345   # override a node param
-python3 "$py" outputs                # generated files
-python3 "$py" fetch ComfyUI_00001_.webm
+comfy status                 # is it up? versions? queue?
+comfy workflows              # what can I generate today?
+comfy run /path/to/ltxv_t2v_8gb.json
+comfy run /path/to/ltxv_t2v_8gb.json 20.seed=12345   # override a node param
+comfy outputs                # generated files
+comfy fetch ComfyUI_00001_.webm
 ```
 
-If the client file is not alongside this skill, use the repo copy:
-`~/workspace/comfyui-setup/scripts/` has `validate_workflow.py` (same conversion +
-full wait) and the client lives at `$SKILL_DIR/comfy_client.py`.
+The CLI reads workflow facts from `skills/comfyui-server/instance_facts.json` in
+this repository. `comfyui-setup`'s `validate_workflow.py` remains an external
+reference for the same conversion.
 
 ## Workflows available (filenames in facts: `workflows`)
 
@@ -81,7 +79,7 @@ converts frontend JSON automatically.
 - Fixed seed ⇒ deterministic output; set `noise_seed` on `SamplerCustom` for variety.
 - Longer videos = chain segments: last frame of segment N becomes first frame of
   segment N+1 (same prompt/seed), concatenate with ffmpeg.
-- Overrides example: `python3 comfy_client.py run ltxv_t2v_8gb.json 20.noise_seed=7`
+- Overrides example: `comfy run ltxv_t2v_8gb.json 20.noise_seed=7`
   (find the node id with `info SamplerCustom` / `info EmptyLTXVLatentVideo`).
 
 ## Node/model reference (canonical list in facts: `nodes` + `models`)

@@ -39,10 +39,10 @@ For each row also draft the description, then wait for explicit approval.
 
 ## Validation
 
-Run the shared validator from `create-skill` after writing each skill:
+Run the shared CLI validator after writing each skill:
 
 ```bash
-uv run "$SKILL_DIR/../create-skill/scripts/validate_skill.py" .agents/skills/<name>/SKILL.md
+node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
 ```
 
 If validation fails, fix the file and rerun before reporting success.

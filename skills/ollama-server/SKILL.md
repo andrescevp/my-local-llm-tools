@@ -23,7 +23,7 @@ local: prompts, images, and embeddings never leave the machine.
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `python3 "$SKILL_DIR/scripts/ollama_server.py" ...`.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" ollama ...`.
 
 ## Core rules
 
@@ -42,26 +42,26 @@ local: prompts, images, and embeddings never leave the machine.
 ## Quick start
 
 ```bash
-CLI="$SKILL_DIR/scripts/ollama_server.py"
+cli() { node "$SKILL_DIR/../../src/cli.mjs" ollama "$@"; }
 
-python3 "$CLI" status                  # service, version, model counts
-python3 "$CLI" models                  # installed models + capabilities
-python3 "$CLI" ps                      # loaded models and VRAM use
+cli status                  # service, version, model counts
+cli models                  # installed models + capabilities
+cli ps                      # loaded models and VRAM use
 
 # Text generation
-python3 "$CLI" generate minicpm-v4.6:latest \
+cli generate minicpm-v4.6:latest \
   --prompt "Summarize this screenshot" --image /abs/path/shot.png
 
 # Chat with a system prompt
-python3 "$CLI" chat qwen3:8b \
+cli chat qwen3:8b \
   --system "Answer in Spanish, concise." --prompt "¿Qué es Ollama?"
 
 # Embeddings
-python3 "$CLI" embed nomic-embed-text-v2-moe:latest --text "hola mundo"
+cli embed nomic-embed-text-v2-moe:latest --text "hola mundo"
 
 # Metadata / lifecycle
-python3 "$CLI" show minicpm-v4.6:latest
-python3 "$CLI" unload minicpm-v4.6:latest
+cli show minicpm-v4.6:latest
+cli unload minicpm-v4.6:latest
 ```
 
 `--json` works before or after the subcommand and prints the raw API payload

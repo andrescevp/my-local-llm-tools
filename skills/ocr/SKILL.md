@@ -18,7 +18,7 @@ metadata:
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Resolve the script/reference paths below against it.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" ocr ...`.
 
 # OCR with Local Ollama (PaddleOCR-VL)
 
@@ -54,7 +54,7 @@ ollama list | rg "MedAIBase/PaddleOCR-VL:0.9b" || ollama pull MedAIBase/PaddleOC
 ### 2) Run OCR extraction
 
 ```bash
-python3 $SKILL_DIR/scripts/ocr_ollama.py \
+node "$SKILL_DIR/../../src/cli.mjs" ocr \
   --image "/absolute/path/to/image.png" \
   --prompt "Extract all visible text and preserve structure in markdown." \
   --format markdown
@@ -63,7 +63,7 @@ python3 $SKILL_DIR/scripts/ocr_ollama.py \
 ### 3) Multi-image extraction (batch)
 
 ```bash
-python3 $SKILL_DIR/scripts/ocr_ollama.py \
+node "$SKILL_DIR/../../src/cli.mjs" ocr \
   --image "/abs/page-1.png" \
   --image "/abs/page-2.png" \
   --prompt "Extract text from all pages and keep page boundaries."
@@ -86,13 +86,12 @@ Use these references only when needed:
 | Output contracts | User requests strict JSON schema or post-processing structure | `references/output-contracts.md` |
 | Troubleshooting | Model/service errors, timeout, poor recognition quality | `references/troubleshooting.md` |
 
-## Available scripts
+## CLI
 
-- `scripts/ocr_ollama.py`
+- `node "$SKILL_DIR/../../src/cli.mjs" ocr --image PATH ...`
   - Calls local Ollama `/api/generate` with base64-encoded images
   - Defaults to model `MedAIBase/PaddleOCR-VL:0.9b`
   - Supports one or many `--image` flags
-  - Run `python3 $SKILL_DIR/scripts/ocr_ollama.py --help`
 
 ## Gotchas
 

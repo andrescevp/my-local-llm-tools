@@ -1,0 +1,19 @@
+rules:
+  - id: no-eval
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Do not use eval(); it executes arbitrary code.
+    pattern: eval(...)
+
+  - id: no-shell-true
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Do not spawn processes with shell true.
+    pattern: "shell: true"
+
+  - id: no-hardcoded-aws-key
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: Possible hard-coded AWS access key.
+    patterns:
+      - pattern-regex: "AKIA[0-9A-Z]{16}"

@@ -4,7 +4,7 @@
 
 # OCR Prompt Templates
 
-Use these prompts with `$SKILL_DIR/scripts/ocr_ollama.py --prompt "..."`.
+Use these prompts with `node "$SKILL_DIR/../../src/cli.mjs" ocr --prompt "..."`.
 
 ## 1) Generic document OCR
 

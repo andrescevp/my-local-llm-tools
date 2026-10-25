@@ -3,21 +3,22 @@
 // Registers the bundled skills (skills/*/SKILL.md, metadata from
 // skills/manifest.json) and injects a compact inventory into every session.
 // This harness is skills-only: no agents are installed as files.
-import { Plugin } from "@opencode/plugin"
+
 import { readFileSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
+import { Plugin } from "@opencode/plugin"
 
 const HARNESS_ID = "cheap-ai-winth-local-tools"
 const CONTEXT_MARKER = "## Cheap AI Local Tools"
 
 const SUMMARIES: Record<string, string> = {
   "image-analysis": "describe/compare images with local Ollama vision models",
-  "ocr": "extract text and structure from images/documents locally",
-  "autoskills": "analyze a project and propose skills, authored via create-skill",
+  ocr: "extract text and structure from images/documents locally",
+  autoskills: "analyze a project and propose skills, authored via create-skill",
   "create-skill": "create, update, and evaluate agent skills",
   "create-agent": "create, optimize, and validate custom agents",
-  "speak": "text-to-speech in Spanish via local piper-tts",
+  speak: "text-to-speech in Spanish via local piper-tts",
   "comfyui-server": "generate video/image/music/voice with local ComfyUI",
   "llamacpp-server": "run and query a local llama.cpp GGUF server",
   "ollama-server": "manage and query the local Ollama server",

@@ -40,7 +40,7 @@ Try in order:
 
 Use a larger timeout:
 ```bash
-python3 $SKILL_DIR/scripts/ocr_ollama.py --image "/abs/img.png" --timeout 300
+node "$SKILL_DIR/../../src/cli.mjs" ocr --image "/abs/img.png" --timeout 300
 ```
 
 Or split into smaller crops/pages.

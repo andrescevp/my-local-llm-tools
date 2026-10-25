@@ -46,7 +46,7 @@ Progress:
 
 ```markdown
 1. Make your edits
-2. Run validation: `scripts/validate.py`
+2. Run validation: `node src/cli.mjs skill validate <SKILL.md>`
 3. If validation fails, fix and run again
 4. Only proceed when validation passes
 ```
@@ -54,10 +54,10 @@ Progress:
 **Plan-validate-execute for batch/destructive operations:**
 
 ```markdown
-1. Create plan: `scripts/analyze.sh input > plan.json`
-2. Validate plan: `scripts/validate.sh plan.json`
+1. Create plan: `node src/cli.mjs <domain> plan input > plan.json`
+2. Validate plan: `node src/cli.mjs <domain> validate-plan plan.json`
 3. If validation fails, revise and re-validate
-4. Execute: `scripts/execute.sh plan.json`
+4. Execute: `node src/cli.mjs <domain> execute plan.json`
 ```
 
 ## SKILL.md body conventions

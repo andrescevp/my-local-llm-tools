@@ -3,7 +3,7 @@
     {
       "id": "autoskills",
       "name": "autoskills",
-      "description": "Use this skill when analyzing a project's structure, docs, configs, code, and agent settings to propose project-specific skills \u2014 scanning artifacts for conventions, workflows, and gotchas, then presenting a shortlist with names, descriptions, and scope for approval before authoring. Trigger when bootstrapping skills for a new project, onboarding, or auditing for skillable patterns, including \"set up skills for this project\" or \"what skills would help here?\" \u2014 ask for root/scope if ambiguous."
+      "description": "Use this skill when analyzing a project's structure, docs, configs, code, and agent settings to propose project-specific skills — scanning artifacts for conventions, workflows, and gotchas, then presenting a shortlist with names, descriptions, and scope for approval before authoring. Trigger when bootstrapping skills for a new project, onboarding, or auditing for skillable patterns, including \"set up skills for this project\" or \"what skills would help here?\" — ask for root/scope if ambiguous."
     },
     {
       "id": "comfyui-server",
@@ -13,32 +13,32 @@
     {
       "id": "create-agent",
       "name": "create-agent",
-      "description": "Use this skill when creating, optimizing, or validating custom agents \u2014 write agent definition files with valid frontmatter, clear tool boundaries, trigger-aware descriptions, and completion checks so the agent is usable immediately. Also use when improving an agent profile, tightening tool permissions, refining a workflow, or debugging why an agent is not selected, including \"create an agent for X\" or \"my agent is ignored\" \u2014 ask clarifying questions if scope is ambiguous."
+      "description": "Use this skill when creating, optimizing, or validating custom agents — write agent definition files with valid frontmatter, clear tool boundaries, trigger-aware descriptions, and completion checks so the agent is usable immediately. Also use when improving an agent profile, tightening tool permissions, refining a workflow, or debugging why an agent is not selected, including \"create an agent for X\" or \"my agent is ignored\" — ask clarifying questions if scope is ambiguous."
     },
     {
       "id": "create-skill",
       "name": "create-skill",
-      "description": "Use this skill when creating, updating, or evaluating agent skills \u2014 interview the user first to extract maximum information with minimal words, then write lean SKILL.md files with valid frontmatter, trigger-optimized descriptions, bundled scripts, and eval harnesses. Trigger on new skill creation, improving an existing skill's instructions or description, adding scripts, or setting up evaluation cases \u2014 even if they just say \"make a skill for X\" without mentioning skill creation explicitly."
+      "description": "Use this skill when creating, updating, or evaluating agent skills — interview the user first to extract maximum information with minimal words, then write lean SKILL.md files with valid frontmatter, trigger-optimized descriptions, bundled scripts, and eval harnesses. Trigger on new skill creation, improving an existing skill's instructions or description, adding scripts, or setting up evaluation cases — even if they just say \"make a skill for X\" without mentioning skill creation explicitly."
     },
     {
       "id": "image-analysis",
       "name": "image-analysis",
-      "description": "Use this skill to analyze, describe, or understand images with a local Ollama vision model \u2014 screenshots, photos, charts, diagrams, scanned pages, or image pairs, with multi-image analysis, model auto-detection, deterministic output, and markdown/json/raw formats. Trigger on \"analyze this image\", \"describe what's in this picture\", \"what does this screenshot show\", or \"read this chart/diagram\", or when visual content must stay local. Uses minicpm-v4.6; prefer ocr for pure text extraction."
+      "description": "Use this skill to analyze, describe, or understand images with a local Ollama vision model — screenshots, photos, charts, diagrams, scanned pages, or image pairs, with multi-image analysis, model auto-detection, deterministic output, and markdown/json/raw formats. Trigger on \"analyze this image\", \"describe what's in this picture\", \"what does this screenshot show\", or \"read this chart/diagram\", or when visual content must stay local. Uses minicpm-v4.6; prefer ocr for pure text extraction."
     },
     {
       "id": "llamacpp-server",
       "name": "llamacpp-server",
-      "description": "Use this skill to run or query a local llama.cpp HTTP server (llama-server) with GGUF models \u2014 detect the binary, list local .gguf files, start a managed server on port 8080 with GPU offload and context settings, check health/logs, send OpenAI-compatible chat/completion requests, and stop only the process this skill started. Trigger on \"run llama.cpp\", \"start llama-server\", \"serve this GGUF\", \"use a local GGUF model\", \"llama.cpp OpenAI endpoint\", or \"stop the local llama server\"."
+      "description": "Use this skill to run or query a local llama.cpp HTTP server (llama-server) with GGUF models — detect the binary, list local .gguf files, start a managed server on port 8080 with GPU offload and context settings, check health/logs, send OpenAI-compatible chat/completion requests, and stop only the process this skill started. Trigger on \"run llama.cpp\", \"start llama-server\", \"serve this GGUF\", \"use a local GGUF model\", \"llama.cpp OpenAI endpoint\", or \"stop the local llama server\"."
     },
     {
       "id": "ocr",
       "name": "ocr",
-      "description": "Use this skill when extracting text or structure from screenshots, scanned pages, PDF page images, whiteboards, charts, diagrams, or UI captures with a local OCR-capable vision model \u2014 producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Trigger on \"extract text from this screenshot\", \"read this chart and list percentages\", \"OCR this scanned invoice\", or \"parse labels from a chart\". Uses Ollama with MedAIBase/PaddleOCR-VL:0.9b."
+      "description": "Use this skill when extracting text or structure from screenshots, scanned pages, PDF page images, whiteboards, charts, diagrams, or UI captures with a local OCR-capable vision model — producing markdown or JSON from text, tables, labels, and annotations, with prompt templates and confidence notes. Trigger on \"extract text from this screenshot\", \"read this chart and list percentages\", \"OCR this scanned invoice\", or \"parse labels from a chart\". Uses Ollama with MedAIBase/PaddleOCR-VL:0.9b."
     },
     {
       "id": "ollama-server",
       "name": "ollama-server",
-      "description": "Use this skill when managing or querying the local Ollama server \u2014 checking health/version, listing installed or loaded models, generating text or vision answers, chatting, computing embeddings, pulling or inspecting models, and unloading from VRAM. Trigger on \"is Ollama up?\", \"list Ollama models\", \"run a local model\", \"ask minicpm about this image\", \"embed this text locally\", \"pull this model\", or \"unload the model\". Uses 127.0.0.1:11434 and never sends data to a cloud provider."
+      "description": "Use this skill when managing or querying the local Ollama server — checking health/version, listing installed or loaded models, generating text or vision answers, chatting, computing embeddings, pulling or inspecting models, and unloading from VRAM. Trigger on \"is Ollama up?\", \"list Ollama models\", \"run a local model\", \"ask minicpm about this image\", \"embed this text locally\", \"pull this model\", or \"unload the model\". Uses 127.0.0.1:11434 and never sends data to a cloud provider."
     },
     {
       "id": "speak",

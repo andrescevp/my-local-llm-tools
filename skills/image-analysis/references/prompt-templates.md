@@ -9,7 +9,7 @@ the generic `DEFAULT_ANALYZE_PROMPT` is not specific enough.
 
 Always use the image path and prompt as:
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/path/image.png" --prompt "<TEMPLATE>"
 ```
 

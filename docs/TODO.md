@@ -1,10 +1,13 @@
 - [] todos los scripts deben ser en jsvascript, para qa usar biome, osv-scanner y semgrep
 - [] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
+- [] unificar ocr y image-analysis
 - [] Nueva skill `setup` que debe encargarse de comprobar que las dependencias estan instalas y crear un manifest file con la informacion:
-    - local ollama server -> If not installed install it browsing to https://ollama.com/download, models used are CPU peformant, so if the user do not have GPU should not be a big issue
+    - docker
+    - local ollama server (direct installation) -> ask user for url if he has already an insance. If not installed install it browsing to https://ollama.com/download, models used are CPU peformant, so if the user do not have GPU should not be a big issue
         - url
-        - modelos para analisis de imagen y ocr
+        - modelos para analisis de imagen y ocr MedAIBase/PaddleOCR-VL:0.9b minicpm-v4.6:latest
         - tesseract (fallback del ocr)
         - pipper tts
-    - comfyui -> If not installed, check if the user have at least a GPU with 8GB of VRAM and install from https://comfy.org/download , if the user do not have 8GB VRAM skip installation and warn user that the system would not support properly local image generation
-        - [] Extraer de comfyui-server el setup de la instancia a la skill general `setup` , modelos, workflows etc, hacer `intance_facts.json` sea ignorado y recreado en la maquina.
+    - comfyui (docker installation as prefference, otherwise local offer it providing advantages and disvantages) -> sk user for url if he has already an insance. If not installed, check if the user have at least a GPU with 8GB of VRAM and install from https://comfy.org/download , if the user do not have 8GB VRAM skip installation and warn user that the system would not support properly local image generation
+        - [] Extraer de comfyui-server el setup de la instancia a la skill general `setup` , modelos, workflows etc, hacer `intance_facts.json` sea ignorado y recreado en la maquina. Usitilizar la ocnfiguracion del comfyui instalado en este sisytema comoreferencias de modelos templats etc.
+- crear `local-image-generation`, `local-video-generation`, `local-audio-generation`, skills usando comfyui

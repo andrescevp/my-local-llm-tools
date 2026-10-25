@@ -50,7 +50,7 @@ Create one folder per skill and put `SKILL.md` inside:
 
 Supporting directories (optional, inside the skill directory):
 
-- `scripts/` — executable scripts bundled with the skill
+- `scripts/` — executable scripts bundled with the skill (this repo centralizes them in `src/cli.mjs` instead)
 - `references/` — detailed reference material for progressive disclosure
 - `assets/` — templates, sample files, or other resources
 - `evals/` — evaluation test cases and input files
@@ -77,7 +77,7 @@ Directory layout after split:
 skills/<name>/
   SKILL.md              ← Lean: workflow, rules, reference triggers (~200 lines)
   references/           ← Detailed guides loaded on specific triggers
-  scripts/              ← Bundled scripts (if any)
+  scripts/              ← Bundled scripts (this repo: src/cli.mjs instead)
   evals/                ← Test cases (if any)
 ```
 
@@ -112,7 +112,7 @@ Description rules (critical for triggering):
 4. **Write the SKILL.md body** — start directly with core rules/workflow; no `What I do` / `When to use me` headers. Split over-200-line detail into `references/`.
 5. **Show the draft and confirm** — present the full skill; adjust on feedback.
 6. **Write the file** — create the directory and write `SKILL.md` at the agreed path (ask if ambiguous).
-7. **Verify** — run the checklist below and `uv run scripts/validate_skill.py <path>`.
+7. **Verify** — run the checklist below and `node "$SKILL_DIR/../../src/cli.mjs" skill validate <path>`.
 
 ## Update workflow
 
@@ -134,11 +134,21 @@ When updating an existing skill, interview first (same questions), then:
 
 Limits in this file are canonical: reference files must defer to them, never restate different values.
 
-## Available scripts
+## CLI
 
-- **`scripts/validate_skill.py`** — Validates a SKILL.md against the spec (name regex, frontmatter, description, banned sections, vague language, line count). Run: `uv run scripts/validate_skill.py <path-to-SKILL.md>`
-- **`scripts/test_triggers.py`** — Tests description trigger rates against eval queries. Run: `uv run scripts/test_triggers.py <queries.json> <skill_name> [runs]`
-- **`scripts/run_evals.py`** — Runs evaluation cases with/without the skill. Run: `uv run scripts/run_evals.py <evals.json> <skill_path> <workspace_dir> [--baseline]`
+Skill tooling lives in the repository's single CLI (`src/cli.mjs`); there are no
+per-skill scripts. Run it from the repo root with `pnpm cli …` or directly:
+
+- **`skill validate <SKILL.md>`** — name regex, frontmatter, description cap,
+  banned sections, vague language, line count.
+- **`skill triggers <queries.json> <skill_name> [runs]`** — trigger rates against
+  eval queries.
+- **`skill evals <evals.json> <SKILL.md> <workspace_dir> [--baseline]`** — run
+  evaluation cases with/without the skill.
+
+```bash
+node "$SKILL_DIR/../../src/cli.mjs" skill validate skills/<name>/SKILL.md
+```
 
 ## Validation checklist
 
@@ -150,4 +160,4 @@ Before writing the file, verify:
 - [ ] Directory structure is `<base>/skills/<name>/SKILL.md`
 - [ ] Main file under 250 lines (target 200); detail in `references/` with clear triggers
 - [ ] Content avoids teaching what the agent already knows; gotchas included
-- [ ] Scripts (if any) have no interactive prompts and document `--help`
+- [ ] Scripts (if any) have no interactive prompts and expose `--help`

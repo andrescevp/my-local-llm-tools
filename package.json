@@ -8,12 +8,27 @@
     ".": "./index.ts"
   },
   "scripts": {
-    "manifest": "python3 scripts/build_manifest.py",
-    "validate": "python3 scripts/validate.py",
-    "test": "bash scripts/test.sh",
-    "harness:install": "./scripts/install.sh"
+    "manifest": "node scripts/build_manifest.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "cli": "node src/cli.mjs",
+    "harness:install": "node scripts/install.mjs",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "deps": "depcruise src scripts tests index.ts",
+    "dup": "jscpd src scripts tests",
+    "security": "osv-scanner scan source -r . && semgrep --config .semgrep.yml --error .",
+    "qa": "pnpm lint && pnpm deps && pnpm dup && pnpm test && pnpm validate && pnpm security"
   },
   "dependencies": {
-    "@opencode/plugin": "latest"
+    "@opencode/plugin": "latest",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.3",
+    "dependency-cruiser": "^18.7.0",
+    "jscpd": "^5.4.2",
+    "typescript": "^6.0.3"
   }
 }

@@ -87,7 +87,7 @@ ollama show MedAIBase/PaddleOCR-VL:0.9b --verbose     # Capabilities must list v
 Default is 120 s. Increase per call:
 
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/x.png" --timeout 300
 ```
 

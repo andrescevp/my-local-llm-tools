@@ -1,0 +1,8 @@
+{
+  "threshold": 5,
+  "minLines": 5,
+  "minTokens": 50,
+  "reporters": ["console"],
+  "format": ["javascript", "typescript"],
+  "ignore": ["**/node_modules/**", "skills/**", "docs/**", "reports/**", "**/*.md"]
+}

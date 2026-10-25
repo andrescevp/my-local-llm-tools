@@ -18,7 +18,7 @@ metadata:
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Resolve the script/reference paths below against it.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" image ...`.
 
 # Image Analysis with Local Ollama
 
@@ -54,14 +54,14 @@ ollama list | rg "minicpm-v4.6|PaddleOCR-VL" || ollama pull minicpm-v4.6:latest
 ### 2) Analyze an image (minicpm default)
 
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/path/image.png"
 ```
 
 ### 3) OCR mode (PaddleOCR, falls back to minicpm if vision unsupported)
 
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/path/page.png" --model "MedAIBase/PaddleOCR-VL:0.9b" --mode ocr
 ```
 
@@ -72,7 +72,7 @@ stderr — extraction still succeeds.
 ### 4) Compare two images
 
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/a.png" --image "/abs/b.png" \
   --prompt "Compare these two images: shared elements, differences, which is better and why."
 ```
@@ -80,7 +80,7 @@ python3 $SKILL_DIR/scripts/analyze_image.py \
 ### 5) Structured output
 
 ```bash
-python3 $SKILL_DIR/scripts/analyze_image.py \
+node "$SKILL_DIR/../../src/cli.mjs" image \
   --image "/abs/chart.png" --format json \
   --prompt "Return ONLY a JSON object with chart values, no markdown fences."
 ```
@@ -99,13 +99,12 @@ python3 $SKILL_DIR/scripts/analyze_image.py \
 | Prompt templates | Task-specific analysis: UI, charts, diagrams, photos, comparison, strict JSON | `references/prompt-templates.md` |
 | Troubleshooting | Ollama down, model missing, timeouts, hallucinations, poor quality | `references/troubleshooting.md` |
 
-## Available scripts
+## CLI
 
-- `scripts/analyze_image.py`
+- `node "$SKILL_DIR/../../src/cli.mjs" image --image PATH ...`
   - Local Ollama `/api/generate` with base64-encoded images
   - Default model `minicpm-v4.6:latest`; `--mode auto|analyze|ocr`
   - One or many `--image` flags; `--format markdown|json|raw`; `--timeout`
-  - Run `python3 $SKILL_DIR/scripts/analyze_image.py --help`
 
 ## Gotchas
 
@@ -120,5 +119,5 @@ python3 $SKILL_DIR/scripts/analyze_image.py \
 - [ ] Skill name matches directory: `image-analysis`
 - [ ] Uses local Ollama endpoint (no external image API)
 - [ ] Default model `minicpm-v4.6:latest` with OCR fallback `MedAIBase/PaddleOCR-VL:0.9b`
-- [ ] Tests pass: `python3 evals/test_analyze_image.py`
+- [ ] Tests pass: `pnpm test`
 - [ ] Main `SKILL.md` stays under 250 lines

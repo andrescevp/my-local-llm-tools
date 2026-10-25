@@ -24,7 +24,7 @@ recorded itself, and never kills an unknown PID.
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `python3 "$SKILL_DIR/scripts/llamacpp_server.py" ...`.
+> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" llamacpp ...`.
 
 ## Current machine state
 
@@ -52,26 +52,26 @@ the `ollama-server` skill when you do not specifically need llama.cpp.
 ## Quick start
 
 ```bash
-CLI="$SKILL_DIR/scripts/llamacpp_server.py"
+cli() { node "$SKILL_DIR/../../src/cli.mjs" llamacpp "$@"; }
 
-python3 "$CLI" doctor                     # binary, GPU, model dirs, port
-python3 "$CLI" models                     # discover local .gguf files
-python3 "$CLI" install                    # pacman / AUR / source options
+cli doctor                     # binary, GPU, model dirs, port
+cli models                     # discover local .gguf files
+cli install                    # pacman / AUR / source options
 
 # Start (model path or unique filename from `models`)
-python3 "$CLI" start ~/models/qwen2.5-7b-instruct-q4_k_m.gguf \
+cli start ~/models/qwen2.5-7b-instruct-q4_k_m.gguf \
   --ctx 8192 --ngl 99 --jinja
 
-python3 "$CLI" status
-python3 "$CLI" logs -n 80
-python3 "$CLI" chat --prompt "Explain GGUF quantization briefly" --max-tokens 256
-python3 "$CLI" stop
+cli status
+cli logs -n 80
+cli chat --prompt "Explain GGUF quantization briefly" --max-tokens 256
+cli stop
 ```
 
 Extra llama-server flags go through `--arg` (repeatable):
 
 ```bash
-python3 "$CLI" start model.gguf --arg --flash-attn --arg on --arg --no-mmap
+cli start model.gguf --arg --flash-attn --arg on --arg --no-mmap
 ```
 
 ## CLI reference

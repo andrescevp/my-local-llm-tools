@@ -16,14 +16,14 @@ Always speak in Spanish. If the input text is not in Spanish, translate it befor
 
 ## Usage
 
-> Script location is `$SKILL_DIR/scripts/speak.sh`.
+> CLI location: `src/cli.mjs` at the repository root.
 
 ```bash
 # Speak a phrase
-bash "$SKILL_DIR/scripts/speak.sh" "Hola, soy Laura"
+node "$SKILL_DIR/../../src/cli.mjs" speak "Hola, soy Laura"
 
 # Speak from stdin (long text)
-cat /tmp/response.$(uuid).txt | bash "$SKILL_DIR/scripts/speak.sh" -q
+cat /tmp/response.$(uuid).txt | node "$SKILL_DIR/../../src/cli.mjs" speak -q
 ```
 
-> For responses that may be long (paragraphs, multi-line outputs), ALWAYS use the script with stdin piping. The script handles arbitrary text lengths with no timeout, so, when speaking a response, do NOT set a short timeout. Piper can take 10-30+ seconds for long text. Use a timeout of at least 120000ms (2 minutes) in the bash tool when invoking piper or the speak script for long text.
+> For responses that may be long (paragraphs, multi-line outputs), ALWAYS use the CLI with stdin piping. It handles arbitrary text lengths with no timeout, so, when speaking a response, do NOT set a short timeout. Piper can take 10-30+ seconds for long text. Use a timeout of at least 120000ms (2 minutes) in the bash tool when invoking piper or the speak CLI for long text.

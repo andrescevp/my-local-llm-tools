@@ -1,32 +1,37 @@
 # Script Design Rules for Skills
 
-When the agent independently reinvents the same logic across runs, bundle a tested script in `scripts/`.
+When the agent independently reinvents the same logic across runs, add it to the
+repository's unified CLI in `src/` instead of bundling a per-skill script.
 
 ## One-off commands
 
 For existing tools, reference them directly in `SKILL.md`:
 
 ```bash
-uvx ruff@0.8.0 check .
-npx eslint@9 --fix .
+pnpm dlx eslint@9 .
+pnpm dlx prettier@3 --write .
 ```
 
 Pin versions. State prerequisites in `SKILL.md`.
 
-## Self-contained scripts
+## Unified CLI modules
 
-Use PEP 723 for Python scripts with inline dependencies:
+Skill behavior lives in `src/commands/<domain>.mjs`, wired through
+`src/cli.mjs`. Shared helpers go in `src/lib/`. Modules are plain ESM:
 
-```python
-# /// script
-# dependencies = ["beautifulsoup4>=4.12,<5"]
-# requires-python = ">=3.10"
-# ///
+```js
+#!/usr/bin/env node
+import { readFileSync } from "node:fs"
+import { parse } from "yaml"
 
-from bs4 import BeautifulSoup
+export function run(argv) {
+  // parse flags explicitly; never prompt interactively
+  return 0
+}
 ```
 
-Run with `uv run scripts/script.py` — creates isolated env, installs deps, runs.
+Run with `node src/cli.mjs <domain> <action>` (or `pnpm cli …`). Declare any
+third-party dependency in `package.json`; never vendor code.
 
 ## Script design rules
 
@@ -39,20 +44,19 @@ Run with `uv run scripts/script.py` — creates isolated env, installs deps, run
 - **Dry-run support** — for destructive operations, add `--dry-run` flag.
 - **Predictable output size** — default to summaries/reasonable limits; support `--output` for large output.
 
-## Referencing scripts from SKILL.md
+## Referencing commands from SKILL.md
 
-List available scripts in the main skill file:
+List the CLI actions in the main skill file:
 
 ```markdown
-## Available scripts
+## CLI
 
-- **`scripts/validate.sh`** — Validates configuration files
-- **`scripts/process.py`** — Processes input data
+- `skill validate <SKILL.md>` — checks the skill against the spec
+- `ollama status` — health, version, model counts
 ```
 
-Run with relative paths from the skill directory root:
+Run with the repo-root CLI:
 
 ```bash
-bash scripts/validate.sh "$INPUT_FILE"
-python3 scripts/process.py --input results.json
+node "$SKILL_DIR/../../src/cli.mjs" skill validate skills/<name>/SKILL.md
 ```

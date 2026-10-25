@@ -121,10 +121,10 @@ For each approved skill:
 4. Validate the result with the shared validator:
 
    ```bash
-   uv run "$SKILL_DIR/../create-skill/scripts/validate_skill.py" .agents/skills/<name>/SKILL.md
+   node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
    ```
 
-   `create-skill` is a sibling skill folder here; if it lives elsewhere, run its script from that location.
+   `src/cli.mjs` is the repository's single CLI; `create-skill` defines the rules it enforces.
 
 ## 6. Verify and report
 
@@ -138,7 +138,7 @@ Created N skills for <project-name>:
 ✓ test-patterns — .agents/skills/test-patterns/SKILL.md (validated)
 
 Run the shared validator on any skill to re-check:
-  uv run "$SKILL_DIR/../create-skill/scripts/validate_skill.py" .agents/skills/deploy-staging/SKILL.md
+  node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/deploy-staging/SKILL.md
 ```
 
 ## Reference
