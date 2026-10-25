@@ -4,4 +4,5 @@
 - [x] Nueva skill `setup` + comandos `setup`/`doctor`, manifest multiplataforma, hechos de ComfyUI generados en config y skills leyendo requisitos
     - [x] Extraer de comfyui-server el setup de la instancia a `setup` (modelos, workflows, custom nodes); `instance_facts.json` ignorado y recreado en la máquina
     - [x] Instalaciones informadas + confirmación (`--install` / `--yes`); instalación manual con URLs oficiales
+- eliminar skills/manifest.json de todo el repositorio eferencias y usos
 - crear `local-image-generation`, `local-video-generation`, `local-audio-generation`, skills usando comfyui

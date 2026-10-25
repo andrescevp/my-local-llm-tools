@@ -53,7 +53,9 @@ OpenCode — local dependencies outside watched config directories may not hot
 reload.
 
 The plugin registers skills from `skills/manifest.json` and injects a compact
-inventory into each session. No agents are installed as files.
+inventory into each session. Hosts and per-skill readiness come from the
+machine manifest written by `setup`; when that manifest is missing or invalid,
+the injected context warns to run `setup`. No agents are installed as files.
 
 ### Claude Code
 

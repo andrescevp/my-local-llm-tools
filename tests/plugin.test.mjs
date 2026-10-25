@@ -1,5 +1,7 @@
 import assert from "node:assert/strict"
-import { existsSync } from "node:fs"
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import test from "node:test"
 
 import plugin from "../index.ts"
@@ -31,9 +33,83 @@ function fakeContext() {
   }
 }
 
+function machineManifest() {
+  return {
+    schema: 2,
+    plugin: "my-local-llm-tools",
+    generated_at: "2026-10-26T00:00:00.000Z",
+    platform: { os: "linux", arch: "x64", release: "6.0.0" },
+    ok: true,
+    hosts: { ollama: "http://ollama.test:11434", comfyui: "http://comfy.test:8188" },
+    models: { ollama: { available: [], required: [], missing: [] }, comfyui: [] },
+    paths: { tesseract: "", ffmpeg: "", ffprobe: "", piper: "" },
+    tools: {
+      node: { ok: true, version: "v24.0.0", path: "/usr/bin/node" },
+      pnpm: { ok: true, version: "11.0.0", path: "/usr/bin/pnpm" },
+      docker: { ok: false, version: "", path: "" },
+      tesseract: { ok: false, version: "", path: "", languages: [] },
+      ffmpeg: { ok: false, version: "", path: "" },
+      ffprobe: { ok: false, version: "", path: "" },
+      piper: { ok: false, version: "", path: "" },
+      voice_model: { ok: false, path: "" },
+    },
+    gpu: { ok: true, name: "Test GPU", vram_gb: 8, source: "test" },
+    ollama: {
+      host: "http://ollama.test:11434",
+      reachable: true,
+      version: "0.1.0",
+      models: { available: [], required: [], missing: [] },
+    },
+    comfyui: {
+      host: "http://comfy.test:8188",
+      reachable: false,
+      version: "",
+      python: "",
+      gpu: "",
+      vram_gb: 0,
+      gpu_ok: false,
+    },
+    features: {
+      "image-analysis": { ok: true, requires: [], optional: [] },
+      ocr: { ok: false, requires: [{ requirement: "ollama", ok: false }], optional: [] },
+    },
+    warnings: [],
+  }
+}
+
+async function setupWith({ manifest, raw } = {}) {
+  const configDir = mkdtempSync(join(tmpdir(), "my-local-llm-tools-"))
+  if (manifest) {
+    writeFileSync(join(configDir, "manifest.json"), JSON.stringify(manifest, null, 2))
+  }
+  if (raw !== undefined) writeFileSync(join(configDir, "manifest.json"), raw)
+
+  const previous = process.env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR
+  process.env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR = configDir
+  const context = fakeContext()
+  const warnings = []
+  const originalWarn = console.warn
+  console.warn = (...args) => warnings.push(args.join(" "))
+  try {
+    await plugin.setup(context.ctx)
+  } finally {
+    console.warn = originalWarn
+    if (previous === undefined) delete process.env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR
+    else process.env.MY_LOCAL_LLM_TOOLS_CONFIG_DIR = previous
+    rmSync(configDir, { recursive: true, force: true })
+  }
+  return { ...context, warnings }
+}
+
+function contextText(hooks) {
+  const event = { system: [] }
+  hooks.context(event)
+  assert.equal(event.system.length, 1)
+  return event.system[0].text
+}
+
 test("plugin registers every skill with path and content", async () => {
-  const { ctx, skills } = fakeContext()
-  await plugin.setup(ctx)
+  const { skills } = await setupWith({ manifest: machineManifest() })
   assert.equal(skills.length, 10)
   for (const skill of skills) {
     assert.ok(skill.id.startsWith("my-local-llm-tools:"), `${skill.id} prefix`)
@@ -46,12 +122,47 @@ test("plugin registers every skill with path and content", async () => {
 })
 
 test("context hook injects the inventory once", async () => {
-  const { ctx, hooks } = fakeContext()
-  await plugin.setup(ctx)
+  const { hooks } = await setupWith({ manifest: machineManifest() })
   const event = { system: [] }
   hooks.context(event)
   hooks.context(event)
   assert.equal(event.system.length, 1)
   assert.match(event.system[0].text, /## my-local-llm-tools/)
   assert.match(event.system[0].text, /my-local-llm-tools:image-analysis/)
+})
+
+test("missing manifest alerts to run setup instead of using hardcoded hosts", async () => {
+  const { hooks, warnings } = await setupWith()
+  const text = contextText(hooks)
+  assert.match(text, /machine manifest missing or invalid/i)
+  assert.match(text, /manifest\.json/)
+  assert.match(text, /cli\.mjs setup/)
+  assert.match(text, /pnpm cli setup/)
+  assert.ok(!text.includes("127.0.0.1:11434"), "no hardcoded Ollama host")
+  assert.ok(!text.includes("127.0.0.1:8188"), "no hardcoded ComfyUI host")
+  assert.ok(
+    warnings.some((line) => line.includes("missing or invalid")),
+    "plugin load warns about the missing manifest",
+  )
+})
+
+test("manifest hosts and readiness drive the injected profile", async () => {
+  const { hooks, warnings } = await setupWith({ manifest: machineManifest() })
+  const text = contextText(hooks)
+  assert.match(text, /generated 2026-10-26T00:00:00\.000Z/)
+  assert.match(text, /Ollama http:\/\/ollama\.test:11434: reachable/)
+  assert.match(text, /ComfyUI http:\/\/comfy\.test:8188: unreachable/)
+  assert.match(text, /GPU Test GPU: 8 GiB/)
+  assert.match(text, /my-local-llm-tools:image-analysis: .*— ready/)
+  assert.match(text, /my-local-llm-tools:ocr: .*— not ready/)
+  assert.ok(!text.includes("127.0.0.1:11434"), "no hardcoded Ollama host")
+  assert.ok(!text.includes("llama.cpp http://127.0.0.1:8080"), "no hardcoded llama.cpp host")
+  assert.equal(warnings.length, 0)
+})
+
+test("an unreadable manifest is reported like a missing one", async () => {
+  const { hooks } = await setupWith({ raw: "{" })
+  const text = contextText(hooks)
+  assert.match(text, /machine manifest missing or invalid/i)
+  assert.match(text, /cli\.mjs setup/)
 })

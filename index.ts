@@ -2,12 +2,16 @@
 //
 // Registers the bundled skills (skills/*/SKILL.md, metadata from
 // skills/manifest.json) and injects a compact inventory into every session.
-// This harness is skills-only: no agents are installed as files.
+// Machine facts (endpoints, readiness) are read from the manifest written by
+// `setup`; nothing about the host is hardcoded here.
 
 import { readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
+
 import { Plugin } from "@opencode/plugin"
+
+import { manifestPath, readManifest } from "./src/commands/setup/manifest.mjs"
 
 const HARNESS_ID = "my-local-llm-tools"
 const CONTEXT_MARKER = "## my-local-llm-tools"
@@ -40,6 +44,32 @@ interface LoadedSkill extends SkillMeta {
   content: string
 }
 
+interface MachineManifest {
+  generated_at: string
+  hosts: { ollama: string; comfyui: string }
+  ollama: { reachable: boolean }
+  comfyui: { reachable: boolean }
+  gpu: { ok: boolean; name: string; vram_gb: number }
+  features: Record<string, { ok: boolean }>
+}
+
+type Machine =
+  | { ok: true; path: string; manifest: MachineManifest }
+  | { ok: false; path: string; error: string }
+
+function setupCommand(root: string): string {
+  return `node ${join(root, "src", "cli.mjs")} setup`
+}
+
+function loadMachine(): Machine {
+  const path = manifestPath()
+  try {
+    return { ok: true, path, manifest: readManifest() as MachineManifest }
+  } catch (error) {
+    return { ok: false, path, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
 function renderSkillContent(content: string, root: string, skillDir: string): string {
   const pluginRoot = root.replaceAll("\\", "/")
   const directory = skillDir.replaceAll("\\", "/")
@@ -70,18 +100,50 @@ function loadSkills(root: string): LoadedSkill[] {
   return entries
 }
 
-function contextBlock(skills: LoadedSkill[], root: string): string {
+function machineLines(machine: Machine, root: string): string[] {
+  if (!machine.ok) {
+    return [
+      "WARNING: machine manifest missing or invalid — run setup before using local skills.",
+      `  manifest: ${machine.path}`,
+      `  command:  ${setupCommand(root)}`,
+      '  (or "pnpm cli setup" from the repository root)',
+      "",
+    ]
+  }
+  const { manifest } = machine
+  const lines = [
+    `Machine profile (${machine.path}, generated ${manifest.generated_at}):`,
+    `- Ollama ${manifest.hosts.ollama}: ${manifest.ollama.reachable ? "reachable" : "unreachable"}`,
+    `- ComfyUI ${manifest.hosts.comfyui}: ${
+      manifest.comfyui.reachable ? "reachable" : "unreachable"
+    }`,
+  ]
+  if (manifest.gpu.ok) {
+    lines.push(`- GPU ${manifest.gpu.name}: ${manifest.gpu.vram_gb} GiB`)
+  }
+  lines.push("")
+  return lines
+}
+
+function readiness(machine: Machine, skillId: string): string {
+  if (!machine.ok) return ""
+  const feature = machine.manifest.features[skillId]
+  if (!feature) return ""
+  return feature.ok ? " — ready" : " — not ready"
+}
+
+function contextBlock(skills: LoadedSkill[], root: string, machine: Machine): string {
   const lines = [
     CONTEXT_MARKER,
     "",
-    "Local-first, low-cost AI toolbelt. Everything runs on this machine.",
-    "Endpoints: Ollama http://127.0.0.1:11434 · ComfyUI http://127.0.0.1:8188 ·",
-    "llama.cpp http://127.0.0.1:8080 (optional OpenAI-compatible server).",
+    "Local-first, low-cost AI toolbelt. Machine facts come from the setup manifest.",
     "",
+    ...machineLines(machine, root),
     `Bundled skills (root: ${join(root, "skills")}):`,
   ]
   for (const skill of skills) {
-    lines.push(`- ${HARNESS_ID}:${skill.id}: ${SUMMARIES[skill.id] ?? "local tool"}`)
+    const summary = SUMMARIES[skill.id] ?? "local tool"
+    lines.push(`- ${HARNESS_ID}:${skill.id}: ${summary}${readiness(machine, skill.id)}`)
   }
   lines.push(
     "",
@@ -97,6 +159,14 @@ export default Plugin.define({
   async setup(ctx) {
     const root = dirname(fileURLToPath(import.meta.url))
     const skills = loadSkills(root)
+    const machine = loadMachine()
+
+    if (!machine.ok) {
+      console.warn(
+        `[${HARNESS_ID}] machine manifest missing or invalid at ${machine.path} — ` +
+          `run "${setupCommand(root)}" (${machine.error})`,
+      )
+    }
 
     await ctx.skill.transform((editor) => {
       for (const skill of skills) {
@@ -107,7 +177,7 @@ export default Plugin.define({
       }
     })
 
-    const block = contextBlock(skills, root)
+    const block = contextBlock(skills, root, machine)
     await ctx.session.hook("context", (event) => {
       const already = event.system.some(
         (part) => part.type === "text" && part.text.includes(CONTEXT_MARKER),
