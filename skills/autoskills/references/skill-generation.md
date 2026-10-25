@@ -42,7 +42,7 @@ For each row also draft the description, then wait for explicit approval.
 Run the shared CLI validator after writing each skill:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
+pnpm cli skill validate .agents/skills/<name>/SKILL.md
 ```
 
 If validation fails, fix the file and rerun before reporting success.

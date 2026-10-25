@@ -57,6 +57,33 @@ curl -sS "$OPENAI_BASE_URL/chat/completions" \
 Use the exact model id the server reports (`GET /models`). Ollama names include
 tags (`minicpm-v4.6:latest`); llama.cpp accepts the `--alias` or model path.
 
+### Windows
+
+PowerShell:
+
+```powershell
+$env:OPENAI_BASE_URL = "http://127.0.0.1:11434/v1"
+$env:OPENAI_API_KEY = "ollama"
+$body = '{"model":"minicpm-v4.6:latest","messages":[{"role":"user","content":"Hola"}]}'
+Invoke-RestMethod -Method Post -Uri "$env:OPENAI_BASE_URL/chat/completions" `
+  -Headers @{ Authorization = "Bearer $env:OPENAI_API_KEY" } `
+  -ContentType "application/json" -Body $body
+```
+
+cmd.exe:
+
+```bat
+set OPENAI_BASE_URL=http://127.0.0.1:11434/v1
+set OPENAI_API_KEY=ollama
+curl.exe -sS "%OPENAI_BASE_URL%/chat/completions" ^
+  -H "Content-Type: application/json" ^
+  -H "Authorization: Bearer %OPENAI_API_KEY%" ^
+  -d "{\"model\":\"minicpm-v4.6:latest\",\"messages\":[{\"role\":\"user\",\"content\":\"Hola\"}]}"
+```
+
+Use `curl.exe` in cmd, not PowerShell's `curl` alias. Use WSL2 or Git Bash only
+when `wsl --status` or `bash --version` succeeds and the user already works there.
+
 ### Node.js (fetch)
 
 ```js

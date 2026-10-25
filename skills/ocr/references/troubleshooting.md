@@ -23,7 +23,7 @@ Symptoms:
 
 Fix:
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" doctor --skill ocr
+pnpm cli doctor --skill ocr
 ```
 `setup --install --yes` pulls the required model, or run `ollama pull` manually.
 
@@ -40,7 +40,7 @@ Try in order:
 
 Use a larger timeout:
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" ocr --image "/abs/img.png" --timeout 300
+pnpm cli ocr --image "/abs/img.png" --timeout 300
 ```
 
 Or split into smaller crops/pages.

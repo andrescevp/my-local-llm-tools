@@ -8,8 +8,8 @@ description: >
   dependency", "Ollama or ComfyUI URL", or "why can't this skill run?" — run
   `pnpm cli doctor --skill <name>` first.
 license: MIT
-compatibility: opencode, copilot, antigravity
-allowed-tools: bash, read
+compatibility: opencode, claude, copilot, antigravity
+allowed-tools: Bash, Read
 metadata:
   audience: developers
   workflow: environment-setup
@@ -138,6 +138,9 @@ directory. Rerun `setup` after adding models, workflows, or custom nodes.
 - Audio playback: `pw-play`/`paplay`/`aplay` (Linux), `afplay` (macOS),
   PowerShell `SoundPlayer` (Windows).
 - Install hints differ per OS; the command picks the matching hint.
+- Windows: use PowerShell or cmd for `pnpm`/`node` commands. Use WSL2 or Git
+  Bash only if `wsl --status` or `bash --version` succeeds and the user already
+  works there. Copy-paste commands: `references/windows.md`.
 
 ## Troubleshooting
 

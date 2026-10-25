@@ -55,6 +55,43 @@ reload.
 The plugin registers skills from `skills/manifest.json` and injects a compact
 inventory into each session. No agents are installed as files.
 
+### Claude Code
+
+The same directory is a Claude Code plugin via `.claude-plugin/plugin.json`:
+
+```bash
+pnpm install
+claude plugin validate .
+claude --plugin-dir .
+```
+
+Claude Code prefixes plugin skills automatically (`/my-local-llm-tools:ocr`).
+Skills use the standard `${CLAUDE_PLUGIN_ROOT}` reference; Claude Code
+substitutes it natively and the OpenCode plugin renders it with the real path
+when it registers each skill. The same files work in both hosts.
+
+### Windows
+
+Use PowerShell (`pwsh` or `powershell`) or `cmd.exe` for `pnpm`, `node`, and
+`claude`:
+
+```powershell
+pnpm install
+pnpm harness:install
+claude plugin validate .
+claude --plugin-dir .
+```
+
+Use WSL2 or Git Bash **only when installed and configured**:
+
+```powershell
+wsl --status        # must succeed
+Get-Command bash    # Git Bash
+bash --version
+```
+
+Copy-paste Windows examples: `skills/setup/references/windows.md`.
+
 ### Coexistence with `my-utils-harness`
 
 `my-utils-harness` (if installed) also registers `autoskills`,
@@ -154,8 +191,20 @@ pnpm cli comfy status
 pnpm cli comfy run ltxv_t2v_8gb.json 20.seed=12345
 ```
 
-Each `SKILL.md` invokes the CLI at `$SKILL_DIR/../../src/cli.mjs`. The skill
-loader reports `$SKILL_DIR`; from the repo root, `pnpm cli` is equivalent.
+PowerShell equivalent for the OpenAI-compatible request:
+
+```powershell
+$env:OPENAI_BASE_URL = "http://127.0.0.1:11434/v1"
+$env:OPENAI_API_KEY = "ollama"
+$body = '{"model":"minicpm-v4.6:latest","messages":[{"role":"user","content":"Hola"}]}'
+Invoke-RestMethod -Method Post -Uri "$env:OPENAI_BASE_URL/chat/completions" `
+  -Headers @{ Authorization = "Bearer $env:OPENAI_API_KEY" } `
+  -ContentType "application/json" -Body $body
+```
+
+Each `SKILL.md` invokes the CLI through `${CLAUDE_PLUGIN_ROOT}/src/cli.mjs`.
+Claude Code substitutes the placeholder; the OpenCode plugin renders it at
+registration. From the repo root, `pnpm cli` is equivalent.
 
 ## Layout
 

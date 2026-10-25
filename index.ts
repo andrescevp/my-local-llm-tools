@@ -40,6 +40,14 @@ interface LoadedSkill extends SkillMeta {
   content: string
 }
 
+function renderSkillContent(content: string, root: string, skillDir: string): string {
+  const pluginRoot = root.replaceAll("\\", "/")
+  const directory = skillDir.replaceAll("\\", "/")
+  return content
+    .replaceAll("${CLAUDE_PLUGIN_ROOT}", pluginRoot)
+    .replaceAll("${CLAUDE_SKILL_DIR}", directory)
+}
+
 function loadSkills(root: string): LoadedSkill[] {
   let manifest: Manifest | undefined
   try {
@@ -50,9 +58,11 @@ function loadSkills(root: string): LoadedSkill[] {
   }
   const entries: LoadedSkill[] = []
   for (const meta of manifest.skills) {
-    const path = join(root, "skills", meta.id, "SKILL.md")
+    const skillDir = join(root, "skills", meta.id)
+    const path = join(skillDir, "SKILL.md")
     try {
-      entries.push({ ...meta, path, content: readFileSync(path, "utf8") })
+      const content = renderSkillContent(readFileSync(path, "utf8"), root, skillDir)
+      entries.push({ ...meta, path, content })
     } catch {
       console.warn(`[${HARNESS_ID}] missing SKILL.md for '${meta.id}'`)
     }
@@ -76,7 +86,7 @@ function contextBlock(skills: LoadedSkill[], root: string): string {
   lines.push(
     "",
     "Use the skill tool to load full instructions. For bundled CLI commands,",
-    'set SKILL_DIR to the skill folder reported by the skill loader and run "$SKILL_DIR/../../src/cli.mjs".',
+    `run "node ${join(root, "src", "cli.mjs")}" (or "pnpm cli" from the repository root).`,
     "Never delete models, pull multi-GB files, or kill local servers without explicit user approval.",
   )
   return lines.join("\n")

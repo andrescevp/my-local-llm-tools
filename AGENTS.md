@@ -85,8 +85,10 @@ per-skill script.
 - Each skill has YAML frontmatter with `name` (equal to the directory) and a
   trigger-oriented `description` of at most 500 characters.
 - Bundled behavior is invoked through the CLI, e.g.
-  `node "$SKILL_DIR/../../src/cli.mjs" skill validate <path>`.
-- Docs use `$SKILL_DIR` and assume the skill loader exposes the folder location.
+  `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate <path>`.
+- Skills use the standard `${CLAUDE_PLUGIN_ROOT}` reference; Claude Code
+  substitutes it and the OpenCode plugin renders it at registration.
+  `${CLAUDE_SKILL_DIR}` is also supported for skill-local files.
 - `openai-api-usage` is documentation-only: it must not add runtime code or
   duplicate endpoints that local servers do not implement.
 - Local endpoints: Ollama `127.0.0.1:11434`, ComfyUI `127.0.0.1:8188`,

@@ -10,7 +10,7 @@ description: >
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" speak ...`.
+> Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak ...`.
 
 Always speak in Spanish. If the input text is not in Spanish, translate it before speaking.
 
@@ -25,10 +25,16 @@ fails, run `setup`.
 
 ```bash
 # Speak a phrase
-node "$SKILL_DIR/../../src/cli.mjs" speak "Hola, soy Laura"
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak "Hola, soy Laura"
 
 # Speak from stdin (long text)
-cat /tmp/response.$(uuid).txt | node "$SKILL_DIR/../../src/cli.mjs" speak -q
+cat /tmp/response.txt | node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak -q
+```
+
+Windows PowerShell, from the repository root:
+
+```powershell
+Get-Content .\response.txt | pnpm cli speak -q
 ```
 
 > For responses that may be long (paragraphs, multi-line outputs), ALWAYS use the CLI with stdin piping. It handles arbitrary text lengths with no timeout, so, when speaking a response, do NOT set a short timeout. Piper can take 10-30+ seconds for long text. Use a timeout of at least 120000ms (2 minutes) in the bash tool when invoking piper or the speak CLI for long text.

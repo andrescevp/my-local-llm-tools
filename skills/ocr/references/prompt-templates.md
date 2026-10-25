@@ -4,7 +4,7 @@
 
 # OCR Prompt Templates
 
-Use these prompts with `node "$SKILL_DIR/../../src/cli.mjs" ocr --prompt "..."`.
+Use these prompts with `pnpm cli ocr --prompt "..."`.
 
 ## 1) Generic document OCR
 

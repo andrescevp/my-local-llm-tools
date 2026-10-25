@@ -9,8 +9,8 @@ description: >
   general analysis; when the image is a document or contains tables, hand off to
   ocr for full detail.
 license: MIT
-compatibility: opencode, copilot, antigravity
-allowed-tools: bash, read
+compatibility: opencode, claude, copilot, antigravity
+allowed-tools: Bash, Read
 metadata:
   audience: developers
   workflow: multimodal-analysis
@@ -18,7 +18,7 @@ metadata:
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" image ...`.
+> Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image ...`.
 
 # Image Analysis with Local Ollama
 
@@ -65,16 +65,16 @@ Progress:
 ### 1) Verify readiness
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" doctor --skill image-analysis
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" doctor --skill image-analysis
 ```
 
-If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`; see the `setup`
+If it fails, run `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" setup`; see the `setup`
 skill for install options.
 
 ### 2) Analyze an image (minicpm default)
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image \
   --image "/abs/path/image.png"
 ```
 
@@ -83,14 +83,14 @@ node "$SKILL_DIR/../../src/cli.mjs" image \
 For a document, report, or table, use the `ocr` skill/CLI as the primary path:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" ocr --image "/abs/path/page.png"
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr --image "/abs/path/page.png"
 ```
 
 `image` also has an OCR mode for convenience; it falls back to minicpm if the
 model lacks vision support:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image \
   --image "/abs/path/page.png" --model "MedAIBase/PaddleOCR-VL:0.9b" --mode ocr
 ```
 
@@ -100,7 +100,7 @@ CLI retries with minicpm-v4.6 and warns on stderr — extraction still succeeds.
 ### 4) Compare two images
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image \
   --image "/abs/a.png" --image "/abs/b.png" \
   --prompt "Compare these two images: shared elements, differences, which is better and why."
 ```
@@ -108,7 +108,7 @@ node "$SKILL_DIR/../../src/cli.mjs" image \
 ### 5) Structured output
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image \
   --image "/abs/chart.png" --format json \
   --prompt "Return ONLY a JSON object with chart values, no markdown fences."
 ```
@@ -129,7 +129,7 @@ node "$SKILL_DIR/../../src/cli.mjs" image \
 
 ## CLI
 
-- `node "$SKILL_DIR/../../src/cli.mjs" image --image PATH ...`
+- `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" image --image PATH ...`
   - Local Ollama `/api/generate` with base64-encoded images
   - Default model `minicpm-v4.6:latest`; `--mode auto|analyze|ocr`
   - One or many `--image` flags; `--format markdown|json|raw`; `--timeout`

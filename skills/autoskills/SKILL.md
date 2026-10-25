@@ -122,7 +122,7 @@ For each approved skill:
 4. Validate the result with the shared validator:
 
    ```bash
-   node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
+   node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
    ```
 
    `src/cli.mjs` is the repository's single CLI; `create-skill` defines the rules it enforces.
@@ -139,7 +139,7 @@ Created N skills for <project-name>:
 ✓ test-patterns — .agents/skills/test-patterns/SKILL.md (validated)
 
 Run the shared validator on any skill to re-check:
-  node "$SKILL_DIR/../../src/cli.mjs" skill validate .agents/skills/deploy-staging/SKILL.md
+  node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate .agents/skills/deploy-staging/SKILL.md
 ```
 
 ## Reference

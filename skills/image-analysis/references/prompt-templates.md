@@ -9,7 +9,7 @@ the generic `DEFAULT_ANALYZE_PROMPT` is not specific enough.
 
 Always use the image path and prompt as:
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+pnpm cli image \
   --image "/abs/path/image.png" --prompt "<TEMPLATE>"
 ```
 

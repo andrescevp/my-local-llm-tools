@@ -8,8 +8,8 @@ description: >
   frames", or "describe the scene" — hand off to ocr for documents/tables and
   image-analysis for single images.
 license: MIT
-compatibility: opencode, copilot, antigravity
-allowed-tools: bash, read
+compatibility: opencode, claude, copilot, antigravity
+allowed-tools: Bash, Read
 metadata:
   audience: developers
   workflow: multimodal-analysis
@@ -45,7 +45,7 @@ manifest and probes Ollama/ffmpeg; if it fails, run `setup`.
 ## CLI
 
 ```bash
-cli() { node "$SKILL_DIR/../../src/cli.mjs" video "$@"; }
+cli() { node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" video "$@"; }
 
 cli --input "/abs/path/clip.mp4"                      # 6 frames, markdown
 cli --input "/abs/path/clip.mp4" --frames 12 --summary
@@ -79,10 +79,10 @@ Progress:
 ### 1) Verify readiness
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" doctor --skill video-analysis
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" doctor --skill video-analysis
 ```
 
-If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`.
+If it fails, run `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" setup`.
 
 ### 2) Choose the prompt
 

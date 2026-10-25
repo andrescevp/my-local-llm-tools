@@ -40,6 +40,8 @@ test("plugin registers every skill with path and content", async () => {
     assert.ok(skill.path.endsWith("SKILL.md"), `${skill.id} path`)
     assert.ok(existsSync(skill.path), `${skill.id} file exists`)
     assert.ok(skill.content.length > 0, `${skill.id} content`)
+    assert.ok(!skill.content.includes("${CLAUDE_PLUGIN_ROOT}"), `${skill.id} plugin root rendered`)
+    assert.ok(!skill.content.includes("${CLAUDE_SKILL_DIR}"), `${skill.id} skill dir rendered`)
   }
 })
 

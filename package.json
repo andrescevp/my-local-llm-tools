@@ -20,7 +20,8 @@
     "deps": "depcruise src scripts tests index.ts",
     "dup": "jscpd src scripts tests",
     "security": "osv-scanner scan source -r . && semgrep --config .semgrep.yml --error .",
-    "qa": "pnpm lint && pnpm typecheck && pnpm deps && pnpm dup && pnpm test && pnpm validate && pnpm security"
+    "qa": "pnpm lint && pnpm typecheck && pnpm deps && pnpm dup && pnpm test && pnpm validate && pnpm security",
+    "claude:validate": "claude plugin validate ."
   },
   "dependencies": {
     "@opencode/plugin": "2.1.3",

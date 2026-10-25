@@ -9,8 +9,8 @@ description: >
   MedAIBase/PaddleOCR-VL:0.9b on local Ollama, with Tesseract as complementary
   evidence for correction passes.
 license: MIT
-compatibility: opencode, copilot, antigravity
-allowed-tools: bash, read
+compatibility: opencode, claude, copilot, antigravity
+allowed-tools: Bash, Read
 metadata:
   audience: developers
   workflow: multimodal-extraction
@@ -18,7 +18,7 @@ metadata:
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" ocr ...`.
+> Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr ...`.
 
 # OCR with Local Ollama (PaddleOCR-VL)
 
@@ -66,16 +66,16 @@ Progress:
 ### 1) Verify readiness
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" doctor --skill ocr
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" doctor --skill ocr
 ```
 
-If it fails, run `node "$SKILL_DIR/../../src/cli.mjs" setup`; Tesseract is
+If it fails, run `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" setup`; Tesseract is
 optional and only affects correction passes.
 
 ### 2) Run OCR extraction
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" ocr \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr \
   --image "/absolute/path/to/image.png" \
   --prompt "Extract all visible text and preserve structure in markdown." \
   --format markdown
@@ -84,7 +84,7 @@ node "$SKILL_DIR/../../src/cli.mjs" ocr \
 ### 3) Multi-image extraction (batch)
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" ocr \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr \
   --image "/abs/page-1.png" \
   --image "/abs/page-2.png" \
   --prompt "Extract text from all pages and keep page boundaries."
@@ -97,7 +97,7 @@ feedback. Tesseract is enabled automatically and its raw text is added to the
 prompt as evidence:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" ocr \
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr \
   --image "/abs/page.png" \
   --previous /tmp/extraction.md \
   --feedback "Falta la fila 3; el total correcto es 1.240" \
@@ -149,7 +149,7 @@ Use these references only when needed:
 
 ## CLI
 
-- `node "$SKILL_DIR/../../src/cli.mjs" ocr --image PATH ...`
+- `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" ocr --image PATH ...`
   - Calls local Ollama `/api/generate` with base64-encoded images
   - Defaults to model `MedAIBase/PaddleOCR-VL:0.9b`
   - Supports one or many `--image` flags

@@ -112,7 +112,7 @@ Description rules (critical for triggering):
 4. **Write the SKILL.md body** — start directly with core rules/workflow; no `What I do` / `When to use me` headers. Split over-200-line detail into `references/`.
 5. **Show the draft and confirm** — present the full skill; adjust on feedback.
 6. **Write the file** — create the directory and write `SKILL.md` at the agreed path (ask if ambiguous).
-7. **Verify** — run the checklist below and `node "$SKILL_DIR/../../src/cli.mjs" skill validate <path>`.
+7. **Verify** — run the checklist below and `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate <path>`.
 
 ## Update workflow
 
@@ -147,7 +147,7 @@ per-skill scripts. Run it from the repo root with `pnpm cli …` or directly:
   evaluation cases with/without the skill.
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" skill validate skills/<name>/SKILL.md
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate skills/<name>/SKILL.md
 ```
 
 ## Validation checklist

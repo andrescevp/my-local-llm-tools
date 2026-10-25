@@ -16,7 +16,7 @@ ERROR: Cannot reach Ollama at http://127.0.0.1:11434
 Run the harness diagnostic:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" doctor --skill image-analysis
+pnpm cli doctor --skill image-analysis
 ```
 
 If Ollama is down, start it or tell `setup`/`doctor` the URL with
@@ -81,7 +81,7 @@ If the upstream model is fixed, refresh it via `setup`.
 Default is 120 s. Increase per call:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" image \
+pnpm cli image \
   --image "/abs/x.png" --timeout 300
 ```
 

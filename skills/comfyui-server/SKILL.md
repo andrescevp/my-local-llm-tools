@@ -12,12 +12,12 @@ description: >
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
-> Run the CLI as `node "$SKILL_DIR/../../src/cli.mjs" comfy ...`.
+> Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" comfy ...`.
 
 # comfyui-server
 
 Consume the **shared local ComfyUI server**. Before generating, check readiness
-with `node "$SKILL_DIR/../../src/cli.mjs" doctor --skill comfyui-server`.
+with `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" doctor --skill comfyui-server`.
 `setup` regenerates `instance_facts.json` in the per-user config directory with
 the exact models, nodes, workflows, versions, and device state.
 
@@ -40,7 +40,7 @@ and local generation needs ≥8 GB VRAM).
 ## Quick start
 
 ```bash
-comfy() { node "$SKILL_DIR/../../src/cli.mjs" comfy "$@"; }
+comfy() { node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" comfy "$@"; }
 
 comfy status                 # is it up? versions? queue?
 comfy workflows              # what can I generate today?

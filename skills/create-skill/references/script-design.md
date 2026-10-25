@@ -58,5 +58,5 @@ List the CLI actions in the main skill file:
 Run with the repo-root CLI:
 
 ```bash
-node "$SKILL_DIR/../../src/cli.mjs" skill validate skills/<name>/SKILL.md
+pnpm cli skill validate skills/<name>/SKILL.md
 ```
