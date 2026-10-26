@@ -5,7 +5,7 @@ import { join } from "node:path"
 
 import { binaryVersion, commandPath, hasCommand, runCommand } from "../../lib/exec.mjs"
 import { probeLibreOffice, resolveLibreOffice } from "../../lib/libreoffice.mjs"
-import { voiceModelPath } from "../../lib/piper.mjs"
+import { voiceStatus } from "../../lib/piper.mjs"
 import { scanModels } from "./facts.mjs"
 import { evaluateFeatures } from "./features.mjs"
 
@@ -13,7 +13,6 @@ export const PLUGIN_NAME = "my-local-llm-tools"
 export const OLLAMA_MODELS = ["minicpm-v4.6:latest", "MedAIBase/PaddleOCR-VL:0.9b"]
 export const DEFAULT_OLLAMA = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434"
 export const DEFAULT_COMFY = process.env.COMFY_BASE ?? "http://127.0.0.1:8188"
-export const VOICE_MODEL = voiceModelPath()
 
 async function fetchJson(url, timeout = 2500) {
   const response = await fetch(url, { signal: AbortSignal.timeout(timeout) })
@@ -58,6 +57,7 @@ function detectU2net() {
 export function detectTools() {
   const tesseract = binaryVersion("tesseract")
   const piper = commandPath("piper")
+  const voice = voiceStatus()
   const office = resolveLibreOffice()
   const libreoffice = office.ok
     ? { ...probeLibreOffice(office.path), source: office.source }
@@ -70,7 +70,7 @@ export function detectTools() {
     ffmpeg: binaryVersion("ffmpeg", ["-version"]),
     ffprobe: binaryVersion("ffprobe", ["-version"]),
     piper: { ok: Boolean(piper), version: piper ? "found" : "", path: piper },
-    voice_model: { ok: existsSync(VOICE_MODEL), path: VOICE_MODEL },
+    voice_model: { ok: voice.exists, path: voice.path },
     libreoffice,
     gimp: binaryVersion("gimp", ["--version"]),
     inkscape: binaryVersion("inkscape", ["--version"]),

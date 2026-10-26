@@ -25,7 +25,7 @@ const SUMMARIES: Record<string, string> = {
   "openai-api-usage": "call OpenAI and OpenAI-compatible APIs (llama.cpp, Ollama, vLLM)",
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
-  speak: "text-to-speech in Spanish via local piper-tts",
+  speak: "text-to-speech in the system language via local piper-tts",
   "comfyui-server": "generate video/image/music/voice with local ComfyUI",
   "convert-files": "convert documents with local LibreOffice",
   "autoedit-with-gimp": "resize, convert, optimize, and edit images with GIMP",

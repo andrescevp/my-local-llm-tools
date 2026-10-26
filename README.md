@@ -21,7 +21,7 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
-| `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
+| `speak` | Speak text aloud in the system language (English fallback) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
 | `convert-files` | Convert documents with LibreOffice | LibreOffice |
 | `autoedit-with-gimp` | Resize, convert, optimize, and edit images; custom macros | GIMP |
@@ -164,7 +164,7 @@ is generated next to it and is not tracked in git.
 | Ollama | `0.40.10`, systemd `ollama.service`, `127.0.0.1:11434` |
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
 | ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
-| Piper | `~/.local/bin/piper` + `es_MX-laura-high.onnx` |
+| Piper | `~/.local/bin/piper` + system-language voice in `~/.mllt/piper-voices` |
 | Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
 | LibreOffice | `/usr/sbin/soffice`; converts documents |
 | GIMP | `3.2.6`; batch image editing and macros |
@@ -179,7 +179,7 @@ uses GIMP's own embedded Python-Fu interpreter, not a project Python script.
 ```bash
 # Unified CLI
 pnpm cli skill validate skills/create-skill/SKILL.md
-pnpm cli speak "Hola, soy Laura"
+pnpm cli speak "Hello, this is the system voice"
 
 # OpenAI-compatible API (OpenAI, Ollama, llama.cpp, vLLM)
 export OPENAI_BASE_URL="http://127.0.0.1:11434/v1"

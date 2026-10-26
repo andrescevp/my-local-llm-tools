@@ -118,3 +118,28 @@ test("planInstall lists missing tools and models", () => {
   assert.ok(ids.includes("comfyui"))
   assert.match(formatPlan(actions), /Tesseract/)
 })
+
+test("planInstall downloads the system-language voice when piper exists", () => {
+  const manifest = {
+    tools: {
+      pnpm: { ok: true },
+      docker: { ok: true },
+      tesseract: { ok: true },
+      ffmpeg: { ok: true },
+      ffprobe: { ok: true },
+      piper: { ok: true },
+      voice_model: { ok: false },
+    },
+    ollama: {
+      reachable: true,
+      host: "http://127.0.0.1:11434",
+      models: { available: [], required: [], missing: [] },
+    },
+    comfyui: { reachable: true, host: "http://127.0.0.1:8188", vram_gb: 8, gpu_ok: true },
+  }
+  const actions = planInstall(manifest, "/repo", "linux")
+  const voice = actions.find((action) => action.id === "piper-voice")
+  assert.ok(voice)
+  assert.equal(voice.kind, "command")
+  assert.deepEqual(voice.args.slice(-2), ["voice", "ensure"])
+})

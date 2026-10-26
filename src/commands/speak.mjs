@@ -3,14 +3,14 @@ import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from "nod
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { hasCommand } from "../lib/exec.mjs"
-import { voiceModelPath } from "../lib/piper.mjs"
+import { voiceStatus } from "../lib/piper.mjs"
 
-const MODEL = voiceModelPath()
 const PLAY_WAV = join(tmpdir(), "speak_output.wav")
 
 const USAGE = `Usage: node src/cli.mjs speak [options] [text]
 
-Convert text to speech using piper-tts (Laura es_MX) and play audio.
+Convert text to speech using piper-tts in the system language
+(English fallback) and play audio.
 
 Options:
   -f FILE   Read text from file
@@ -135,11 +135,18 @@ export function speak(argv) {
     return 0
   }
 
-  if (!existsSync(MODEL)) {
-    process.stderr.write(`ERROR: voice model not found at ${MODEL}\n`)
-    process.stderr.write("Run 'node src/cli.mjs setup' to see what is missing.\n")
+  const voice = voiceStatus()
+  if (!voice.exists) {
+    process.stderr.write(
+      `ERROR: no piper voice for ${voice.locale} (${voice.voice}) at ${voice.path}\n`,
+    )
+    process.stderr.write(
+      "Run 'node src/cli.mjs voice ensure' or 'node src/cli.mjs setup --install'.\n",
+    )
     return 1
   }
+
+  const MODEL = voice.path
 
   const piper =
     (process.env.PIPER_BIN && existsSync(process.env.PIPER_BIN) ? process.env.PIPER_BIN : "") ||

@@ -117,7 +117,7 @@ export async function doctor(argv) {
     line(
       "piper",
       manifest.tools.piper.ok && manifest.tools.voice_model.ok,
-      manifest.tools.piper.version || "missing",
+      `${manifest.tools.piper.version || "missing"}${manifest.tools.voice_model.ok ? "" : " (voice missing)"}`,
     )
     line(
       "libreoffice",

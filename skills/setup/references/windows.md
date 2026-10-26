@@ -46,7 +46,8 @@ pnpm cli image --image C:\images\shot.png
 pnpm cli ocr --image C:\images\page.png
 pnpm cli video --input C:\videos\clip.mp4 --frames 12 --summary
 pnpm cli comfy status
-pnpm cli speak "Hola, soy Laura"
+pnpm cli speak "Hello, this is the system voice"
+pnpm cli voice ensure
 ```
 
 Paths with spaces must be quoted:

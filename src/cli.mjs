@@ -17,6 +17,7 @@ import { skill } from "./commands/skill.mjs"
 import { speak } from "./commands/speak.mjs"
 import { validate } from "./commands/validate.mjs"
 import { video } from "./commands/video.mjs"
+import { voice } from "./commands/voice.mjs"
 
 const COMMANDS = {
   comfy,
@@ -34,6 +35,7 @@ const COMMANDS = {
   speak,
   validate,
   video,
+  voice,
 }
 
 const HELP = `Usage: node src/cli.mjs <command> [args...]
@@ -47,7 +49,7 @@ Commands:
   image --image PATH [options]                      analyze images locally
   ocr --image PATH [options]                        extract text from images
   video --input PATH [options]                      analyze a local video
-  speak [options] [text]                            Spanish TTS via piper
+  speak [options] [text]                            system-language TTS via piper
   setup [options]                                   detect deps + write machine manifest
   doctor [options]                                  diagnose the harness (read-only)
   install [--dry-run]                               link the plugin into OpenCode
@@ -57,6 +59,7 @@ Commands:
   inkscape <command> --input FILE                   operate on SVG/vector files
   presentation --input JSON --output FILE           generate PPTX/HTML/PDF
   remove-bg --input FILE --output FILE              remove an image background
+  voice ensure|status [--lang LOCALE]               manage piper voices
 `
 
 async function main(argv) {

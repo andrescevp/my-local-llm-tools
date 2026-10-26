@@ -2,6 +2,7 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 
 import { runCommand } from "../../lib/exec.mjs"
+import { voiceStatus } from "../../lib/piper.mjs"
 
 const OLLAMA_URL = "https://ollama.com/download"
 const COMFY_URL = "https://comfy.org/download"
@@ -137,13 +138,23 @@ export function planInstall(manifest, root, platform = process.platform) {
     }
   }
 
-  if (!tools.piper.ok || !tools.voice_model.ok) {
+  if (!tools.piper.ok) {
     add({
       id: "piper",
       kind: "manual",
-      description: "Install piper-tts and the Laura es_MX voice model",
-      detail: "Set PIPER_BIN/PIPER_VOICE if they live outside PATH/~/.local/share",
+      description: "Install piper-tts",
+      detail:
+        "Set PIPER_BIN if it lives outside PATH; setup can download the system-language voice afterwards",
       url: PIPER_URL,
+    })
+  } else if (!tools.voice_model.ok) {
+    const voice = voiceStatus()
+    add({
+      id: "piper-voice",
+      kind: "command",
+      description: `Download the piper voice for ${voice.locale} (${voice.voice}${voice.fallback ? ", English fallback" : ""})`,
+      command: process.execPath,
+      args: [join(root, "src", "cli.mjs"), "voice", "ensure"],
     })
   }
 

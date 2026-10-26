@@ -3,29 +3,31 @@ name: speak
 description: >
   Use this skill when opencode needs to speak text aloud, say something out loud,
   read output aloud, announce results verbally, or when the user says "speak", "say", "read aloud",
-  "decir", "hablar", or mentions voice/tts/audio output. Converts text to speech using piper-tts
-  with the Laura (es_MX) voice model. Always speaks in Spanish regardless of conversation language;
-  automatically translates non-Spanish text before speaking.
+  "decir", "hablar", or mentions voice/tts/audio output.
 ---
 
 > **Bundled files live in this skill's directory.** `SKILL_DIR` is the absolute
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
 > Run the CLI as `node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak ...`.
 
-Always speak in Spanish. If the input text is not in Spanish, translate it before speaking.
+Always speak in system language. If the input text is not in system language, translate it before speaking.
 
 ## Requirements
 
-Check `doctor --skill speak --cached` before running (piper + Laura voice model). If it
-fails, run `setup`.
+Check `doctor --skill speak --cached` before running (piper + voice model for
+the system language, with English fallback). If it fails, run `setup` or
+`node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" voice ensure`.
 
 ## Usage
 
 > CLI location: `src/cli.mjs` at the repository root.
 
 ```bash
-# Speak a phrase
-node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak "Hola, soy Laura"
+# Speak a phrase in the system language
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak "Hello, this is the system voice"
+
+# Download/refresh the voice for the system language
+node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" voice ensure
 
 # Speak from stdin (long text)
 cat /tmp/response.txt | node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" speak -q

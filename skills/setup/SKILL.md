@@ -82,7 +82,7 @@ ID when invoking the skill tool.
 | `ocr` | Ollama + `MedAIBase/PaddleOCR-VL:0.9b` | Tesseract |
 | `video-analysis` | Ollama + `minicpm-v4.6:latest`, ffmpeg, ffprobe | — |
 | `comfyui-server` | ComfyUI reachable | 8 GB VRAM for local generation |
-| `speak` | piper + Laura `es_MX` voice model | — |
+| `speak` | piper + system-language voice model | English fallback |
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `create-skill`, `create-agent`, `autoskills` | Node only | — |
 | `convert-files` | LibreOffice | — |
@@ -113,8 +113,10 @@ managers as root):
   UB Mannheim installer.
 - **ffmpeg/ffprobe** — required by `video-analysis`; install from
   <https://ffmpeg.org/download.html> or the platform package manager.
-- **piper + voice** — <https://github.com/rhasspy/piper/releases>; set
-  `PIPER_BIN`/`PIPER_VOICE` if installed outside PATH.
+- **piper + voice** — <https://github.com/rhasspy/piper/releases>; setup
+  downloads the voice for the system language into `~/.mllt/piper-voices`, or
+  English when the language is unavailable. Set `PIPER_BIN`/`PIPER_VOICE` for
+  custom installs; `voice ensure` refreshes the voice.
 - **LibreOffice** — system package first; portable fallback under
   `~/.mllt/libreoffice` (macOS: `LibreOffice.app`).
 - **GIMP** — install from the OS package manager; used by
