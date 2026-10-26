@@ -84,7 +84,7 @@ ID when invoking the skill tool.
 | `comfyui-server` | ComfyUI reachable | 8 GB VRAM for local generation |
 | `speak` | piper + system-language voice model | English fallback |
 | `openai-api-usage` | — | OpenAI key or compatible server |
-| `create-skill`, `create-agent`, `autoskills` | Node only | — |
+| `ccreate-skill`, `ccreate-agent`, `autoskills` | Node only | — |
 | `convert-files` | LibreOffice | — |
 | `autoedit-with-gimp` | GIMP | — |
 | `autoedit-with-inkscape` | Inkscape | Potrace for vectorize |

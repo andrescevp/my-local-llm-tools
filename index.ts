@@ -19,9 +19,9 @@ const CONTEXT_MARKER = "## my-local-llm-tools"
 const SUMMARIES: Record<string, string> = {
   "image-analysis": "describe/compare images with local Ollama vision models",
   ocr: "extract text and structure from images/documents locally",
-  autoskills: "analyze a project and propose skills, authored via create-skill",
-  "create-skill": "create, update, and evaluate agent skills",
-  "create-agent": "create, optimize, and validate custom agents",
+  autoskills: "analyze a project and propose skills, authored via ccreate-skill",
+  "ccreate-skill": "create, update, and evaluate agent skills",
+  "ccreate-agent": "create, optimize, and validate custom agents",
   "openai-api-usage": "call OpenAI and OpenAI-compatible APIs (llama.cpp, Ollama, vLLM)",
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",

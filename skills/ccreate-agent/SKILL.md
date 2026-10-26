@@ -1,5 +1,5 @@
 ---
-name: create-agent
+name: ccreate-agent
 description: >
   Use this skill when creating, optimizing, or validating custom agents —
   write agent definition files with valid frontmatter, clear tool boundaries,

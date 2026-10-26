@@ -41,7 +41,7 @@ Bash, WSL, or Git Bash.
 ## CLI examples (PowerShell)
 
 ```powershell
-pnpm cli skill validate skills/create-skill/SKILL.md
+pnpm cli skill validate skills/ccreate-skill/SKILL.md
 pnpm cli image --image C:\images\shot.png
 pnpm cli ocr --image C:\images\page.png
 pnpm cli video --input C:\videos\clip.mp4 --frames 12 --summary

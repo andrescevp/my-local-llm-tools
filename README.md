@@ -15,9 +15,9 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 |---|---|---|
 | `image-analysis` | Describe, compare, and inspect images with a local vision model | Ollama + `minicpm-v4.6` |
 | `ocr` | Extract text/tables/structure from documents; Tesseract-assisted corrections | Ollama + `PaddleOCR-VL`, optional Tesseract |
-| `autoskills` | Analyze a project, propose skills, author them via `create-skill` | local FS + Node |
-| `create-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
-| `create-agent` | Create, optimize, and validate agent profiles | local FS |
+| `autoskills` | Analyze a project, propose skills, author them via `ccreate-skill` | local FS + Node |
+| `ccreate-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
+| `ccreate-agent` | Create, optimize, and validate agent profiles | local FS |
 | `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
@@ -32,7 +32,7 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 Skill tooling lives in one CLI: `src/cli.mjs`. Registered skill IDs are
 namespaced as `my-local-llm-tools:<skill>` (for example
 `my-local-llm-tools:ocr`). `autoskills` delegates naming, frontmatter,
-description limits, and validation to `create-skill`.
+description limits, and validation to `ccreate-skill`.
 
 ## Install (OpenCode V2)
 
@@ -178,7 +178,7 @@ uses GIMP's own embedded Python-Fu interpreter, not a project Python script.
 
 ```bash
 # Unified CLI
-pnpm cli skill validate skills/create-skill/SKILL.md
+pnpm cli skill validate skills/ccreate-skill/SKILL.md
 pnpm cli speak "Hello, this is the system voice"
 
 # OpenAI-compatible API (OpenAI, Ollama, llama.cpp, vLLM)
@@ -244,8 +244,8 @@ registration. From the repo root, `pnpm cli` is equivalent.
 │   ├── autoedit-with-inkscape/
 │   ├── comfyui-server/
 │   ├── convert-files/
-│   ├── create-agent/
-│   ├── create-skill/
+│   ├── ccreate-agent/
+│   ├── ccreate-skill/
 │   ├── image-analysis/
 │   ├── image-background-removal/
 │   ├── ocr/
@@ -265,7 +265,7 @@ registration. From the repo root, `pnpm cli` is equivalent.
   or sync step from another checkout.
 - Skills are discovered from `skills/*/SKILL.md` at plugin load; adding,
   renaming, or removing a directory is enough (no manifest step).
-- For a new skill, load `create-skill` and follow its workflow.
+- For a new skill, load `ccreate-skill` and follow its workflow.
 - New executable behavior goes in `src/commands/<domain>.mjs`, wired through
   `src/cli.mjs`; do not add per-skill scripts.
 - Limits enforced by the CLI validator: frontmatter description 1-500

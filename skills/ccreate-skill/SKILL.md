@@ -1,5 +1,5 @@
 ---
-name: create-skill
+name: ccreate-skill
 description: >
   Use this skill when creating, updating, or evaluating agent skills — interview
   the user first to extract maximum information with minimal words, then write
@@ -10,7 +10,7 @@ description: >
   for X" without mentioning skill creation explicitly.
 ---
 
-# create-skill
+# ccreate-skill
 
 Create, optimize, and evaluate agent skills. Convention: the frontmatter `description` compresses "What I do" + "When to use me"; the body never repeats them.
 

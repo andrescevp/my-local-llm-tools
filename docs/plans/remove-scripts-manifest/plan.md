@@ -515,7 +515,7 @@ legacy symlink, refuse to replace a non-symlink, create the symlink/junction.
   and generic skill-authoring examples may retain `scripts/`.
 - **Acceptance Criteria:** No active doc tells users to run a deleted command or
   edit a deleted file.
-- **Cautionary Points:** `skills/create-skill/SKILL.md` uses `scripts/` as a
+- **Cautionary Points:** `skills/ccreate-skill/SKILL.md` uses `scripts/` as a
   generic skill-structure example; keep it unless it explicitly describes this
   repository's root.
 - **Implementation Suggestions:** Update the layout tree to show `src/` modules

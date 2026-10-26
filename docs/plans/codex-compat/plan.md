@@ -228,7 +228,7 @@ resolves its CLI through `MLLT_*`.
 - **Files:** `skills/image-analysis/SKILL.md`, `skills/ocr/SKILL.md`,
   `skills/video-analysis/SKILL.md`, `skills/comfyui-server/SKILL.md`,
   `skills/speak/SKILL.md`, `skills/autoskills/SKILL.md`,
-  `skills/create-skill/SKILL.md`, `skills/setup/SKILL.md`,
+  `skills/ccreate-skill/SKILL.md`, `skills/setup/SKILL.md`,
   `src/lib/render.mjs`, `index.ts`, `tests/path_contract.test.mjs` (new),
   `AGENTS.md`, `README.md`.
 - **Do not add hooks** and do not create per-host builds.
@@ -332,10 +332,10 @@ host.
 - **Dependency:** 0.1 (D3).
 - **Requirements:** CX-06, XH-01.
 
-### 2.4 Add Codex subagent guidance to `create-agent`
+### 2.4 Add Codex subagent guidance to `ccreate-agent`
 
-- **Files:** `skills/create-agent/SKILL.md`,
-  `skills/create-agent/references/codex-subagents.md` (new).
+- **Files:** `skills/ccreate-agent/SKILL.md`,
+  `skills/ccreate-agent/references/codex-subagents.md` (new).
 - **Content:**
   - Host routing: OpenCode/Claude Markdown profiles vs Codex TOML.
   - Codex paths: `~/.codex/agents/` (personal), `.codex/agents/` (project).
@@ -343,9 +343,9 @@ host.
     `developer_instructions`, and optional `model` / `model_reasoning_effort`.
   - Validation guidance: confirm the agent file loads with `codex` and does not
     duplicate an existing name.
-- **Acceptance:** `create-agent` routes by host; the reference exists and is
+- **Acceptance:** `ccreate-agent` routes by host; the reference exists and is
   linked; `SKILL.md` stays at most 250 lines.
-- **Validation:** `pnpm cli skill validate skills/create-agent/SKILL.md`.
+- **Validation:** `pnpm cli skill validate skills/ccreate-agent/SKILL.md`.
 - **Requirements:** CX-07.
 
 ### 2.5 Teach `autoskills` about Codex artifacts
@@ -458,7 +458,7 @@ understand Codex.
     forms);
   - every script-using skill has the path contract;
   - no `hooks/` files or hook references;
-  - `create-agent` Codex reference exists;
+  - `ccreate-agent` Codex reference exists;
   - no host-specific wording in shared instructions.
 - **Acceptance:** tests fail before the implementation and pass after; they do
   not require Codex, network, or models.
@@ -589,7 +589,7 @@ tests. No database, no migrations, no destructive commands.
 - [ ] No hooks and no generated per-host builds exist.
 - [ ] The Codex catalog budget limitation and namespace strategy are
       documented; no description rewrite is required.
-- [ ] `create-agent` and `autoskills` understand Codex.
+- [ ] `ccreate-agent` and `autoskills` understand Codex.
 - [ ] Codex namespacing verified as `<plugin>:<skill>`; no skill-name prefix
       or OpenCode/Claude regression.
 - [ ] Harness tests enforce Codex compatibility and the path contract.

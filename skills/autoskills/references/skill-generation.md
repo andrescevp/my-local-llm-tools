@@ -2,7 +2,7 @@
 > path of the folder containing this `SKILL.md` (the skill loader reports it).
 > Resolve the script/reference paths below against it.
 >
-> Authoring rules live in `create-skill`: naming, frontmatter, 1-500 character
+> Authoring rules live in `ccreate-skill`: naming, frontmatter, 1-500 character
 > descriptions, 200/250 line budget, progressive disclosure, script design,
 > evals, and validation. This file covers only project analysis and proposals.
 

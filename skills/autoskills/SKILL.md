@@ -13,7 +13,7 @@ description: >
 # autoskills
 
 Analyze a project, propose a shortlist of skills, then hand authoring to
-`create-skill`, the single source of truth for naming, frontmatter, description
+`ccreate-skill`, the single source of truth for naming, frontmatter, description
 limits, progressive disclosure, scripts, evals, and validation. Never restate
 those rules here.
 
@@ -111,11 +111,11 @@ For each proposed skill, include:
 
 Wait for approval, rejection, or modification before writing any files.
 
-## 5. Author approved skills with create-skill
+## 5. Author approved skills with ccreate-skill
 
 For each approved skill:
 
-1. Load the `my-local-llm-tools:create-skill` skill and run its interview and
+1. Load the `my-local-llm-tools:ccreate-skill` skill and run its interview and
    creation workflow.
 2. Ground content in this project's actual artifacts, not generic knowledge.
 3. Write the approved file to `.agents/skills/<name>/SKILL.md` unless the user chose another scope.
@@ -125,7 +125,7 @@ For each approved skill:
    node "${CLAUDE_PLUGIN_ROOT}/src/cli.mjs" skill validate .agents/skills/<name>/SKILL.md
    ```
 
-   `src/cli.mjs` is the repository's single CLI; `create-skill` defines the rules it enforces.
+   `src/cli.mjs` is the repository's single CLI; `ccreate-skill` defines the rules it enforces.
 
 ## 6. Verify and report
 

@@ -115,7 +115,7 @@ development convenience and must not create duplicate names.
   documented: the budget limitation is explained and the plugin namespace is
   the collision strategy. No description rewrite is performed because
   `skills/manifest.json` regeneration depends on deprecated tooling.
-- **CX-07** `create-agent` can produce Codex subagent definitions (TOML in
+- **CX-07** `ccreate-agent` can produce Codex subagent definitions (TOML in
   `~/.codex/agents/` or `.codex/agents/`) in addition to Markdown agent
   profiles.
 - **CX-08** `autoskills` recognizes Codex artifacts (`.codex/config.toml`,
@@ -158,7 +158,7 @@ development convenience and must not create duplicate names.
 | CX-04 | In an isolated `CODEX_HOME`, a Codex session runs the OCR skill after deriving `MLLT_*` from the installed `SKILL.md`; no hook or generated distribution |
 | CX-05 | `codex debug prompt-input "smoke"` shows the path contract and the setup manifest pointer, plus all 10 repo skills |
 | CX-06 | The catalog budget limitation and namespace collision strategy are documented; no description rewrite is required |
-| CX-07 | `create-agent/references/codex-subagents.md` exists and is referenced by `create-agent` |
+| CX-07 | `ccreate-agent/references/codex-subagents.md` exists and is referenced by `ccreate-agent` |
 | CX-08 | `autoskills` scan list includes the Codex artifacts |
 | CX-09 | README has a Codex section and updated layout tree |
 | CX-10 | No skill-name prefix or rename is applied; Codex lists skills as `<plugin>:<skill>` |

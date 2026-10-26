@@ -19,7 +19,7 @@ and dependencies are managed with `pnpm`.
   (`src/commands/skill/validate.mjs`) enforces the limit.
 - `autoskills` must not restate authoring rules: it delegates naming,
   frontmatter, description limits, progressive disclosure, and validation to
-  the `create-skill` skill.
+  the `ccreate-skill` skill.
 - TDD: write or extend the `node:test` suite before implementing logic in
   `src/` or `index.ts`.
 - Dependencies are detected by `setup`/`doctor`; skills must not embed install
