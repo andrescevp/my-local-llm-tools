@@ -32,6 +32,9 @@ const SUMMARIES: Record<string, string> = {
   "autoedit-with-inkscape": "export, clean, edit, and vectorize SVG files",
   "image-background-removal": "remove image backgrounds locally with U2Net",
   "presentations-generator": "generate PPTX, HTML, and PDF presentations from JSON",
+  "use-my-browser": "use an isolated persistent browser for extraction and downloads",
+  "use-my-browser-learn": "learn and store browser selectors in SQLite",
+  "use-my-browser-record": "record and replay browser workflows",
 }
 
 interface SkillMeta {

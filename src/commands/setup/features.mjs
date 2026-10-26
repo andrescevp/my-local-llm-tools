@@ -19,6 +19,9 @@ export const FEATURES = {
   "autoedit-with-inkscape": { requires: ["inkscape"], optional: ["potrace"] },
   "image-background-removal": { requires: ["u2net_model"], optional: ["gimp"] },
   "presentations-generator": { requires: [], optional: ["playwright"] },
+  "use-my-browser": { requires: ["playwright"], optional: ["chrome"] },
+  "use-my-browser-learn": { requires: [] },
+  "use-my-browser-record": { requires: ["playwright"], optional: ["chrome"] },
 }
 
 function satisfied(name, context) {

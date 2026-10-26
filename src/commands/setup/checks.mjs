@@ -46,6 +46,20 @@ function detectPlaywright() {
   }
 }
 
+function detectChrome() {
+  const names =
+    process.platform === "win32"
+      ? ["chrome", "msedge"]
+      : process.platform === "darwin"
+        ? ["google-chrome", "chromium"]
+        : ["google-chrome-stable", "google-chrome", "chromium", "microsoft-edge"]
+  for (const name of names) {
+    const found = binaryVersion(name, ["--version"])
+    if (found.ok) return { ...found, source: "system" }
+  }
+  return { ok: false, version: "", path: "", error: "no system Chrome/Chromium found" }
+}
+
 function detectU2net() {
   const path =
     process.env.TOOLBOX_U2NET_MODEL ||
@@ -76,6 +90,7 @@ export function detectTools() {
     inkscape: binaryVersion("inkscape", ["--version"]),
     potrace: binaryVersion("potrace", ["--version"]),
     pdftoppm: binaryVersion("pdftoppm", ["-v"]),
+    chrome: detectChrome(),
     playwright: detectPlaywright(),
     u2net_model: detectU2net(),
   }

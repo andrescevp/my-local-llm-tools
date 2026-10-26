@@ -126,6 +126,11 @@ export async function doctor(argv) {
     )
     line("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "missing (optional)")
     line(
+      "chrome",
+      manifest.tools.chrome?.ok,
+      manifest.tools.chrome?.path || "missing (Playwright Chromium fallback)",
+    )
+    line(
       "inkscape",
       manifest.tools.inkscape.ok,
       manifest.tools.inkscape.version || "missing (optional)",

@@ -2,6 +2,7 @@
 // Unified CLI for the skills bundled in this repository.
 //
 // Usage: node src/cli.mjs <command> [args...]
+import { browser } from "./commands/browser.mjs"
 import { comfy } from "./commands/comfy.mjs"
 import { convert } from "./commands/convert.mjs"
 import { doctor } from "./commands/doctor.mjs"
@@ -20,6 +21,7 @@ import { video } from "./commands/video.mjs"
 import { voice } from "./commands/voice.mjs"
 
 const COMMANDS = {
+  browser,
   comfy,
   convert,
   doctor,
@@ -60,6 +62,8 @@ Commands:
   presentation --input JSON --output FILE           generate PPTX/HTML/PDF
   remove-bg --input FILE --output FILE              remove an image background
   voice ensure|status [--lang LOCALE]               manage piper voices
+  browser session|open|extract|download|page       use an isolated browser session
+  browser learn|record|replay                       learn selectors and record actions
 `
 
 async function main(argv) {

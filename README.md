@@ -1,6 +1,6 @@
 # my-local-llm-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Fifteen skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Eighteen skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -28,6 +28,9 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `autoedit-with-inkscape` | Export/clean/edit SVG and vectorize bitmaps | Inkscape, optional Potrace |
 | `image-background-removal` | Remove image backgrounds locally with U2Net | U2Net ONNX + sharp |
 | `presentations-generator` | Generate PPTX/HTML/PDF from JSON | Node, Playwright for PDF |
+| `use-my-browser` | Persistent isolated browser for extraction/downloads | Playwright, system Chrome optional |
+| `use-my-browser-learn` | Learn/teach CSS selectors for repeatable extraction | linkedom + SQLite |
+| `use-my-browser-record` | Record and replay browser workflows | Playwright + SQLite |
 
 Skill tooling lives in one CLI: `src/cli.mjs`. Registered skill IDs are
 namespaced as `my-local-llm-tools:<skill>` (for example
@@ -211,6 +214,15 @@ pnpm cli remove-bg --input /abs/product.jpg --output /abs/product.png
 pnpm cli presentation --input /abs/deck.json --output /abs/deck.pptx
 pnpm cli presentation --input /abs/deck.json --output /abs/deck.html
 pnpm cli presentation --input /abs/deck.json --output /abs/deck.pdf
+
+# Browser
+pnpm cli browser session status
+pnpm cli browser open --url https://example.com
+pnpm cli browser extract --url https://example.com --selector main
+pnpm cli browser page --url https://example.com --out /abs/pages/example
+pnpm cli browser learn add --url https://example.com --field title --value "Example Domain"
+pnpm cli browser record start --name demo --url https://example.com
+pnpm cli browser replay --name demo
 ```
 
 PowerShell equivalent for the OpenAI-compatible request:
@@ -253,6 +265,9 @@ registration. From the repo root, `pnpm cli` is equivalent.
 │   ├── presentations-generator/
 │   ├── setup/
 │   ├── speak/
+│   ├── use-my-browser/
+│   ├── use-my-browser-learn/
+│   ├── use-my-browser-record/
 │   └── video-analysis/
 ├── tests/                    # node:test suites
 ├── AGENTS.md

@@ -67,6 +67,11 @@ function printSummary(manifest, target, factsTarget) {
   )
   statusLine("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "not found (optional)")
   statusLine(
+    "chrome",
+    manifest.tools.chrome?.ok,
+    manifest.tools.chrome?.path || "not found (Playwright Chromium fallback)",
+  )
+  statusLine(
     "inkscape",
     manifest.tools.inkscape.ok,
     manifest.tools.inkscape.version || "not found (optional)",

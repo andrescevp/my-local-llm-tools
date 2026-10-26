@@ -55,8 +55,8 @@ Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 - `libre_office_path`: resolved LibreOffice binary.
 - `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
-  voice model, LibreOffice, GIMP, Inkscape, Potrace, `pdftoppm`, Playwright,
-  and the U2Net model, each with its resolved `path`.
+  voice model, LibreOffice, GIMP, Inkscape, Potrace, `pdftoppm`, Chrome,
+  Playwright, and the U2Net model, each with its resolved `path`.
 - `ollama`: host, reachability, version, models.
 - `comfyui`: host, reachability, version, GPU, VRAM (GiB).
 - `features`: per-skill `ok` plus the requirements that passed or failed.
@@ -90,6 +90,9 @@ ID when invoking the skill tool.
 | `autoedit-with-inkscape` | Inkscape | Potrace for vectorize |
 | `image-background-removal` | U2Net ONNX model | GIMP for refine |
 | `presentations-generator` | Node | Playwright for PDF |
+| `use-my-browser` | Playwright | system Chrome/Chromium |
+| `use-my-browser-learn` | Node + linkedom | — |
+| `use-my-browser-record` | Playwright | system Chrome/Chromium |
 
 ## Install policy
 
@@ -124,7 +127,9 @@ managers as root):
 - **Inkscape + Potrace** — Inkscape for SVG export/edit; Potrace for
   `inkscape vectorize`.
 - **Playwright Chromium** — run `pnpm exec playwright install chromium` for
-  presentation PDF output.
+  presentation PDF output and browser fallback.
+- **System Chrome/Chromium** — optional; the browser skills prefer it and fall
+  back to Playwright Chromium.
 - **U2Net model** — place `u2net.onnx` at `~/.mllt/models/u2net.onnx` or set
   `TOOLBOX_U2NET_MODEL`; it is never downloaded automatically.
 - **ComfyUI** — Docker is preferred. If the user already runs an instance, pass

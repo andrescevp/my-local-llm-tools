@@ -111,6 +111,7 @@
         "inkscape": { "$ref": "#/$defs/binary" },
         "potrace": { "$ref": "#/$defs/binary" },
         "pdftoppm": { "$ref": "#/$defs/binary" },
+        "chrome": { "$ref": "#/$defs/binary" },
         "playwright": { "$ref": "#/$defs/binary" },
         "u2net_model": {
           "type": "object",

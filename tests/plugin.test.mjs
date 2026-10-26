@@ -21,6 +21,9 @@ const EXPECTED_SKILL_IDS = [
   "presentations-generator",
   "setup",
   "speak",
+  "use-my-browser",
+  "use-my-browser-learn",
+  "use-my-browser-record",
   "video-analysis",
 ]
 

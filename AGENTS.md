@@ -8,7 +8,7 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All fifteen skills are canonical here; edit `skills/<name>/` directly.
+- All eighteen skills are canonical here; edit `skills/<name>/` directly.
 - Skills are discovered from `skills/*/SKILL.md` at plugin load; there is no
   registration manifest to generate or edit.
 - All executable skill tooling lives in the single CLI at `src/`; do not add
@@ -41,6 +41,8 @@ and dependencies are managed with `pnpm`.
 | `src/commands/inkscape.mjs` | SVG export/edit/vectorize | static |
 | `src/commands/remove-bg.mjs` / `remove-bg/` | U2Net background removal | static |
 | `src/commands/presentation.mjs` / `presentation/` | PPTX/HTML/PDF engine | static |
+| `src/commands/browser.mjs` / `browser/` | Persistent browser, selectors, recordings | static |
+| `src/lib/browser.mjs` / `browser-db.mjs` | Browser session paths and SQLite | static |
 | `src/commands/setup.mjs` / `doctor.mjs` | Manifest generation and diagnostics | static |
 | `src/commands/setup/manifest.schema.json` | Formal manifest schema (JSON Schema 2020-12) | static |
 | `src/lib/skills.mjs` | Skill discovery and frontmatter parsing | static |
