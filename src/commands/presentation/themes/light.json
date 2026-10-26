@@ -1,0 +1,31 @@
+{
+  "name": "Light Minimal",
+  "colors": {
+    "background": "#FAFAFA",
+    "text": "#333333",
+    "accent": "#4A90D9",
+    "accent2": "#7BB3E0",
+    "heading": "#222222",
+    "light_bg": "#EEEEEE",
+    "success": "#2ecc71",
+    "warning": "#f39c12"
+  },
+  "fonts": {
+    "heading": "Helvetica",
+    "body": "Helvetica",
+    "size_title": 42,
+    "size_heading": 30,
+    "size_body": 20,
+    "size_caption": 14,
+    "size_small": 12
+  },
+  "page": {
+    "size": "A4",
+    "margin": "20mm",
+    "slide_number": false
+  },
+  "logo": null,
+  "logo_position": "top-right",
+  "background_image": null,
+  "chart_accent_colors": ["#4A90D9", "#7BB3E0", "#2ecc71", "#f39c12", "#e74c3c", "#9b59b6"]
+}

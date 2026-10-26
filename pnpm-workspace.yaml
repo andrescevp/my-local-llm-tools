@@ -1,0 +1,6 @@
+allowBuilds:
+  onnxruntime-node: true
+  sharp: true
+
+overrides:
+  image-size: ^2.0.3

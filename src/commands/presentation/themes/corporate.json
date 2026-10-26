@@ -1,0 +1,31 @@
+{
+  "name": "Corporate Blue",
+  "colors": {
+    "background": "#FFFFFF",
+    "text": "#2c3e50",
+    "accent": "#0066CC",
+    "accent2": "#00A3E0",
+    "heading": "#003366",
+    "light_bg": "#F0F4F8",
+    "success": "#27ae60",
+    "warning": "#e67e22"
+  },
+  "fonts": {
+    "heading": "Arial",
+    "body": "Calibri",
+    "size_title": 40,
+    "size_heading": 30,
+    "size_body": 20,
+    "size_caption": 14,
+    "size_small": 12
+  },
+  "page": {
+    "size": "A4",
+    "margin": "20mm",
+    "slide_number": true
+  },
+  "logo": null,
+  "logo_position": "top-right",
+  "background_image": null,
+  "chart_accent_colors": ["#0066CC", "#00A3E0", "#27ae60", "#e67e22", "#8e44ad", "#e74c3c"]
+}

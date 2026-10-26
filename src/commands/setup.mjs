@@ -60,6 +60,27 @@ function printSummary(manifest, target, factsTarget) {
     manifest.tools.tesseract.version || "not found (optional)",
   )
   statusLine("ffmpeg", manifest.tools.ffmpeg.ok, manifest.tools.ffmpeg.version || "not found")
+  statusLine(
+    "libreoffice",
+    manifest.tools.libreoffice.ok,
+    manifest.tools.libreoffice.path || "not found (convert-files unavailable)",
+  )
+  statusLine("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "not found (optional)")
+  statusLine(
+    "inkscape",
+    manifest.tools.inkscape.ok,
+    manifest.tools.inkscape.version || "not found (optional)",
+  )
+  statusLine(
+    "playwright",
+    manifest.tools.playwright.ok,
+    manifest.tools.playwright.path || "browser missing (PDF unavailable)",
+  )
+  statusLine(
+    "u2net",
+    manifest.tools.u2net_model.ok,
+    manifest.tools.u2net_model.path || "model missing (remove-bg unavailable)",
+  )
   const gpu = manifest.gpu ?? { ok: false, name: "", vram_gb: 0 }
   statusLine("gpu", gpu.ok, gpu.ok ? `${gpu.name} ${gpu.vram_gb} GiB` : "not detected (optional)")
   for (const warning of manifest.warnings) console.log(`warning      ${warning}`)

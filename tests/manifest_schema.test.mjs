@@ -9,11 +9,12 @@ import { validateManifest } from "../src/commands/setup/schema.mjs"
 
 function validManifest() {
   return {
-    schema: 2,
+    schema: 3,
     plugin: "my-local-llm-tools",
     generated_at: "2026-01-01T00:00:00.000Z",
     platform: { os: "linux", arch: "x64", release: "test" },
     ok: true,
+    libre_office_path: "/usr/bin/soffice",
     hosts: { ollama: "http://127.0.0.1:11434", comfyui: "http://127.0.0.1:8188" },
     models: {
       ollama: {
@@ -51,6 +52,18 @@ function validManifest() {
       ffprobe: { ok: true, version: "7", path: "/usr/bin/ffprobe", error: "" },
       piper: { ok: true, version: "found", path: "/usr/bin/piper" },
       voice_model: { ok: true, path: "/voices/es.onnx" },
+      libreoffice: {
+        ok: true,
+        version: "LibreOffice 26",
+        path: "/usr/bin/soffice",
+        source: "system",
+      },
+      gimp: { ok: true, version: "GIMP 3", path: "/usr/bin/gimp" },
+      inkscape: { ok: true, version: "Inkscape 1.4", path: "/usr/bin/inkscape" },
+      potrace: { ok: true, version: "potrace 1.16", path: "/usr/bin/potrace" },
+      pdftoppm: { ok: true, version: "pdftoppm 26", path: "/usr/bin/pdftoppm" },
+      playwright: { ok: true, version: "1.64.1", path: "/cache/chromium" },
+      u2net_model: { ok: true, path: "/models/u2net.onnx" },
     },
     gpu: { ok: true, name: "GPU", vram_gb: 8, source: "nvidia-smi" },
     ollama: {

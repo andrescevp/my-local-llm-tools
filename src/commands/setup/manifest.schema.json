@@ -10,6 +10,7 @@
     "generated_at",
     "platform",
     "ok",
+    "libre_office_path",
     "hosts",
     "models",
     "paths",
@@ -21,9 +22,10 @@
     "warnings"
   ],
   "properties": {
-    "schema": { "const": 2 },
+    "schema": { "const": 3 },
     "plugin": { "const": "my-local-llm-tools" },
     "generated_at": { "type": "string", "minLength": 1 },
+    "libre_office_path": { "type": "string" },
     "platform": {
       "type": "object",
       "additionalProperties": false,
@@ -78,7 +80,14 @@
         "ffmpeg",
         "ffprobe",
         "piper",
-        "voice_model"
+        "voice_model",
+        "libreoffice",
+        "gimp",
+        "inkscape",
+        "potrace",
+        "pdftoppm",
+        "playwright",
+        "u2net_model"
       ],
       "properties": {
         "node": { "$ref": "#/$defs/binary" },
@@ -89,6 +98,21 @@
         "ffprobe": { "$ref": "#/$defs/binary" },
         "piper": { "$ref": "#/$defs/binary" },
         "voice_model": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ok", "path"],
+          "properties": {
+            "ok": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        },
+        "libreoffice": { "$ref": "#/$defs/binary" },
+        "gimp": { "$ref": "#/$defs/binary" },
+        "inkscape": { "$ref": "#/$defs/binary" },
+        "potrace": { "$ref": "#/$defs/binary" },
+        "pdftoppm": { "$ref": "#/$defs/binary" },
+        "playwright": { "$ref": "#/$defs/binary" },
+        "u2net_model": {
           "type": "object",
           "additionalProperties": false,
           "required": ["ok", "path"],
@@ -165,7 +189,8 @@
         "ok": { "type": "boolean" },
         "version": { "type": "string" },
         "path": { "type": "string" },
-        "error": { "type": "string" }
+        "error": { "type": "string" },
+        "source": { "type": "string" }
       }
     },
     "tesseract": {

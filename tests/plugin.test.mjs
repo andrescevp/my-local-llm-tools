@@ -6,6 +6,24 @@ import test from "node:test"
 
 import plugin from "../index.ts"
 
+const EXPECTED_SKILL_IDS = [
+  "autoskills",
+  "autoedit-with-gimp",
+  "autoedit-with-inkscape",
+  "comfyui-server",
+  "convert-files",
+  "create-agent",
+  "create-skill",
+  "image-analysis",
+  "image-background-removal",
+  "ocr",
+  "openai-api-usage",
+  "presentations-generator",
+  "setup",
+  "speak",
+  "video-analysis",
+]
+
 function fakeContext() {
   const skills = []
   const hooks = {}
@@ -35,11 +53,12 @@ function fakeContext() {
 
 function machineManifest() {
   return {
-    schema: 2,
+    schema: 3,
     plugin: "my-local-llm-tools",
     generated_at: "2026-10-26T00:00:00.000Z",
     platform: { os: "linux", arch: "x64", release: "6.0.0" },
     ok: true,
+    libre_office_path: "/usr/bin/soffice",
     hosts: { ollama: "http://ollama.test:11434", comfyui: "http://comfy.test:8188" },
     models: { ollama: { available: [], required: [], missing: [] }, comfyui: [] },
     paths: { tesseract: "", ffmpeg: "", ffprobe: "", piper: "" },
@@ -52,6 +71,13 @@ function machineManifest() {
       ffprobe: { ok: false, version: "", path: "" },
       piper: { ok: false, version: "", path: "" },
       voice_model: { ok: false, path: "" },
+      libreoffice: { ok: true, version: "LibreOffice 26", path: "/usr/bin/soffice" },
+      gimp: { ok: true, version: "GIMP 3", path: "/usr/bin/gimp" },
+      inkscape: { ok: true, version: "Inkscape 1.4", path: "/usr/bin/inkscape" },
+      potrace: { ok: true, version: "potrace 1.16", path: "/usr/bin/potrace" },
+      pdftoppm: { ok: true, version: "pdftoppm 26", path: "/usr/bin/pdftoppm" },
+      playwright: { ok: true, version: "1.64.1", path: "/cache/chromium" },
+      u2net_model: { ok: true, path: "/models/u2net.onnx" },
     },
     gpu: { ok: true, name: "Test GPU", vram_gb: 8, source: "test" },
     ollama: {
@@ -110,7 +136,11 @@ function contextText(hooks) {
 
 test("plugin registers every skill with path and content", async () => {
   const { skills } = await setupWith({ manifest: machineManifest() })
-  assert.equal(skills.length, 10)
+  assert.equal(skills.length, EXPECTED_SKILL_IDS.length)
+  assert.deepEqual(
+    skills.map((skill) => skill.id).sort(),
+    EXPECTED_SKILL_IDS.map((id) => `my-local-llm-tools:${id}`).sort(),
+  )
   for (const skill of skills) {
     assert.ok(skill.id.startsWith("my-local-llm-tools:"), `${skill.id} prefix`)
     assert.ok(skill.path.endsWith("SKILL.md"), `${skill.id} path`)

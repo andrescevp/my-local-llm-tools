@@ -6,20 +6,15 @@ import test from "node:test"
 import { configDir, factsPath, manifestPath } from "../src/lib/config.mjs"
 import { voiceCandidates } from "../src/lib/piper.mjs"
 
-test("configDir follows XDG on Linux", () => {
-  assert.equal(configDir({ XDG_CONFIG_HOME: "/tmp/xdg" }, "linux"), "/tmp/xdg/my-local-llm-tools")
+test("configDir uses ~/.mllt on every platform", () => {
+  assert.equal(configDir({}, "linux"), join(homedir(), ".mllt"))
+  assert.equal(configDir({}, "darwin"), join(homedir(), ".mllt"))
+  assert.equal(configDir({}, "win32"), join(homedir(), ".mllt"))
 })
 
-test("configDir uses APPDATA on Windows", () => {
-  const appData = "C:\\Users\\demo\\AppData\\Roaming"
-  assert.equal(configDir({ APPDATA: appData }, "win32"), join(appData, "my-local-llm-tools"))
-})
-
-test("configDir uses Application Support on macOS", () => {
-  assert.equal(
-    configDir({}, "darwin"),
-    join(homedir(), "Library", "Application Support", "my-local-llm-tools"),
-  )
+test("XDG and APPDATA do not move the plugin config", () => {
+  assert.equal(configDir({ XDG_CONFIG_HOME: "/tmp/xdg" }, "linux"), join(homedir(), ".mllt"))
+  assert.equal(configDir({ APPDATA: "C:\\AppData" }, "win32"), join(homedir(), ".mllt"))
 })
 
 test("MY_LOCAL_LLM_TOOLS_CONFIG_DIR overrides the platform default", () => {

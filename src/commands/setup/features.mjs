@@ -14,6 +14,11 @@ export const FEATURES = {
   "create-skill": { requires: [] },
   "create-agent": { requires: [] },
   autoskills: { requires: [] },
+  "convert-files": { requires: ["libreoffice"] },
+  "autoedit-with-gimp": { requires: ["gimp"] },
+  "autoedit-with-inkscape": { requires: ["inkscape"], optional: ["potrace"] },
+  "image-background-removal": { requires: ["u2net_model"], optional: ["gimp"] },
+  "presentations-generator": { requires: [], optional: ["playwright"] },
 }
 
 function satisfied(name, context) {

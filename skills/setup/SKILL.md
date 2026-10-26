@@ -42,9 +42,9 @@ Written by `setup` to a per-user config directory:
 
 | OS | Path |
 |---|---|
-| Linux | `${XDG_CONFIG_HOME:-~/.config}/my-local-llm-tools/manifest.json` |
-| macOS | `~/Library/Application Support/my-local-llm-tools/manifest.json` |
-| Windows | `%APPDATA%\my-local-llm-tools\manifest.json` |
+| Linux | `~/.mllt/manifest.json` |
+| macOS | `~/.mllt/manifest.json` |
+| Windows | `%USERPROFILE%\.mllt\manifest.json` |
 
 Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 
@@ -52,9 +52,11 @@ Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 - `platform`: OS, arch, release.
 - `hosts`: `ollama` and `comfyui` base URLs.
 - `models`: `ollama.available/required/missing` and the local ComfyUI model files.
+- `libre_office_path`: resolved LibreOffice binary.
 - `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
-  voice model, each with its resolved `path`.
+  voice model, LibreOffice, GIMP, Inkscape, Potrace, `pdftoppm`, Playwright,
+  and the U2Net model, each with its resolved `path`.
 - `ollama`: host, reachability, version, models.
 - `comfyui`: host, reachability, version, GPU, VRAM (GiB).
 - `features`: per-skill `ok` plus the requirements that passed or failed.
@@ -83,6 +85,11 @@ ID when invoking the skill tool.
 | `speak` | piper + Laura `es_MX` voice model | — |
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `create-skill`, `create-agent`, `autoskills` | Node only | — |
+| `convert-files` | LibreOffice | — |
+| `autoedit-with-gimp` | GIMP | — |
+| `autoedit-with-inkscape` | Inkscape | Potrace for vectorize |
+| `image-background-removal` | U2Net ONNX model | GIMP for refine |
+| `presentations-generator` | Node | Playwright for PDF |
 
 ## Install policy
 
@@ -108,6 +115,16 @@ managers as root):
   <https://ffmpeg.org/download.html> or the platform package manager.
 - **piper + voice** — <https://github.com/rhasspy/piper/releases>; set
   `PIPER_BIN`/`PIPER_VOICE` if installed outside PATH.
+- **LibreOffice** — system package first; portable fallback under
+  `~/.mllt/libreoffice` (macOS: `LibreOffice.app`).
+- **GIMP** — install from the OS package manager; used by
+  `autoedit-with-gimp` and optional background refinement.
+- **Inkscape + Potrace** — Inkscape for SVG export/edit; Potrace for
+  `inkscape vectorize`.
+- **Playwright Chromium** — run `pnpm exec playwright install chromium` for
+  presentation PDF output.
+- **U2Net model** — place `u2net.onnx` at `~/.mllt/models/u2net.onnx` or set
+  `TOOLBOX_U2NET_MODEL`; it is never downloaded automatically.
 - **ComfyUI** — Docker is preferred. If the user already runs an instance, pass
   `--comfy-url`; otherwise install from <https://comfy.org/download>. Local
   generation needs a GPU with **at least 8 GB VRAM**; below that, skip ComfyUI

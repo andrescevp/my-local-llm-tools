@@ -119,6 +119,27 @@ export async function doctor(argv) {
       manifest.tools.piper.ok && manifest.tools.voice_model.ok,
       manifest.tools.piper.version || "missing",
     )
+    line(
+      "libreoffice",
+      manifest.tools.libreoffice.ok,
+      manifest.tools.libreoffice.path || "missing (optional)",
+    )
+    line("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "missing (optional)")
+    line(
+      "inkscape",
+      manifest.tools.inkscape.ok,
+      manifest.tools.inkscape.version || "missing (optional)",
+    )
+    line(
+      "playwright",
+      manifest.tools.playwright.ok,
+      manifest.tools.playwright.path || "browser missing (optional)",
+    )
+    line(
+      "u2net",
+      manifest.tools.u2net_model.ok,
+      manifest.tools.u2net_model.path || "model missing (optional)",
+    )
     const gpu = manifest.gpu ?? { ok: false, name: "", vram_gb: 0 }
     line("gpu", gpu.ok, gpu.ok ? `${gpu.name} ${gpu.vram_gb} GiB` : "not detected (optional)")
     console.log("\nSkills:")

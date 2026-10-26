@@ -8,9 +8,9 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All ten skills are canonical here; edit `skills/<name>/` directly.
-- Never edit `skills/manifest.json` by hand — generate it with
-  `pnpm manifest` (`scripts/build_manifest.mjs`).
+- All fifteen skills are canonical here; edit `skills/<name>/` directly.
+- Skills are discovered from `skills/*/SKILL.md` at plugin load; there is no
+  registration manifest to generate or edit.
 - All executable skill tooling lives in the single CLI at `src/`; do not add
   per-skill `scripts/` directories. Add a command module and wire it in
   `src/cli.mjs`.
@@ -21,7 +21,7 @@ and dependencies are managed with `pnpm`.
   frontmatter, description limits, progressive disclosure, and validation to
   the `create-skill` skill.
 - TDD: write or extend the `node:test` suite before implementing logic in
-  `src/`, `scripts/`, or `index.ts`.
+  `src/` or `index.ts`.
 - Dependencies are detected by `setup`/`doctor`; skills must not embed install
   commands. Each runnable skill gates on `doctor --skill <name>` (add `--cached`
   to read the manifest without probing services).
@@ -34,20 +34,24 @@ and dependencies are managed with `pnpm`.
 | `index.ts` | `Plugin.define`: registers skills + context block | static |
 | `src/cli.mjs` | Single CLI dispatcher | static |
 | `src/commands/<domain>.mjs` | One module per skill domain | static |
+| `src/commands/install.mjs` | Symlink plugin into OpenCode | static |
+| `src/commands/validate.mjs` | Static harness validation | static |
+| `src/commands/convert.mjs` | LibreOffice conversion | static |
+| `src/commands/gimp.mjs` / `gimp/` | GIMP operations and macros | static |
+| `src/commands/inkscape.mjs` | SVG export/edit/vectorize | static |
+| `src/commands/remove-bg.mjs` / `remove-bg/` | U2Net background removal | static |
+| `src/commands/presentation.mjs` / `presentation/` | PPTX/HTML/PDF engine | static |
 | `src/commands/setup.mjs` / `doctor.mjs` | Manifest generation and diagnostics | static |
 | `src/commands/setup/manifest.schema.json` | Formal manifest schema (JSON Schema 2020-12) | static |
-| `skills/<name>/SKILL.md` | Skill instructions | static |
-| `skills/manifest.json` | Registration metadata (id/name/description) | yes — `build_manifest.mjs` |
-| `scripts/build_manifest.mjs` | Regenerate `skills/manifest.json` | static |
-| `scripts/install.mjs` | Symlink plugin into OpenCode | static |
-| `scripts/validate.mjs` | Static validation | static |
+| `src/lib/skills.mjs` | Skill discovery and frontmatter parsing | static |
+| `src/lib/libreoffice.mjs` | Shared LibreOffice resolver | static |
+| `skills/<name>/SKILL.md` | Skill instructions; discovered at load time | static |
 | `tests/*.test.mjs` | `node:test` suites | static |
 
 ## Workflows
 
 ```bash
 pnpm install
-pnpm manifest          # regenerate manifest after adding/removing a skill
 pnpm harness:install   # install/update the OpenCode plugin link
 pnpm cli setup         # detect dependencies + write the machine manifest
 pnpm cli doctor        # diagnose the harness (read-only)
@@ -64,9 +68,9 @@ another package manager; `pnpm` is the only supported package manager.
 
 ### Migration status
 
-All skill tooling is migrated to `src/`; there are no Python or shell
-executables under `skills/`. Add new behavior as a command module, not as a
-per-skill script.
+All skill and repository tooling lives in `src/`; there are no Python or shell
+executables under `skills/` and no root `scripts/` directory. Add new behavior
+as a command module, not as a per-skill or root-level script.
 
 ## Platform constraints (OpenCode V2 plugin API)
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= config.title %></title>
+<link rel="stylesheet" href="<%= assets %>/reveal.css">
+<link rel="stylesheet" href="<%= assets %>/theme/black.css">
+<style>
+:root {
+  --bg: <%= theme.colors.background %>; --text: <%= theme.colors.text %>;
+  --accent: <%= theme.colors.accent %>; --accent2: <%= theme.colors.accent2 %>;
+  --heading: <%= theme.colors.heading %>; --light-bg: <%= theme.colors.light_bg %>;
+  --font-h: <%= theme.fonts.heading %>; --font-b: <%= theme.fonts.body %>;
+}
+.reveal { background: var(--bg); color: var(--text); font-family: var(--font-b); }
+.reveal h1, .reveal h2, .reveal h3 { font-family: var(--font-h); color: var(--heading); text-transform: none; }
+.reveal h1 { font-size: <%= theme.fonts.size_title %>px; }
+.reveal h2 { font-size: <%= theme.fonts.size_heading %>px; }
+.reveal p, .reveal li { color: var(--text); font-size: <%= theme.fonts.size_body %>px; }
+.reveal table { width: 100%; border-collapse: collapse; }
+.reveal th { background: var(--accent); color: #fff; padding: 10px; }
+.reveal td { padding: 8px; border-bottom: 1px solid var(--light-bg); }
+.columns { display: flex; gap: 30px; }
+.column { flex: 1; }
+.gallery img { display: none; max-height: 420px; margin: 0 auto; }
+.gallery img.active { display: block; }
+.gallery-nav button { background: var(--accent); color: #fff; border: 0; padding: 6px 14px; margin: 4px; }
+.gallery-nav .dot { display: inline-block; width: 9px; height: 9px; margin: 3px; background: #555; border-radius: 50%; }
+.gallery-nav .dot.active { background: var(--accent); }
+.divider { height: 4px; width: 80px; background: var(--accent); margin: 20px auto; }
+.caption { font-size: 0.7em; opacity: 0.6; }
+video { max-width: 100%; max-height: 460px; }
+img { max-width: 100%; max-height: 460px; }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+<% for (const slide of config.slides) { %>
+<section class="<%= slide.type %>-slide">
+<% if (slide.type === "title") { %>
+  <div class="divider"></div>
+  <h1><%= slide.title || config.title %></h1>
+  <% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+  <p class="caption"><%= [config.author, config.date].filter(Boolean).join(" | ") %></p>
+<% } else if (slide.type === "section") { %>
+  <div class="divider"></div><h2><%= slide.title %></h2>
+  <% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+<% } else if (slide.type === "bullets") { %>
+  <h2><%= slide.title %></h2><ul><% for (const item of slide.items || []) { %><li><%= item %></li><% } %></ul>
+<% } else if (slide.type === "text") { %>
+  <h2><%= slide.title %></h2><p><%= slide.body %></p>
+<% } else if (slide.type === "image") { %>
+  <h2><%= slide.title %></h2><img src="<%= slide.src %>" alt="<%= slide.title %>">
+  <% if (slide.caption) { %><p class="caption"><%= slide.caption %></p><% } %>
+<% } else if (slide.type === "gallery") { %>
+  <h2><%= slide.title %></h2>
+  <div class="gallery" data-gallery>
+    <% for (const [index, image] of (slide.images || []).entries()) { %>
+      <img class="<%= index === 0 ? "active" : "" %>" src="<%= image %>" alt="gallery <%= index %>">
+    <% } %>
+    <div class="gallery-nav">
+      <button data-prev>Prev</button>
+      <% for (const [index] of (slide.images || []).entries()) { %><span class="dot <%= index === 0 ? "active" : "" %>" data-dot="<%= index %>"></span><% } %>
+      <button data-next>Next</button>
+    </div>
+  </div>
+<% } else if (slide.type === "video") { %>
+  <h2><%= slide.title %></h2><video controls <% if (slide.poster) { %>poster="<%= slide.poster %>"<% } %> src="<%= slide.src %>"></video>
+<% } else if (slide.type === "table") { %>
+  <h2><%= slide.title %></h2>
+  <table><thead><tr><% for (const header of slide.headers || []) { %><th><%= header %></th><% } %></tr></thead>
+  <tbody><% for (const row of slide.rows || []) { %><tr><% for (const cell of row) { %><td><%= cell %></td><% } %></tr><% } %></tbody></table>
+<% } else if (slide.type === "columns") { %>
+  <h2><%= slide.title %></h2><div class="columns">
+  <% for (const column of slide.columns || []) { %><div class="column"><h3><%= column.title %></h3><ul><% for (const item of column.items || []) { %><li><%= item %></li><% } %></ul></div><% } %>
+  </div>
+<% } else if (slide.type === "chart") { %>
+  <h2><%= slide.title %></h2><canvas data-chart="<%- JSON.stringify({ type: slide.chart_type || "bar", data: { labels: slide.labels || [], datasets: (slide.datasets || []).map((dataset) => ({ label: dataset.label, data: dataset.data, backgroundColor: dataset.color || theme.colors.accent, borderColor: dataset.color || theme.colors.accent })) } }) %>"></canvas>
+<% } else if (slide.type === "closing") { %>
+  <h2><%= slide.title %></h2><% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+<% } %>
+</section>
+<% } %>
+</div></div>
+<script src="<%= assets %>/reveal.js"></script>
+<script src="<%= assets %>/chart.umd.js"></script>
+<script>
+Reveal.initialize({ hash: false, slideNumber: <%= theme.page.slide_number !== false %> });
+document.querySelectorAll("[data-gallery]").forEach((gallery) => {
+  const images = [...gallery.querySelectorAll("img")];
+  const dots = [...gallery.querySelectorAll("[data-dot]")];
+  let index = 0;
+  const show = (next) => {
+    images[index]?.classList.remove("active"); dots[index]?.classList.remove("active");
+    index = (next + images.length) % images.length;
+    images[index]?.classList.add("active"); dots[index]?.classList.add("active");
+  };
+  gallery.querySelector("[data-prev]")?.addEventListener("click", () => show(index - 1));
+  gallery.querySelector("[data-next]")?.addEventListener("click", () => show(index + 1));
+  dots.forEach((dot) => dot.addEventListener("click", () => show(Number(dot.dataset.dot))));
+});
+document.querySelectorAll("[data-chart]").forEach((canvas) => {
+  new Chart(canvas, JSON.parse(canvas.dataset.chart));
+});
+</script>
+</body>
+</html>

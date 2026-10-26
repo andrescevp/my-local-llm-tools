@@ -1,0 +1,22 @@
+[
+  { "query": "Generate a presentation from this JSON data", "should_trigger": true },
+  { "query": "Create a slide deck for my quarterly report", "should_trigger": true },
+  { "query": "Make a PowerPoint from this dataset", "should_trigger": true },
+  { "query": "Turn these KPI metrics into a dashboard PDF", "should_trigger": true },
+  { "query": "I need a pitch deck from this JSON config", "should_trigger": true },
+  { "query": "How do I set up a custom theme for my presentations?", "should_trigger": true },
+  { "query": "Can I add charts to my generated report?", "should_trigger": true },
+  { "query": "What slide types are available in the presentation command?", "should_trigger": true },
+  { "query": "I want to email a PDF report generated from my data", "should_trigger": true },
+  { "query": "Show me how to add a gallery of images to a slide", "should_trigger": true },
+  { "query": "Generate a PDF report from my data", "should_trigger": false },
+  { "query": "What's the best way to design a presentation outline?", "should_trigger": false },
+  { "query": "How do I install PowerPoint on Linux?", "should_trigger": false },
+  { "query": "Create an HTML page from a template", "should_trigger": false },
+  { "query": "Build a dashboard with Grafana", "should_trigger": false },
+  { "query": "Write a Python script to make charts", "should_trigger": false },
+  { "query": "How do I use a code node for data transformation?", "should_trigger": false },
+  { "query": "Send a report via email", "should_trigger": false },
+  { "query": "What chart type is best for revenue data?", "should_trigger": false },
+  { "query": "Convert this CSV to a formatted document", "should_trigger": false }
+]

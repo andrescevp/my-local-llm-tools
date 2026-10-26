@@ -1,0 +1,41 @@
+{
+  "skill_name": "presentations-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have monthly revenue and user data. Generate a quarterly executive dashboard PDF with a title slide, a KPI table, a bar chart for revenue, a line chart for users, and a closing slide. Use the light theme.",
+      "expected_output": "A JSON config for the dashboard with title, table, chart, and closing slides, plus a local presentation CLI command ending in .pdf.",
+      "assertions": [
+        "The config has 5+ slides covering title, table, chart, and closing types",
+        "The theme is set to light",
+        "Chart datasets reference revenue and users",
+        "The CLI command uses pnpm cli presentation and an output ending in .pdf",
+        "Table rows include month-over-month comparisons"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Turn this survey JSON into a PowerPoint: [{question: Satisfaction, score: 4.5}, {question: NPS, score: 72}]. Use a dark theme with accent #00ff88.",
+      "expected_output": "A JSON config with title, table, and bar chart slides, a dark theme overridden with the emerald accent, and a .pptx command.",
+      "assertions": [
+        "Config has exactly 3 slides: title, table, and chart",
+        "Theme override uses accent #00ff88",
+        "Chart labels match the survey questions",
+        "CLI output is .pptx",
+        "Table headers match question and score"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create an HTML deck with a gallery of four screenshots, an embedded demo video, and a feature bullet list. Use the corporate theme and a local logo.",
+      "expected_output": "A JSON config with title, gallery, video, and bullets slides, corporate theme with logo override, and an .html command.",
+      "assertions": [
+        "Gallery slide has four images",
+        "Video slide has a local src",
+        "Bullets slide lists features",
+        "Theme is corporate with a logo override",
+        "CLI output extension is .html"
+      ]
+    }
+  ]
+}

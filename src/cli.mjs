@@ -3,15 +3,38 @@
 //
 // Usage: node src/cli.mjs <command> [args...]
 import { comfy } from "./commands/comfy.mjs"
+import { convert } from "./commands/convert.mjs"
 import { doctor } from "./commands/doctor.mjs"
+import { gimp } from "./commands/gimp.mjs"
 import { image } from "./commands/image.mjs"
+import { inkscape } from "./commands/inkscape.mjs"
+import { install } from "./commands/install.mjs"
 import { ocr } from "./commands/ocr.mjs"
+import { presentation } from "./commands/presentation.mjs"
+import { removeBg } from "./commands/remove-bg.mjs"
 import { setup } from "./commands/setup.mjs"
 import { skill } from "./commands/skill.mjs"
 import { speak } from "./commands/speak.mjs"
+import { validate } from "./commands/validate.mjs"
 import { video } from "./commands/video.mjs"
 
-const COMMANDS = { comfy, doctor, image, ocr, setup, skill, speak, video }
+const COMMANDS = {
+  comfy,
+  convert,
+  doctor,
+  gimp,
+  image,
+  inkscape,
+  install,
+  ocr,
+  presentation,
+  "remove-bg": removeBg,
+  setup,
+  skill,
+  speak,
+  validate,
+  video,
+}
 
 const HELP = `Usage: node src/cli.mjs <command> [args...]
 
@@ -27,6 +50,13 @@ Commands:
   speak [options] [text]                            Spanish TTS via piper
   setup [options]                                   detect deps + write machine manifest
   doctor [options]                                  diagnose the harness (read-only)
+  install [--dry-run]                               link the plugin into OpenCode
+  validate [repo-root]                              validate the harness statically
+  convert --input FILE --to FORMAT                  convert files with LibreOffice
+  gimp <operation> --input FILE --output FILE       edit images with GIMP
+  inkscape <command> --input FILE                   operate on SVG/vector files
+  presentation --input JSON --output FILE           generate PPTX/HTML/PDF
+  remove-bg --input FILE --output FILE              remove an image background
 `
 
 async function main(argv) {

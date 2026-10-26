@@ -21,6 +21,33 @@ function ffmpegHint(platform) {
   return "sudo pacman -S ffmpeg (or your distro package)"
 }
 
+function libreofficeHint(platform) {
+  if (platform === "darwin")
+    return "brew install --cask libreoffice (or copy LibreOffice.app to ~/.mllt)"
+  if (platform === "win32")
+    return "winget install TheDocumentFoundation.LibreOffice (or extract portable to %USERPROFILE%\\.mllt\\libreoffice)"
+  return "sudo pacman -S libreoffice-fresh (or extract the AppImage to ~/.mllt/libreoffice)"
+}
+
+function gimpHint(platform) {
+  if (platform === "darwin") return "brew install --cask gimp"
+  if (platform === "win32") return "winget install GIMP.GIMP"
+  return "sudo pacman -S gimp (or your distro package)"
+}
+
+function inkscapeHint(platform) {
+  if (platform === "darwin") return "brew install --cask inkscape"
+  if (platform === "win32") return "winget install Inkscape.Inkscape"
+  return "sudo pacman -S inkscape (or your distro package)"
+}
+
+function popplerHint(platform) {
+  if (platform === "darwin") return "brew install poppler"
+  if (platform === "win32")
+    return "Extract Poppler for Windows to %USERPROFILE%\\.mllt\\poppler and add its bin directory to PATH"
+  return "sudo pacman -S poppler (or apt install poppler-utils)"
+}
+
 export function planInstall(manifest, root, platform = process.platform) {
   const actions = []
   const { tools, ollama, comfyui } = manifest
@@ -117,6 +144,70 @@ export function planInstall(manifest, root, platform = process.platform) {
       description: "Install piper-tts and the Laura es_MX voice model",
       detail: "Set PIPER_BIN/PIPER_VOICE if they live outside PATH/~/.local/share",
       url: PIPER_URL,
+    })
+  }
+
+  if (!tools.libreoffice?.ok) {
+    add({
+      id: "libreoffice",
+      kind: "manual",
+      description: "Install LibreOffice (convert-files)",
+      detail: libreofficeHint(platform),
+      url: "https://www.libreoffice.org/download/download-libreoffice/",
+    })
+  }
+  if (!tools.gimp?.ok) {
+    add({
+      id: "gimp",
+      kind: "manual",
+      description: "Install GIMP (autoedit-with-gimp)",
+      detail: gimpHint(platform),
+      url: "https://www.gimp.org/downloads/",
+    })
+  }
+  if (!tools.inkscape?.ok) {
+    add({
+      id: "inkscape",
+      kind: "manual",
+      description: "Install Inkscape (autoedit-with-inkscape)",
+      detail: inkscapeHint(platform),
+      url: "https://inkscape.org/release/",
+    })
+  }
+  if (!tools.potrace?.ok) {
+    add({
+      id: "potrace",
+      kind: "manual",
+      description: "Install Potrace (bitmap vectorization)",
+      detail: "Install potrace from your package manager",
+      url: "https://potrace.sourceforge.net/",
+    })
+  }
+  if (!tools.pdftoppm?.ok) {
+    add({
+      id: "poppler",
+      kind: "manual",
+      description: "Install Poppler (PDF page rendering)",
+      detail: popplerHint(platform),
+      url: "https://poppler.freedesktop.org/",
+    })
+  }
+  if (!tools.playwright?.ok) {
+    add({
+      id: "playwright",
+      kind: "manual",
+      description: "Install the Playwright Chromium browser (presentation PDF)",
+      detail: "pnpm exec playwright install chromium",
+      url: "https://playwright.dev/docs/browsers",
+    })
+  }
+  if (!tools.u2net_model?.ok) {
+    add({
+      id: "u2net",
+      kind: "manual",
+      description: "Place the U2Net model (image-background-removal)",
+      detail: "Save u2net.onnx to ~/.mllt/models/u2net.onnx or set TOOLBOX_U2NET_MODEL",
+      url: "https://github.com/danielgatis/rembg",
     })
   }
 

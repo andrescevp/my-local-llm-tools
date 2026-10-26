@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title><%= config.title %></title>
+<script src="<%= assets %>/chart.umd.js"></script>
+<style>
+@page { size: <%= theme.page.size || "A4" %>; margin: <%= theme.page.margin || "20mm" %>; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: <%= theme.fonts.body %>, sans-serif; color: <%= theme.colors.text %>; background: <%= theme.colors.background %>; }
+.slide { page-break-after: always; min-height: 100vh; padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; position: relative; background: <%= theme.colors.background %>; }
+.slide:last-child { page-break-after: auto; }
+h1, h2, h3 { font-family: <%= theme.fonts.heading %>, sans-serif; color: <%= theme.colors.heading %>; margin-bottom: 18px; }
+h1 { font-size: <%= theme.fonts.size_title %>px; } h2 { font-size: <%= theme.fonts.size_heading %>px; } h3 { color: <%= theme.colors.accent %>; }
+p, li { font-size: <%= theme.fonts.size_body %>px; line-height: 1.6; }
+table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+th { background: <%= theme.colors.accent %>; color: #fff; padding: 10px; text-align: left; }
+td { padding: 8px; border-bottom: 1px solid <%= theme.colors.light_bg %>; }
+img { max-width: 100%; max-height: 400px; display: block; margin: 12px auto; }
+video { max-width: 100%; max-height: 400px; display: block; margin: 12px auto; }
+canvas { max-width: 100%; max-height: 380px; margin: 12px auto; display: block; }
+.columns { display: flex; gap: 36px; } .column { flex: 1; }
+.divider { height: 4px; width: 80px; background: <%= theme.colors.accent %>; margin: 18px 0; }
+.caption { font-size: 14px; opacity: 0.7; text-align: center; }
+.slide-number { position: absolute; bottom: 24px; right: 44px; font-size: 13px; opacity: 0.5; }
+.section-slide, .closing-slide { text-align: center; justify-content: center; }
+</style>
+</head>
+<body>
+<% for (const [number, slide] of config.slides.entries()) { %>
+<div class="slide <%= slide.type %>-slide">
+<% if (slide.type === "title") { %>
+  <div class="divider"></div><h1><%= slide.title || config.title %></h1>
+  <% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+  <p class="caption"><%= [config.author, config.date].filter(Boolean).join(" | ") %></p>
+<% } else if (slide.type === "section") { %>
+  <div class="divider" style="margin:0 auto 18px"></div><h1><%= slide.title %></h1>
+  <% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+<% } else if (slide.type === "bullets") { %>
+  <h2><%= slide.title %></h2><ul><% for (const item of slide.items || []) { %><li><%= item %></li><% } %></ul>
+<% } else if (slide.type === "text") { %>
+  <h2><%= slide.title %></h2><p><%= slide.body %></p>
+<% } else if (slide.type === "image") { %>
+  <h2><%= slide.title %></h2><img src="<%= slide.src %>" alt="<%= slide.title %>">
+  <% if (slide.caption) { %><p class="caption"><%= slide.caption %></p><% } %>
+<% } else if (slide.type === "gallery") { %>
+  <h2><%= slide.title %></h2><div class="columns"><% for (const image of slide.images || []) { %><div class="column"><img src="<%= image %>" alt="gallery"></div><% } %></div>
+<% } else if (slide.type === "video") { %>
+  <h2><%= slide.title %></h2><video controls <% if (slide.poster) { %>poster="<%= slide.poster %>"<% } %> src="<%= slide.src %>"></video>
+<% } else if (slide.type === "table") { %>
+  <h2><%= slide.title %></h2><table><thead><tr><% for (const header of slide.headers || []) { %><th><%= header %></th><% } %></tr></thead>
+  <tbody><% for (const row of slide.rows || []) { %><tr><% for (const cell of row) { %><td><%= cell %></td><% } %></tr><% } %></tbody></table>
+<% } else if (slide.type === "columns") { %>
+  <h2><%= slide.title %></h2><div class="columns"><% for (const column of slide.columns || []) { %><div class="column"><h3><%= column.title %></h3><ul><% for (const item of column.items || []) { %><li><%= item %></li><% } %></ul></div><% } %></div>
+<% } else if (slide.type === "chart") { %>
+  <h2><%= slide.title %></h2><canvas data-chart="<%- JSON.stringify({ type: slide.chart_type || "bar", data: { labels: slide.labels || [], datasets: (slide.datasets || []).map((dataset) => ({ label: dataset.label, data: dataset.data, backgroundColor: dataset.color || theme.colors.accent, borderColor: dataset.color || theme.colors.accent })) } }) %>"></canvas>
+<% } else if (slide.type === "closing") { %>
+  <h2><%= slide.title %></h2><% if (slide.subtitle) { %><p><%= slide.subtitle %></p><% } %>
+<% } %>
+<% if (theme.page.slide_number !== false && !["title", "section", "closing"].includes(slide.type)) { %><div class="slide-number"><%= number + 1 %> / <%= config.slides.length %></div><% } %>
+</div>
+<% } %>
+<script>
+document.querySelectorAll("[data-chart]").forEach((canvas) => new Chart(canvas, JSON.parse(canvas.dataset.chart)));
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["title", "slides"],
+  "properties": {
+    "title": { "type": "string" },
+    "author": { "type": "string" },
+    "date": { "type": "string" },
+    "theme": { "type": "string" },
+    "template": { "type": "string" },
+    "theme_overrides": { "type": "object" },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "enum": [
+              "title",
+              "section",
+              "bullets",
+              "text",
+              "image",
+              "gallery",
+              "video",
+              "table",
+              "columns",
+              "chart",
+              "closing"
+            ]
+          },
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "items": { "type": "array" },
+          "body": { "type": "string" },
+          "src": { "type": "string" },
+          "caption": { "type": "string" },
+          "images": { "type": "array" },
+          "poster": { "type": "string" },
+          "headers": { "type": "array" },
+          "rows": { "type": "array" },
+          "columns": { "type": "array" },
+          "chart_type": { "type": "string" },
+          "labels": { "type": "array" },
+          "datasets": { "type": "array" }
+        }
+      }
+    }
+  }
+}

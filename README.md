@@ -1,6 +1,6 @@
 # my-local-llm-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Ten skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Fifteen skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -23,6 +23,11 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in Spanish (Laura `es_MX`) | `piper` + voice model |
 | `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
+| `convert-files` | Convert documents with LibreOffice | LibreOffice |
+| `autoedit-with-gimp` | Resize, convert, optimize, and edit images; custom macros | GIMP |
+| `autoedit-with-inkscape` | Export/clean/edit SVG and vectorize bitmaps | Inkscape, optional Potrace |
+| `image-background-removal` | Remove image backgrounds locally with U2Net | U2Net ONNX + sharp |
+| `presentations-generator` | Generate PPTX/HTML/PDF from JSON | Node, Playwright for PDF |
 
 Skill tooling lives in one CLI: `src/cli.mjs`. Registered skill IDs are
 namespaced as `my-local-llm-tools:<skill>` (for example
@@ -52,8 +57,8 @@ point the config at it explicitly. After editing files inside the repo, restart
 OpenCode — local dependencies outside watched config directories may not hot
 reload.
 
-The plugin registers skills from `skills/manifest.json` and injects a compact
-inventory into each session. Hosts and per-skill readiness come from the
+The plugin discovers skills from `skills/*/SKILL.md` at load time and injects a
+compact inventory into each session. Hosts and per-skill readiness come from the
 machine manifest written by `setup`; when that manifest is missing or invalid,
 the injected context warns to run `setup`. No agents are installed as files.
 
@@ -108,12 +113,11 @@ of the overlapping plugins enabled, or disable the duplicate IDs explicitly:
 }
 ```
 
-`install.mjs` prints a reminder when it detects another harness.
+The install command prints a reminder when it detects another harness.
 
 ## Development
 
 ```bash
-pnpm manifest    # regenerate skills/manifest.json
 pnpm validate    # static harness validation
 pnpm typecheck   # OpenCode plugin API types
 pnpm test        # node:test suites
@@ -130,11 +134,10 @@ pnpm cli doctor                 # live diagnostics, writes nothing
 pnpm cli doctor --skill ocr     # exit 1 if the skill cannot run
 ```
 
-The manifest lives at `~/.config/my-local-llm-tools/manifest.json` on Linux
-(`~/Library/Application Support/my-local-llm-tools` on macOS,
-`%APPDATA%\my-local-llm-tools` on Windows) and includes the Ollama/ComfyUI
-hosts, available models, and resolved `tesseract`/`ffmpeg`/`ffprobe`/`piper`
-paths, plus per-skill readiness. It is validated against
+The manifest lives at `~/.mllt/manifest.json` (`%USERPROFILE%\.mllt` on
+Windows) and includes the Ollama/ComfyUI hosts, available models, and resolved
+`tesseract`/`ffmpeg`/`ffprobe`/`piper` paths, plus per-skill readiness. It is
+validated against
 `src/commands/setup/manifest.schema.json` on write and read. `instance_facts.json`
 is generated next to it and is not tracked in git.
 
@@ -163,8 +166,13 @@ is generated next to it and is not tracked in git.
 | ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
 | Piper | `~/.local/bin/piper` + `es_MX-laura-high.onnx` |
 | Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
+| LibreOffice | `/usr/sbin/soffice`; converts documents |
+| GIMP | `3.2.6`; batch image editing and macros |
+| Inkscape + Potrace | `1.4.4` + Potrace `1.16`; SVG export/editing/vectorization |
+| Playwright | Chromium cached under `~/.cache/ms-playwright`; presentation PDF |
 
-No Python runtime is required: all skill tooling is Node.js.
+No Python runtime is required: all skill tooling is Node.js. GIMP batch mode
+uses GIMP's own embedded Python-Fu interpreter, not a project Python script.
 
 ## Usage
 
@@ -191,6 +199,18 @@ pnpm cli video --input /abs/clip.mp4 --frames 12 --summary
 # ComfyUI
 pnpm cli comfy status
 pnpm cli comfy run ltxv_t2v_8gb.json 20.seed=12345
+
+# Documents and images
+pnpm cli convert --input /abs/report.docx --to pdf --out /abs/out
+pnpm cli gimp resize --input /abs/in.png --output /abs/out.png --width 1200
+pnpm cli inkscape export --input /abs/logo.svg --output /abs/logo.png --dpi 300
+pnpm cli inkscape vectorize --input /abs/logo.png --output /abs/logo.svg
+pnpm cli remove-bg --input /abs/product.jpg --output /abs/product.png
+
+# Presentations
+pnpm cli presentation --input /abs/deck.json --output /abs/deck.pptx
+pnpm cli presentation --input /abs/deck.json --output /abs/deck.html
+pnpm cli presentation --input /abs/deck.json --output /abs/deck.pdf
 ```
 
 PowerShell equivalent for the OpenAI-compatible request:
@@ -215,23 +235,25 @@ registration. From the repo root, `pnpm cli` is equivalent.
 ├── index.ts                  # OpenCode V2 plugin: register skills + context
 ├── package.json
 ├── src/
-│   ├── cli.mjs               # single CLI for all skill tooling
-│   └── commands/             # one module per domain
+│   ├── cli.mjs               # single CLI for all skill and repo tooling
+│   ├── commands/             # one module per domain (install, validate, setup, ...)
+│   └── lib/                  # shared helpers (skills discovery, exec, config, ...)
 ├── skills/
 │   ├── autoskills/
+│   ├── autoedit-with-gimp/
+│   ├── autoedit-with-inkscape/
 │   ├── comfyui-server/
+│   ├── convert-files/
 │   ├── create-agent/
 │   ├── create-skill/
 │   ├── image-analysis/
+│   ├── image-background-removal/
 │   ├── ocr/
 │   ├── openai-api-usage/
+│   ├── presentations-generator/
 │   ├── setup/
 │   ├── speak/
 │   └── video-analysis/
-├── scripts/
-│   ├── build_manifest.mjs    # regenerate skills/manifest.json
-│   ├── install.mjs           # symlink plugin into OpenCode
-│   └── validate.mjs          # static harness validation
 ├── tests/                    # node:test suites
 ├── AGENTS.md
 └── README.md
@@ -241,8 +263,8 @@ registration. From the repo root, `pnpm cli` is equivalent.
 
 - Every skill lives in `skills/<name>/` and is edited here — there is no copy
   or sync step from another checkout.
-- `skills/manifest.json` is generated: run `pnpm manifest` after adding,
-  renaming, or removing a skill. Never edit it by hand.
+- Skills are discovered from `skills/*/SKILL.md` at plugin load; adding,
+  renaming, or removing a directory is enough (no manifest step).
 - For a new skill, load `create-skill` and follow its workflow.
 - New executable behavior goes in `src/commands/<domain>.mjs`, wired through
   `src/cli.mjs`; do not add per-skill scripts.

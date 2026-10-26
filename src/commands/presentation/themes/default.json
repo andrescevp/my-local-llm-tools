@@ -1,0 +1,31 @@
+{
+  "name": "Default Dark",
+  "colors": {
+    "background": "#1a1a2e",
+    "text": "#ffffff",
+    "accent": "#e94560",
+    "accent2": "#0f3460",
+    "heading": "#ffffff",
+    "light_bg": "#16213e",
+    "success": "#2ecc71",
+    "warning": "#f39c12"
+  },
+  "fonts": {
+    "heading": "Arial",
+    "body": "Calibri",
+    "size_title": 44,
+    "size_heading": 32,
+    "size_body": 20,
+    "size_caption": 14,
+    "size_small": 12
+  },
+  "page": {
+    "size": "A4",
+    "margin": "20mm",
+    "slide_number": true
+  },
+  "logo": null,
+  "logo_position": "top-right",
+  "background_image": null,
+  "chart_accent_colors": ["#e94560", "#0f3460", "#2ecc71", "#f39c12", "#3498db", "#9b59b6"]
+}

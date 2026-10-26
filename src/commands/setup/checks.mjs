@@ -1,7 +1,10 @@
 import { existsSync } from "node:fs"
-import { release } from "node:os"
+import { createRequire } from "node:module"
+import { homedir, release } from "node:os"
+import { join } from "node:path"
 
 import { binaryVersion, commandPath, hasCommand, runCommand } from "../../lib/exec.mjs"
+import { probeLibreOffice, resolveLibreOffice } from "../../lib/libreoffice.mjs"
 import { voiceModelPath } from "../../lib/piper.mjs"
 import { scanModels } from "./facts.mjs"
 import { evaluateFeatures } from "./features.mjs"
@@ -27,9 +30,38 @@ function tesseractLanguages() {
     .filter((line) => /^[a-z]{2,3}(_[A-Z]+)?$/.test(line))
 }
 
+function detectPlaywright() {
+  try {
+    const require = createRequire(import.meta.url)
+    const pkg = require("playwright/package.json")
+    const { chromium } = require("playwright")
+    const path = chromium.executablePath()
+    return {
+      ok: existsSync(path),
+      version: pkg.version ?? "",
+      path,
+      error: existsSync(path) ? "" : "Playwright Chromium is not installed",
+    }
+  } catch (error) {
+    return { ok: false, version: "", path: "", error: error.message }
+  }
+}
+
+function detectU2net() {
+  const path =
+    process.env.TOOLBOX_U2NET_MODEL ||
+    process.env.U2NET_MODEL ||
+    join(homedir(), ".mllt", "models", "u2net.onnx")
+  return { ok: existsSync(path), path }
+}
+
 export function detectTools() {
   const tesseract = binaryVersion("tesseract")
   const piper = commandPath("piper")
+  const office = resolveLibreOffice()
+  const libreoffice = office.ok
+    ? { ...probeLibreOffice(office.path), source: office.source }
+    : { ok: false, version: "", path: "", error: office.error, source: "" }
   return {
     node: { ok: true, version: process.version, path: process.execPath },
     pnpm: binaryVersion("pnpm"),
@@ -39,6 +71,13 @@ export function detectTools() {
     ffprobe: binaryVersion("ffprobe", ["-version"]),
     piper: { ok: Boolean(piper), version: piper ? "found" : "", path: piper },
     voice_model: { ok: existsSync(VOICE_MODEL), path: VOICE_MODEL },
+    libreoffice,
+    gimp: binaryVersion("gimp", ["--version"]),
+    inkscape: binaryVersion("inkscape", ["--version"]),
+    potrace: binaryVersion("potrace", ["--version"]),
+    pdftoppm: binaryVersion("pdftoppm", ["-v"]),
+    playwright: detectPlaywright(),
+    u2net_model: detectU2net(),
   }
 }
 
@@ -143,6 +182,13 @@ export async function collect({ ollamaUrl = DEFAULT_OLLAMA, comfyUrl = DEFAULT_C
       `GPU VRAM ${gpu.vram_gb} GiB (< 8 GB): local ComfyUI generation is not recommended`,
     )
   if (!tools.tesseract.ok) warnings.push("Tesseract not found (OCR fallback unavailable)")
+  if (!tools.libreoffice.ok) warnings.push("LibreOffice not found (convert-files unavailable)")
+  if (!tools.gimp.ok) warnings.push("GIMP not found (autoedit-with-gimp unavailable)")
+  if (!tools.inkscape.ok) warnings.push("Inkscape not found (autoedit-with-inkscape unavailable)")
+  if (!tools.playwright.ok)
+    warnings.push("Playwright Chromium missing (presentation PDF unavailable)")
+  if (!tools.u2net_model.ok)
+    warnings.push("U2Net model missing (image-background-removal unavailable)")
 
   const models = { ollama: ollama.models, comfyui: scanModels() }
   const paths = {
@@ -152,11 +198,12 @@ export async function collect({ ollamaUrl = DEFAULT_OLLAMA, comfyUrl = DEFAULT_C
     piper: tools.piper.path ?? "",
   }
   return {
-    schema: 2,
+    schema: 3,
     plugin: PLUGIN_NAME,
     generated_at: new Date().toISOString(),
     platform: { os: process.platform, arch: process.arch, release: release() },
     ok: tools.node.ok && tools.pnpm.ok,
+    libre_office_path: tools.libreoffice.path ?? "",
     hosts: { ollama: ollama.host, comfyui: comfyui.host },
     models,
     paths,

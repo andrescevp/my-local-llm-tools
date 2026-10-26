@@ -1,17 +1,17 @@
 // my-local-llm-tools — OpenCode V2 plugin.
 //
-// Registers the bundled skills (skills/*/SKILL.md, metadata from
-// skills/manifest.json) and injects a compact inventory into every session.
-// Machine facts (endpoints, readiness) are read from the manifest written by
-// `setup`; nothing about the host is hardcoded here.
+// Registers the bundled skills discovered from skills/*/SKILL.md and injects a
+// compact inventory into every session. Machine facts (endpoints, readiness)
+// are read from the manifest written by `setup`; nothing about the host is
+// hardcoded here.
 
-import { readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { Plugin } from "@opencode/plugin"
 
 import { manifestPath, readManifest } from "./src/commands/setup/manifest.mjs"
+import { discoverSkills, renderSkillContent } from "./src/lib/skills.mjs"
 
 const HARNESS_ID = "my-local-llm-tools"
 const CONTEXT_MARKER = "## my-local-llm-tools"
@@ -27,16 +27,17 @@ const SUMMARIES: Record<string, string> = {
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
   speak: "text-to-speech in Spanish via local piper-tts",
   "comfyui-server": "generate video/image/music/voice with local ComfyUI",
+  "convert-files": "convert documents with local LibreOffice",
+  "autoedit-with-gimp": "resize, convert, optimize, and edit images with GIMP",
+  "autoedit-with-inkscape": "export, clean, edit, and vectorize SVG files",
+  "image-background-removal": "remove image backgrounds locally with U2Net",
+  "presentations-generator": "generate PPTX, HTML, and PDF presentations from JSON",
 }
 
 interface SkillMeta {
   id: string
   name: string
   description: string
-}
-
-interface Manifest {
-  skills: SkillMeta[]
 }
 
 interface LoadedSkill extends SkillMeta {
@@ -70,34 +71,16 @@ function loadMachine(): Machine {
   }
 }
 
-function renderSkillContent(content: string, root: string, skillDir: string): string {
-  const pluginRoot = root.replaceAll("\\", "/")
-  const directory = skillDir.replaceAll("\\", "/")
-  return content
-    .replaceAll("${CLAUDE_PLUGIN_ROOT}", pluginRoot)
-    .replaceAll("${CLAUDE_SKILL_DIR}", directory)
-}
-
 function loadSkills(root: string): LoadedSkill[] {
-  let manifest: Manifest | undefined
-  try {
-    manifest = JSON.parse(readFileSync(join(root, "skills", "manifest.json"), "utf8")) as Manifest
-  } catch {
-    console.warn(`[${HARNESS_ID}] skills/manifest.json missing — run pnpm manifest`)
-    return []
+  const { skills, warnings } = discoverSkills(root) as {
+    skills: LoadedSkill[]
+    warnings: string[]
   }
-  const entries: LoadedSkill[] = []
-  for (const meta of manifest.skills) {
-    const skillDir = join(root, "skills", meta.id)
-    const path = join(skillDir, "SKILL.md")
-    try {
-      const content = renderSkillContent(readFileSync(path, "utf8"), root, skillDir)
-      entries.push({ ...meta, path, content })
-    } catch {
-      console.warn(`[${HARNESS_ID}] missing SKILL.md for '${meta.id}'`)
-    }
-  }
-  return entries
+  for (const warning of warnings) console.warn(`[${HARNESS_ID}] ${warning}`)
+  return skills.map((skill) => ({
+    ...skill,
+    content: renderSkillContent(skill.content, root, join(root, "skills", skill.id)),
+  }))
 }
 
 function machineLines(machine: Machine, root: string): string[] {
