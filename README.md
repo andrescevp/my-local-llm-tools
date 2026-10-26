@@ -1,12 +1,12 @@
 # my-local-llm-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Eighteen skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Seventeen skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
 
 ```
-Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
+Ollama :11434   llama.cpp :8080 (optional)
 ```
 
 ## Skills
@@ -22,7 +22,6 @@ Ollama :11434   ComfyUI :8188   llama.cpp :8080 (optional)
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in the system language (English fallback) | `piper` + voice model |
-| `comfyui-server` | Generate video, image, music, and voice via verified workflows | ComfyUI on `:8188` |
 | `convert-files` | Convert documents with LibreOffice | LibreOffice |
 | `autoedit-with-gimp` | Resize, convert, optimize, and edit images; custom macros | GIMP |
 | `autoedit-with-inkscape` | Export/clean/edit SVG and vectorize bitmaps | Inkscape, optional Potrace |
@@ -105,7 +104,7 @@ Copy-paste Windows examples: `skills/setup/references/windows.md`.
 ### Coexistence with `my-utils-harness`
 
 `my-utils-harness` (if installed) also registers `autoskills`,
-`comfyui-server`, `image-analysis`, and `ocr`. `dev-harness-skills` may register
+`image-analysis`, and `ocr`. `dev-harness-skills` may register
 other overlapping IDs. OpenCode resolves duplicate skill IDs by plugin load
 order, so the text that wins is not deterministic across machines. Keep only one
 of the overlapping plugins enabled, or disable the duplicate IDs explicitly:
@@ -138,11 +137,9 @@ pnpm cli doctor --skill ocr     # exit 1 if the skill cannot run
 ```
 
 The manifest lives at `~/.mllt/manifest.json` (`%USERPROFILE%\.mllt` on
-Windows) and includes the Ollama/ComfyUI hosts, available models, and resolved
+Windows) and includes the Ollama host, available models, and resolved
 `tesseract`/`ffmpeg`/`ffprobe`/`piper` paths, plus per-skill readiness. It is
-validated against
-`src/commands/setup/manifest.schema.json` on write and read. `instance_facts.json`
-is generated next to it and is not tracked in git.
+validated against `src/commands/setup/manifest.schema.json` on write and read.
 
 ### QA toolchain
 
@@ -166,7 +163,6 @@ is generated next to it and is not tracked in git.
 | Supported OS | Linux, macOS, Windows (Node paths and audio backends adapt) |
 | Ollama | `0.40.10`, systemd `ollama.service`, `127.0.0.1:11434` |
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
-| ComfyUI | user service `comfyui.service`, `127.0.0.1:8188` |
 | Piper | `~/.local/bin/piper` + system-language voice in `~/.mllt/piper-voices` |
 | Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
 | LibreOffice | `/usr/sbin/soffice`; converts documents |
@@ -198,10 +194,6 @@ pnpm cli ocr --image /abs/page.png
 
 # Video
 pnpm cli video --input /abs/clip.mp4 --frames 12 --summary
-
-# ComfyUI
-pnpm cli comfy status
-pnpm cli comfy run ltxv_t2v_8gb.json 20.seed=12345
 
 # Documents and images
 pnpm cli convert --input /abs/report.docx --to pdf --out /abs/out
@@ -254,7 +246,6 @@ registration. From the repo root, `pnpm cli` is equivalent.
 │   ├── autoskills/
 │   ├── autoedit-with-gimp/
 │   ├── autoedit-with-inkscape/
-│   ├── comfyui-server/
 │   ├── convert-files/
 │   ├── ccreate-agent/
 │   ├── ccreate-skill/
@@ -299,5 +290,4 @@ registration. From the repo root, `pnpm cli` is equivalent.
 | Service | Default | Notes |
 |---|---|---|
 | Ollama | `127.0.0.1:11434` | systemd system service |
-| ComfyUI | `127.0.0.1:8188` | single owner; user service |
 | llama.cpp | `127.0.0.1:8080` | optional OpenAI-compatible server |

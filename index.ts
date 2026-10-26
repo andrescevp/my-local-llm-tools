@@ -26,7 +26,6 @@ const SUMMARIES: Record<string, string> = {
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
   speak: "text-to-speech in the system language via local piper-tts",
-  "comfyui-server": "generate video/image/music/voice with local ComfyUI",
   "convert-files": "convert documents with local LibreOffice",
   "autoedit-with-gimp": "resize, convert, optimize, and edit images with GIMP",
   "autoedit-with-inkscape": "export, clean, edit, and vectorize SVG files",
@@ -50,10 +49,8 @@ interface LoadedSkill extends SkillMeta {
 
 interface MachineManifest {
   generated_at: string
-  hosts: { ollama: string; comfyui: string }
+  hosts: { ollama: string }
   ollama: { reachable: boolean }
-  comfyui: { reachable: boolean }
-  gpu: { ok: boolean; name: string; vram_gb: number }
   features: Record<string, { ok: boolean }>
 }
 
@@ -100,14 +97,8 @@ function machineLines(machine: Machine, root: string): string[] {
   const lines = [
     `Machine profile (${machine.path}, generated ${manifest.generated_at}):`,
     `- Ollama ${manifest.hosts.ollama}: ${manifest.ollama.reachable ? "reachable" : "unreachable"}`,
-    `- ComfyUI ${manifest.hosts.comfyui}: ${
-      manifest.comfyui.reachable ? "reachable" : "unreachable"
-    }`,
+    "",
   ]
-  if (manifest.gpu.ok) {
-    lines.push(`- GPU ${manifest.gpu.name}: ${manifest.gpu.vram_gb} GiB`)
-  }
-  lines.push("")
   return lines
 }
 

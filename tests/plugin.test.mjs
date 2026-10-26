@@ -10,7 +10,6 @@ const EXPECTED_SKILL_IDS = [
   "autoskills",
   "autoedit-with-gimp",
   "autoedit-with-inkscape",
-  "comfyui-server",
   "convert-files",
   "ccreate-agent",
   "ccreate-skill",
@@ -62,8 +61,8 @@ function machineManifest() {
     platform: { os: "linux", arch: "x64", release: "6.0.0" },
     ok: true,
     libre_office_path: "/usr/bin/soffice",
-    hosts: { ollama: "http://ollama.test:11434", comfyui: "http://comfy.test:8188" },
-    models: { ollama: { available: [], required: [], missing: [] }, comfyui: [] },
+    hosts: { ollama: "http://ollama.test:11434" },
+    models: { ollama: { available: [], required: [], missing: [] } },
     paths: { tesseract: "", ffmpeg: "", ffprobe: "", piper: "" },
     tools: {
       node: { ok: true, version: "v24.0.0", path: "/usr/bin/node" },
@@ -82,21 +81,11 @@ function machineManifest() {
       playwright: { ok: true, version: "1.64.1", path: "/cache/chromium" },
       u2net_model: { ok: true, path: "/models/u2net.onnx" },
     },
-    gpu: { ok: true, name: "Test GPU", vram_gb: 8, source: "test" },
     ollama: {
       host: "http://ollama.test:11434",
       reachable: true,
       version: "0.1.0",
       models: { available: [], required: [], missing: [] },
-    },
-    comfyui: {
-      host: "http://comfy.test:8188",
-      reachable: false,
-      version: "",
-      python: "",
-      gpu: "",
-      vram_gb: 0,
-      gpu_ok: false,
     },
     features: {
       "image-analysis": { ok: true, requires: [], optional: [] },
@@ -172,7 +161,6 @@ test("missing manifest alerts to run setup instead of using hardcoded hosts", as
   assert.match(text, /cli\.mjs setup/)
   assert.match(text, /pnpm cli setup/)
   assert.ok(!text.includes("127.0.0.1:11434"), "no hardcoded Ollama host")
-  assert.ok(!text.includes("127.0.0.1:8188"), "no hardcoded ComfyUI host")
   assert.ok(
     warnings.some((line) => line.includes("missing or invalid")),
     "plugin load warns about the missing manifest",
@@ -184,8 +172,6 @@ test("manifest hosts and readiness drive the injected profile", async () => {
   const text = contextText(hooks)
   assert.match(text, /generated 2026-10-26T00:00:00\.000Z/)
   assert.match(text, /Ollama http:\/\/ollama\.test:11434: reachable/)
-  assert.match(text, /ComfyUI http:\/\/comfy\.test:8188: unreachable/)
-  assert.match(text, /GPU Test GPU: 8 GiB/)
   assert.match(text, /my-local-llm-tools:image-analysis: .*— ready/)
   assert.match(text, /my-local-llm-tools:ocr: .*— not ready/)
   assert.ok(!text.includes("127.0.0.1:11434"), "no hardcoded Ollama host")

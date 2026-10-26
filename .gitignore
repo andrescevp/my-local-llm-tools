@@ -7,4 +7,3 @@ reports/
 coverage/
 trigger_eval_*/
 fixtures_local/
-instance_facts.json

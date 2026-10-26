@@ -7,7 +7,6 @@ export const FEATURES = {
   "video-analysis": {
     requires: ["ollama", "model:minicpm-v4.6:latest", "ffmpeg", "ffprobe"],
   },
-  "comfyui-server": { requires: ["comfyui"] },
   speak: { requires: ["piper", "voice"] },
   setup: { requires: ["node", "pnpm"] },
   "openai-api-usage": { requires: [] },
@@ -25,12 +24,11 @@ export const FEATURES = {
 }
 
 function satisfied(name, context) {
-  const { tools, ollama, comfyui } = context
+  const { tools, ollama } = context
   if (name === "ollama") return ollama.reachable
   if (name.startsWith("model:")) {
     return ollama.models.available.includes(name.slice("model:".length))
   }
-  if (name === "comfyui") return comfyui.reachable
   if (name === "voice") return tools.voice_model.ok
   return Boolean(tools[name]?.ok)
 }

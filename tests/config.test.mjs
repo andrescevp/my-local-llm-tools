@@ -3,7 +3,7 @@ import { homedir } from "node:os"
 import { join } from "node:path"
 import test from "node:test"
 
-import { configDir, factsPath, manifestPath } from "../src/lib/config.mjs"
+import { configDir, manifestPath } from "../src/lib/config.mjs"
 import { voiceCandidates } from "../src/lib/piper.mjs"
 
 test("configDir uses ~/.mllt on every platform", () => {
@@ -32,13 +32,9 @@ test("piper voice candidates honor PIPER_VOICE", () => {
   }
 })
 
-test("manifest and facts live in the config directory", () => {
+test("manifest lives in the config directory", () => {
   assert.equal(
     manifestPath({ MY_LOCAL_LLM_TOOLS_CONFIG_DIR: "/custom" }, "linux"),
     join("/custom", "manifest.json"),
-  )
-  assert.equal(
-    factsPath({ MY_LOCAL_LLM_TOOLS_CONFIG_DIR: "/custom" }, "linux"),
-    join("/custom", "instance_facts.json"),
   )
 })

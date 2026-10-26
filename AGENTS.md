@@ -8,7 +8,7 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All eighteen skills are canonical here; edit `skills/<name>/` directly.
+- All seventeen skills are canonical here; edit `skills/<name>/` directly.
 - Skills are discovered from `skills/*/SKILL.md` at plugin load; there is no
   registration manifest to generate or edit.
 - All executable skill tooling lives in the single CLI at `src/`; do not add
@@ -97,8 +97,8 @@ as a command module, not as a per-skill or root-level script.
   `${CLAUDE_SKILL_DIR}` is also supported for skill-local files.
 - `openai-api-usage` is documentation-only: it must not add runtime code or
   duplicate endpoints that local servers do not implement.
-- Local endpoints: Ollama `127.0.0.1:11434`, ComfyUI `127.0.0.1:8188`,
-  llama.cpp `127.0.0.1:8080` (optional OpenAI-compatible server).
+- Local endpoints: Ollama `127.0.0.1:11434`, llama.cpp `127.0.0.1:8080`
+  (optional OpenAI-compatible server).
 
 ## Safety
 

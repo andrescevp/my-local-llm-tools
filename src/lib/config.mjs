@@ -13,7 +13,3 @@ export function configDir(env = process.env, _platform = process.platform) {
 export function manifestPath(env = process.env, platform = process.platform) {
   return join(configDir(env, platform), "manifest.json")
 }
-
-export function factsPath(env = process.env, platform = process.platform) {
-  return join(configDir(env, platform), "instance_facts.json")
-}

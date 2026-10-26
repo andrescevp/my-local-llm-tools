@@ -5,7 +5,6 @@ import { runCommand } from "../../lib/exec.mjs"
 import { voiceStatus } from "../../lib/piper.mjs"
 
 const OLLAMA_URL = "https://ollama.com/download"
-const COMFY_URL = "https://comfy.org/download"
 const PIPER_URL = "https://github.com/rhasspy/piper/releases"
 
 function tesseractHint(platform) {
@@ -51,7 +50,7 @@ function popplerHint(platform) {
 
 export function planInstall(manifest, root, platform = process.platform) {
   const actions = []
-  const { tools, ollama, comfyui } = manifest
+  const { tools, ollama } = manifest
   const add = (action) => actions.push(action)
 
   if (!tools.pnpm.ok) {
@@ -110,32 +109,6 @@ export function planInstall(manifest, root, platform = process.platform) {
       detail: ffmpegHint(platform),
       url: "https://ffmpeg.org/download.html",
     })
-  }
-
-  if (!comfyui.reachable) {
-    const gpu = manifest.gpu ?? { ok: false, vram_gb: 0 }
-    if (gpu.ok && gpu.vram_gb < 7.5) {
-      add({
-        id: "comfyui:skip",
-        kind: "manual",
-        description: `Skip local ComfyUI: GPU ${gpu.name} has ${gpu.vram_gb} GiB (< 8 GB)`,
-        detail: "Use an external ComfyUI instance with --comfy-url if one is available",
-        url: COMFY_URL,
-      })
-    } else {
-      add({
-        id: "comfyui",
-        kind: "manual",
-        description: tools.docker.ok
-          ? "Deploy ComfyUI with Docker (preferred), or install locally; pass --comfy-url when ready"
-          : "Install ComfyUI locally (https://comfy.org/download); pass --comfy-url when ready",
-        detail:
-          gpu.ok && gpu.vram_gb >= 7.5
-            ? `GPU detected: ${gpu.name} (${gpu.vram_gb} GiB). Docker is isolated and reproducible; local install is simpler but drifts.`
-            : "Requires a GPU with at least 8 GB VRAM for local generation; otherwise skip ComfyUI",
-        url: COMFY_URL,
-      })
-    }
   }
 
   if (!tools.piper.ok) {

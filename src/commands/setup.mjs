@@ -2,8 +2,7 @@ import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
 import { parseFlags } from "../lib/args.mjs"
-import { collect, DEFAULT_COMFY, DEFAULT_OLLAMA } from "./setup/checks.mjs"
-import { discoverFacts, writeFacts } from "./setup/facts.mjs"
+import { collect, DEFAULT_OLLAMA } from "./setup/checks.mjs"
 import { applyPlan, formatPlan, planInstall } from "./setup/install.mjs"
 import { writeManifest } from "./setup/manifest.mjs"
 
@@ -11,7 +10,6 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..")
 
 const SPEC = {
   "--ollama-url": { key: "ollamaUrl" },
-  "--comfy-url": { key: "comfyUrl" },
   "--install": { key: "install", type: "boolean" },
   "--yes": { key: "yes", type: "boolean" },
   "--json": { key: "json", type: "boolean" },
@@ -23,7 +21,6 @@ Detect dependencies, write the machine manifest, and optionally install.
 
 Options:
   --ollama-url URL   Existing Ollama URL (default: ${DEFAULT_OLLAMA})
-  --comfy-url URL    Existing ComfyUI URL (default: ${DEFAULT_COMFY})
   --install          Print the install plan (requires --yes to execute)
   --yes              Confirm unattended installs (pnpm install, ollama pull)
   --json             Print the manifest as JSON
@@ -33,9 +30,8 @@ function statusLine(label, ok, detail) {
   console.log(`${label.padEnd(12)} ${ok ? "ok  " : "warn"} ${detail}`)
 }
 
-function printSummary(manifest, target, factsTarget) {
+function printSummary(manifest, target) {
   console.log(`Manifest     ${target}`)
-  if (factsTarget) console.log(`Facts        ${factsTarget}`)
   console.log(`Platform     ${manifest.platform.os} ${manifest.platform.arch}`)
   statusLine("node", manifest.tools.node.ok, manifest.tools.node.version)
   statusLine("pnpm", manifest.tools.pnpm.ok, manifest.tools.pnpm.version || "missing")
@@ -50,10 +46,6 @@ function printSummary(manifest, target, factsTarget) {
   statusLine("ollama", manifest.ollama.reachable, modelInfo)
   if (manifest.ollama.models.missing.length)
     console.log(`             missing: ${manifest.ollama.models.missing.join(", ")}`)
-  const comfyInfo = manifest.comfyui.reachable
-    ? `${manifest.comfyui.host} ${manifest.comfyui.vram_gb} GiB`
-    : `${manifest.comfyui.host} unreachable`
-  statusLine("comfyui", manifest.comfyui.reachable, comfyInfo)
   statusLine(
     "tesseract",
     manifest.tools.tesseract.ok,
@@ -86,8 +78,6 @@ function printSummary(manifest, target, factsTarget) {
     manifest.tools.u2net_model.ok,
     manifest.tools.u2net_model.path || "model missing (remove-bg unavailable)",
   )
-  const gpu = manifest.gpu ?? { ok: false, name: "", vram_gb: 0 }
-  statusLine("gpu", gpu.ok, gpu.ok ? `${gpu.name} ${gpu.vram_gb} GiB` : "not detected (optional)")
   for (const warning of manifest.warnings) console.log(`warning      ${warning}`)
   console.log("\nSkills:")
   for (const [name, feature] of Object.entries(manifest.features)) {
@@ -110,7 +100,6 @@ export async function setup(argv) {
 
   const urls = {
     ollamaUrl: values.ollamaUrl ?? DEFAULT_OLLAMA,
-    comfyUrl: values.comfyUrl ?? DEFAULT_COMFY,
   }
 
   if (values.install) {
@@ -129,21 +118,10 @@ export async function setup(argv) {
   const manifest = await collect(urls)
   const target = writeManifest(manifest)
 
-  let factsTarget = ""
-  if (manifest.comfyui.reachable) {
-    try {
-      factsTarget = writeFacts(await discoverFacts({ url: manifest.comfyui.host }))
-    } catch (error) {
-      process.stderr.write(`WARN: could not write ComfyUI facts: ${error.message}\n`)
-    }
-  }
-
   if (values.json) {
-    console.log(
-      JSON.stringify({ manifest, manifest_path: target, facts_path: factsTarget }, null, 2),
-    )
+    console.log(JSON.stringify({ manifest, manifest_path: target }, null, 2))
   } else {
-    printSummary(manifest, target, factsTarget)
+    printSummary(manifest, target)
     console.log("\nRun 'node src/cli.mjs doctor' for diagnostics.")
   }
   return manifest.ok ? 0 : 1

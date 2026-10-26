@@ -15,9 +15,7 @@
     "models",
     "paths",
     "tools",
-    "gpu",
     "ollama",
-    "comfyui",
     "features",
     "warnings"
   ],
@@ -40,22 +38,17 @@
     "hosts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["ollama", "comfyui"],
+      "required": ["ollama"],
       "properties": {
-        "ollama": { "type": "string", "minLength": 1 },
-        "comfyui": { "type": "string", "minLength": 1 }
+        "ollama": { "type": "string", "minLength": 1 }
       }
     },
     "models": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["ollama", "comfyui"],
+      "required": ["ollama"],
       "properties": {
-        "ollama": { "$ref": "#/$defs/modelSet" },
-        "comfyui": {
-          "type": "array",
-          "items": { "$ref": "#/$defs/comfyModel" }
-        }
+        "ollama": { "$ref": "#/$defs/modelSet" }
       }
     },
     "paths": {
@@ -124,17 +117,6 @@
         }
       }
     },
-    "gpu": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["ok", "name", "vram_gb", "source"],
-      "properties": {
-        "ok": { "type": "boolean" },
-        "name": { "type": "string" },
-        "vram_gb": { "type": "number", "minimum": 0 },
-        "source": { "type": "string" }
-      }
-    },
     "ollama": {
       "type": "object",
       "additionalProperties": false,
@@ -144,21 +126,6 @@
         "reachable": { "type": "boolean" },
         "version": { "type": "string" },
         "models": { "$ref": "#/$defs/modelSet" },
-        "error": { "type": "string" }
-      }
-    },
-    "comfyui": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["host", "reachable", "version", "python", "gpu", "vram_gb", "gpu_ok"],
-      "properties": {
-        "host": { "type": "string", "minLength": 1 },
-        "reachable": { "type": "boolean" },
-        "version": { "type": "string" },
-        "python": { "type": "string" },
-        "gpu": { "type": "string" },
-        "vram_gb": { "type": "number", "minimum": 0 },
-        "gpu_ok": { "type": "boolean" },
         "error": { "type": "string" }
       }
     },
@@ -214,17 +181,6 @@
         "available": { "type": "array", "items": { "type": "string" } },
         "required": { "type": "array", "items": { "type": "string" } },
         "missing": { "type": "array", "items": { "type": "string" } }
-      }
-    },
-    "comfyModel": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["name", "subdir", "path", "size_bytes"],
-      "properties": {
-        "name": { "type": "string" },
-        "subdir": { "type": "string" },
-        "path": { "type": "string" },
-        "size_bytes": { "type": "integer", "minimum": 0 }
       }
     },
     "requirements": {

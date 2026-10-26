@@ -165,9 +165,8 @@ resolves its CLI through `MLLT_*`.
   `compactContext(manifest, { host, pluginRoot })`. It renders a compact block
   with:
   - manifest path and `generated_at`;
-  - Ollama and ComfyUI hosts and reachability;
+  - Ollama host and reachability;
   - Ollama available/missing models (count plus required names);
-  - ComfyUI VRAM and GPU status;
   - tesseract/ffmpeg/ffprobe/piper/voice readiness;
   - per-skill readiness from `manifest.features`;
   - warnings;
@@ -226,8 +225,8 @@ resolves its CLI through `MLLT_*`.
 ### 1.5 Add the MLLT path contract to script-using skills
 
 - **Files:** `skills/image-analysis/SKILL.md`, `skills/ocr/SKILL.md`,
-  `skills/video-analysis/SKILL.md`, `skills/comfyui-server/SKILL.md`,
-  `skills/speak/SKILL.md`, `skills/autoskills/SKILL.md`,
+  `skills/video-analysis/SKILL.md`, `skills/speak/SKILL.md`,
+  `skills/autoskills/SKILL.md`,
   `skills/ccreate-skill/SKILL.md`, `skills/setup/SKILL.md`,
   `src/lib/render.mjs`, `index.ts`, `tests/path_contract.test.mjs` (new),
   `AGENTS.md`, `README.md`.
@@ -420,8 +419,7 @@ understand Codex.
 
 ### 3.3 Optional Codex presentation metadata
 
-- **Files:** `skills/speak/agents/openai.yaml`,
-  `skills/comfyui-server/agents/openai.yaml` (new, optional).
+- **Files:** `skills/speak/agents/openai.yaml` (new, optional).
 - **Content:** `policy.allow_implicit_invocation: false` for skills with
   side effects; optional `interface.display_name` and `short_description`.
 - **Acceptance:** files parse as YAML; the skills still validate.

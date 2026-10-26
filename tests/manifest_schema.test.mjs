@@ -15,21 +15,13 @@ function validManifest() {
     platform: { os: "linux", arch: "x64", release: "test" },
     ok: true,
     libre_office_path: "/usr/bin/soffice",
-    hosts: { ollama: "http://127.0.0.1:11434", comfyui: "http://127.0.0.1:8188" },
+    hosts: { ollama: "http://127.0.0.1:11434" },
     models: {
       ollama: {
         available: ["minicpm-v4.6:latest"],
         required: ["minicpm-v4.6:latest"],
         missing: [],
       },
-      comfyui: [
-        {
-          name: "model.gguf",
-          subdir: "diffusion_models",
-          path: "/models/model.gguf",
-          size_bytes: 1,
-        },
-      ],
     },
     paths: {
       tesseract: "/usr/bin/tesseract",
@@ -65,7 +57,6 @@ function validManifest() {
       playwright: { ok: true, version: "1.64.1", path: "/cache/chromium" },
       u2net_model: { ok: true, path: "/models/u2net.onnx" },
     },
-    gpu: { ok: true, name: "GPU", vram_gb: 8, source: "nvidia-smi" },
     ollama: {
       host: "http://127.0.0.1:11434",
       reachable: true,
@@ -75,15 +66,6 @@ function validManifest() {
         required: ["minicpm-v4.6:latest"],
         missing: [],
       },
-    },
-    comfyui: {
-      host: "http://127.0.0.1:8188",
-      reachable: true,
-      version: "0.3",
-      python: "3.12",
-      gpu: "GPU",
-      vram_gb: 8,
-      gpu_ok: true,
     },
     features: {
       ocr: { ok: true, requires: [{ requirement: "ollama", ok: true }], optional: [] },

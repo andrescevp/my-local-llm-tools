@@ -66,8 +66,8 @@ export function install(
   )
 
   if (existsSync(join(plugins, "my-utils-harness"))) {
-    log("    note: my-utils-harness overlaps autoskills, comfyui-server,")
-    log("    image-analysis, and ocr. dev-harness-skills may overlap others.")
+    log("    note: my-utils-harness overlaps autoskills, image-analysis, and ocr.")
+    log("    dev-harness-skills may overlap others.")
     log("    OpenCode resolves duplicate skill IDs by load order — enable only one")
     log("    of the overlapping plugins, or disable the duplicate IDs in opencode.jsonc.")
   }

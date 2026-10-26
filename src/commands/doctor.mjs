@@ -1,10 +1,9 @@
 import { parseFlags } from "../lib/args.mjs"
-import { collect, DEFAULT_COMFY, DEFAULT_OLLAMA } from "./setup/checks.mjs"
+import { collect, DEFAULT_OLLAMA } from "./setup/checks.mjs"
 import { manifestPath, readManifest } from "./setup/manifest.mjs"
 
 const SPEC = {
   "--ollama-url": { key: "ollamaUrl" },
-  "--comfy-url": { key: "comfyUrl" },
   "--skill": { key: "skill" },
   "--json": { key: "json", type: "boolean" },
   "--strict": { key: "strict", type: "boolean" },
@@ -17,10 +16,9 @@ Diagnose the harness without writing the manifest.
 
 Options:
   --ollama-url URL   Ollama URL to probe (default: ${DEFAULT_OLLAMA})
-  --comfy-url URL    ComfyUI URL to probe (default: ${DEFAULT_COMFY})
   --skill NAME       Only check one skill (exit 1 when not ready)
   --json             Print the diagnostic manifest as JSON
-  --strict           Fail on optional gaps (tesseract, docker, ComfyUI, models)
+  --strict           Fail on optional gaps (tesseract, docker, models)
   --cached           Read the manifest instead of probing live services
 `
 
@@ -61,7 +59,6 @@ export async function doctor(argv) {
   } else {
     manifest = await collect({
       ollamaUrl: values.ollamaUrl ?? DEFAULT_OLLAMA,
-      comfyUrl: values.comfyUrl ?? DEFAULT_COMFY,
     })
   }
 
@@ -94,16 +91,6 @@ export async function doctor(argv) {
     )
     if (manifest.ollama.models.missing.length)
       console.log(`               missing: ${manifest.ollama.models.missing.join(", ")}`)
-    line(
-      "comfyui",
-      manifest.comfyui.reachable,
-      manifest.comfyui.reachable
-        ? `${manifest.comfyui.host} ${manifest.comfyui.vram_gb} GiB (${manifest.comfyui.version})`
-        : `${manifest.comfyui.host} unreachable`,
-    )
-    if (manifest.comfyui.reachable && !manifest.comfyui.gpu_ok) {
-      console.log(`               warning: VRAM ${manifest.comfyui.vram_gb} GiB < 8 GB`)
-    }
     line(
       "tesseract",
       manifest.tools.tesseract.ok,
@@ -145,8 +132,6 @@ export async function doctor(argv) {
       manifest.tools.u2net_model.ok,
       manifest.tools.u2net_model.path || "model missing (optional)",
     )
-    const gpu = manifest.gpu ?? { ok: false, name: "", vram_gb: 0 }
-    line("gpu", gpu.ok, gpu.ok ? `${gpu.name} ${gpu.vram_gb} GiB` : "not detected (optional)")
     console.log("\nSkills:")
     for (const [name, feature] of Object.entries(manifest.features)) printFeature(name, feature)
     if (manifest.warnings.length) {
@@ -161,7 +146,6 @@ export async function doctor(argv) {
     values.strict &&
     (manifest.ollama.models.missing.length > 0 ||
       !manifest.tools.tesseract.ok ||
-      !manifest.tools.docker.ok ||
-      !manifest.comfyui.reachable)
+      !manifest.tools.docker.ok)
   return coreFailed || featuresFailed || strictFailed ? 1 : 0
 }

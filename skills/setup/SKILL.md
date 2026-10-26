@@ -2,10 +2,10 @@
 name: setup
 description: >
   Use this skill when installing, checking, or diagnosing the harness —
-  detecting Node/pnpm, Docker, Ollama, ComfyUI, Tesseract, ffmpeg, and piper;
-  writing the per-machine manifest; planning confirmed installs; and reporting
-  which skills can run. Trigger on "setup this machine", "doctor", "missing
-  dependency", "Ollama or ComfyUI URL", or "why can't this skill run?" — run
+  detecting Node/pnpm, Docker, Ollama, Tesseract, ffmpeg, and piper; writing
+  the per-machine manifest; planning confirmed installs; and reporting which
+  skills can run. Trigger on "setup this machine", "doctor", "missing
+  dependency", "Ollama URL", or "why can't this skill run?" — run
   `pnpm cli doctor --skill <name>` first.
 license: MIT
 compatibility: opencode, claude, copilot, antigravity
@@ -23,7 +23,7 @@ instructions here and **reads the manifest** to decide whether it can run.
 ## Commands
 
 ```bash
-pnpm cli setup                        # detect, write manifest + ComfyUI facts
+pnpm cli setup                        # detect and write the manifest
 pnpm cli setup --install              # print the install plan only
 pnpm cli setup --install --yes        # execute the safe, unattended steps
 pnpm cli doctor                       # live diagnostics, writes nothing
@@ -33,8 +33,7 @@ pnpm cli doctor --json                # machine-readable diagnostics
 pnpm cli doctor --strict              # fail on optional gaps too
 ```
 
-Existing servers: pass `--ollama-url URL` and/or `--comfy-url URL`. Defaults are
-`http://127.0.0.1:11434` and `http://127.0.0.1:8188`.
+Existing server: pass `--ollama-url URL` (default `http://127.0.0.1:11434`).
 
 ## Manifest
 
@@ -50,15 +49,14 @@ Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 
 - `plugin`: `my-local-llm-tools`; `schema`: manifest version.
 - `platform`: OS, arch, release.
-- `hosts`: `ollama` and `comfyui` base URLs.
-- `models`: `ollama.available/required/missing` and the local ComfyUI model files.
+- `hosts`: `ollama` base URL.
+- `models`: `ollama.available/required/missing`.
 - `libre_office_path`: resolved LibreOffice binary.
 - `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
   voice model, LibreOffice, GIMP, Inkscape, Potrace, `pdftoppm`, Chrome,
   Playwright, and the U2Net model, each with its resolved `path`.
 - `ollama`: host, reachability, version, models.
-- `comfyui`: host, reachability, version, GPU, VRAM (GiB).
 - `features`: per-skill `ok` plus the requirements that passed or failed.
 - `warnings`: human-readable gaps.
 
@@ -81,7 +79,6 @@ ID when invoking the skill tool.
 | `image-analysis` | Ollama + `minicpm-v4.6:latest` | — |
 | `ocr` | Ollama + `MedAIBase/PaddleOCR-VL:0.9b` | Tesseract |
 | `video-analysis` | Ollama + `minicpm-v4.6:latest`, ffmpeg, ffprobe | — |
-| `comfyui-server` | ComfyUI reachable | 8 GB VRAM for local generation |
 | `speak` | piper + system-language voice model | English fallback |
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `ccreate-skill`, `ccreate-agent`, `autoskills` | Node only | — |
@@ -132,29 +129,6 @@ managers as root):
   back to Playwright Chromium.
 - **U2Net model** — place `u2net.onnx` at `~/.mllt/models/u2net.onnx` or set
   `TOOLBOX_U2NET_MODEL`; it is never downloaded automatically.
-- **ComfyUI** — Docker is preferred. If the user already runs an instance, pass
-  `--comfy-url`; otherwise install from <https://comfy.org/download>. Local
-  generation needs a GPU with **at least 8 GB VRAM**; below that, skip ComfyUI
-  and warn that local image/video generation will not work properly.
-  - Docker: isolated, reproducible, easy to reset, GPU via `--gpus all`; heavier
-    image and needs Docker + the NVIDIA container toolkit.
-  - Local: native performance and simpler model/file access; dependency drift
-    and manual upgrades.
-
-## ComfyUI instance facts
-
-`setup` regenerates `instance_facts.json` next to the manifest from the running
-ComfyUI instance and the local install:
-
-- `versions` and `device` from `/system_stats`.
-- `models` from `COMFY_MODELS` (default `~/ComfyUI/models`).
-- `workflows` from `COMFY_WORKFLOWS` (default
-  `~/ComfyUI/user/default/workflows`).
-- `custom_nodes` and `node_count` from the install and `/object_info`.
-
-The file is **not tracked in git**; `comfy workflows` reads it from the config
-directory. Rerun `setup` after adding models, workflows, or custom nodes.
-
 ## Cross-platform notes
 
 - Node paths come from `node:os`; no fixed `/tmp`, `/proc`, or `which`.
@@ -173,8 +147,6 @@ directory. Rerun `setup` after adding models, workflows, or custom nodes.
 | `doctor` exits 1 | Fix the `fail` lines; `setup --install` prints the plan |
 | Ollama unreachable | Start it, or `setup --ollama-url http://host:11434` |
 | Missing models | `setup --install --yes` pulls them, or `ollama pull <model>` |
-| ComfyUI unreachable | Start Docker/local ComfyUI, then rerun `setup` |
-| VRAM warning | Local generation below 8 GB is unsupported; use an external instance |
 | Tesseract missing | OCR still works via PaddleOCR; correction passes lose the fallback |
 | Stale skills readiness | Rerun `setup` to refresh the manifest |
 
@@ -183,5 +155,4 @@ directory. Rerun `setup` after adding models, workflows, or custom nodes.
 - [ ] `setup` writes the manifest and prints the path
 - [ ] `doctor --skill <name>` exits 0 only when requirements are met
 - [ ] No other skill contains installation commands — they point here
-- [ ] ComfyUI facts are generated outside the repo
 - [ ] Commands work on Linux, macOS, and Windows

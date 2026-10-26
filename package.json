@@ -1,7 +1,7 @@
 {
   "name": "my-local-llm-tools",
   "version": "2.0.0",
-  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image/video analysis, TTS, skill generation, ComfyUI, and OpenAI-compatible API guidance.",
+  "description": "Local-first, low-cost AI toolbelt — OpenCode V2 plugin with OCR, image/video analysis, TTS, skill generation, and OpenAI-compatible API guidance.",
   "type": "module",
   "private": true,
   "exports": {

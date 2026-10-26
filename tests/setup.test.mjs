@@ -25,14 +25,13 @@ function context(overrides = {}) {
         missing: [],
       },
     },
-    comfyui: { reachable: true, host: "http://127.0.0.1:8188", vram_gb: 8, gpu_ok: true },
     ...overrides,
   }
 }
 
 test("all features are ready with a complete environment", () => {
   const features = evaluateFeatures(context())
-  for (const name of ["image-analysis", "ocr", "video-analysis", "comfyui-server", "speak"]) {
+  for (const name of ["image-analysis", "ocr", "video-analysis", "speak"]) {
     assert.equal(features[name].ok, true, name)
   }
 })
@@ -64,29 +63,6 @@ test("tesseract is optional for ocr", () => {
   assert.equal(features.ocr.optional[0].ok, false)
 })
 
-test("planInstall skips ComfyUI when VRAM is below 8 GB", () => {
-  const manifest = {
-    tools: {
-      pnpm: { ok: true },
-      docker: { ok: true },
-      tesseract: { ok: true },
-      ffmpeg: { ok: true },
-      ffprobe: { ok: true },
-      piper: { ok: true },
-      voice_model: { ok: true },
-    },
-    gpu: { ok: true, name: "small", vram_gb: 4 },
-    ollama: {
-      reachable: true,
-      host: "http://127.0.0.1:11434",
-      models: { available: [], required: [], missing: [] },
-    },
-    comfyui: { reachable: false, host: "http://127.0.0.1:8188" },
-  }
-  const actions = planInstall(manifest, "/tmp/does-not-exist-cheap-ai", "linux")
-  assert.ok(actions.some((action) => action.id === "comfyui:skip"))
-})
-
 test("planInstall lists missing tools and models", () => {
   const manifest = {
     tools: {
@@ -107,7 +83,6 @@ test("planInstall lists missing tools and models", () => {
         missing: ["minicpm-v4.6:latest"],
       },
     },
-    comfyui: { reachable: false, host: "http://127.0.0.1:8188" },
   }
   const actions = planInstall(manifest, "/tmp/does-not-exist-cheap-ai", "linux")
   const ids = actions.map((action) => action.id)
@@ -115,7 +90,6 @@ test("planInstall lists missing tools and models", () => {
   assert.ok(ids.includes("model:minicpm-v4.6:latest"))
   assert.ok(ids.includes("tesseract"))
   assert.ok(ids.includes("ffmpeg"))
-  assert.ok(ids.includes("comfyui"))
   assert.match(formatPlan(actions), /Tesseract/)
 })
 
@@ -135,7 +109,6 @@ test("planInstall downloads the system-language voice when piper exists", () => 
       host: "http://127.0.0.1:11434",
       models: { available: [], required: [], missing: [] },
     },
-    comfyui: { reachable: true, host: "http://127.0.0.1:8188", vram_gb: 8, gpu_ok: true },
   }
   const actions = planInstall(manifest, "/repo", "linux")
   const voice = actions.find((action) => action.id === "piper-voice")

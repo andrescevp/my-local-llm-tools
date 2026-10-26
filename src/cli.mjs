@@ -3,7 +3,6 @@
 //
 // Usage: node src/cli.mjs <command> [args...]
 import { browser } from "./commands/browser.mjs"
-import { comfy } from "./commands/comfy.mjs"
 import { convert } from "./commands/convert.mjs"
 import { doctor } from "./commands/doctor.mjs"
 import { gimp } from "./commands/gimp.mjs"
@@ -22,7 +21,6 @@ import { voice } from "./commands/voice.mjs"
 
 const COMMANDS = {
   browser,
-  comfy,
   convert,
   doctor,
   gimp,
@@ -47,7 +45,6 @@ Commands:
   skill triggers <queries.json> <skill> [runs]      measure trigger rates
   skill evals <evals.json> <SKILL.md> <dir> [--baseline]
                                                     run skill evaluations
-  comfy <command> [args...]                         drive the local ComfyUI server
   image --image PATH [options]                      analyze images locally
   ocr --image PATH [options]                        extract text from images
   video --input PATH [options]                      analyze a local video

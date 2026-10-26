@@ -1,8 +1,6 @@
 - [x] todos los scripts deben ser en jsvascript, para qa usar biome, dependency-cruiser, jscpd, osv-scanner y semgrep (pnpm)
 - [x] eliminar llamacpp-server y ollama-server y en su lugar crear openai-api-usage con instrucciones de como usar la api de openai y apis compatibles como las de llamacpp y ollama
 - [x] vincular responsabilidades de ocr e image-analysis (minicpm general; documentos/tablas → PaddleOCR-VL; ocr directo para documentos/informes) y crear `video-analysis` con minicpm
-- [x] Nueva skill `setup` + comandos `setup`/`doctor`, manifest multiplataforma, hechos de ComfyUI generados en config y skills leyendo requisitos
-    - [x] Extraer de comfyui-server el setup de la instancia a `setup` (modelos, workflows, custom nodes); `instance_facts.json` ignorado y recreado en la máquina
+- [x] Nueva skill `setup` + comandos `setup`/`doctor`, manifest multiplataforma y skills leyendo requisitos
     - [x] Instalaciones informadas + confirmación (`--install` / `--yes`); instalación manual con URLs oficiales
 - [x] eliminar skills/manifest.json y el directorio `scripts/` del repositorio; skills descubiertas dinámicamente e install/validate en `src/cli.mjs`
-- crear `local-image-generation`, `local-video-generation`, `local-audio-generation`, skills usando comfyui
