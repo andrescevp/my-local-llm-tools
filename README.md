@@ -1,6 +1,6 @@
 # my-local-llm-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Seventeen skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Eighteen skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -18,6 +18,7 @@ Ollama :11434   llama.cpp :8080 (optional)
 | `autoskills` | Analyze a project, propose skills, author them via `ccreate-skill` | local FS + Node |
 | `ccreate-skill` | Create, update, and evaluate skills; defines the validator | Node + `yaml` |
 | `ccreate-agent` | Create, optimize, and validate agent profiles | local FS |
+| `execute-command` | Run commands with bounded logs, preserved exit codes, and searchable output | shell + `head`/`tail` |
 | `openai-api-usage` | Call OpenAI and compatible APIs (llama.cpp, Ollama, vLLM) | OpenAI key or local `/v1` server |
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
@@ -249,6 +250,7 @@ registration. From the repo root, `pnpm cli` is equivalent.
 │   ├── convert-files/
 │   ├── ccreate-agent/
 │   ├── ccreate-skill/
+│   ├── execute-command/
 │   ├── image-analysis/
 │   ├── image-background-removal/
 │   ├── ocr/

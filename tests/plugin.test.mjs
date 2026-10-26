@@ -13,6 +13,7 @@ const EXPECTED_SKILL_IDS = [
   "convert-files",
   "ccreate-agent",
   "ccreate-skill",
+  "execute-command",
   "image-analysis",
   "image-background-removal",
   "ocr",

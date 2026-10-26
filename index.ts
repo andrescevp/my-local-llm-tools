@@ -22,6 +22,7 @@ const SUMMARIES: Record<string, string> = {
   autoskills: "analyze a project and propose skills, authored via ccreate-skill",
   "ccreate-skill": "create, update, and evaluate agent skills",
   "ccreate-agent": "create, optimize, and validate custom agents",
+  "execute-command": "run commands with bounded logs, preserved exit codes, and searchable output",
   "openai-api-usage": "call OpenAI and OpenAI-compatible APIs (llama.cpp, Ollama, vLLM)",
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",

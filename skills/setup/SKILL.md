@@ -82,6 +82,7 @@ ID when invoking the skill tool.
 | `speak` | piper + system-language voice model | English fallback |
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `ccreate-skill`, `ccreate-agent`, `autoskills` | Node only | — |
+| `execute-command` | POSIX shell with `head`/`tail` | — |
 | `convert-files` | LibreOffice | — |
 | `autoedit-with-gimp` | GIMP | — |
 | `autoedit-with-inkscape` | Inkscape | Potrace for vectorize |

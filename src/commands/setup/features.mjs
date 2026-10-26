@@ -13,6 +13,7 @@ export const FEATURES = {
   "ccreate-skill": { requires: [] },
   "ccreate-agent": { requires: [] },
   autoskills: { requires: [] },
+  "execute-command": { requires: [] },
   "convert-files": { requires: ["libreoffice"] },
   "autoedit-with-gimp": { requires: ["gimp"] },
   "autoedit-with-inkscape": { requires: ["inkscape"], optional: ["potrace"] },
