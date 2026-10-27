@@ -14,7 +14,10 @@ export const FEATURES = {
   "ccreate-agent": { requires: [] },
   autoskills: { requires: [] },
   "execute-command": { requires: [] },
-  "convert-files": { requires: ["libreoffice"] },
+  "convert-files": {
+    requires: ["libreoffice"],
+    optional: ["imagemagick", "ffmpeg", "ffprobe"],
+  },
   "autoedit-with-gimp": { requires: ["gimp"] },
   "autoedit-with-inkscape": { requires: ["inkscape"], optional: ["potrace"] },
   "image-background-removal": { requires: ["u2net_model"], optional: ["gimp"] },

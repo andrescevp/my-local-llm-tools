@@ -23,7 +23,7 @@ Ollama :11434   llama.cpp :8080 (optional)
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in the system language (English fallback) | `piper` + voice model |
-| `convert-files` | Convert documents with LibreOffice | LibreOffice |
+| `convert-files` | Convert/edit documents, images, audio, and video | LibreOffice + ImageMagick + ffmpeg |
 | `autoedit-with-gimp` | Resize, convert, optimize, and edit images; custom macros | GIMP |
 | `autoedit-with-inkscape` | Export/clean/edit SVG and vectorize bitmaps | Inkscape, optional Potrace |
 | `image-background-removal` | Remove image backgrounds locally with U2Net | U2Net ONNX + sharp |
@@ -167,6 +167,8 @@ validated against `src/commands/setup/manifest.schema.json` on write and read.
 | Piper | `~/.local/bin/piper` + system-language voice in `~/.mllt/piper-voices` |
 | Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
 | LibreOffice | `/usr/sbin/soffice`; converts documents |
+| ImageMagick | `/usr/sbin/magick`; converts and edits images |
+| ffmpeg/ffprobe | Video/audio conversion, frames, and media inspection |
 | GIMP | `3.2.6`; batch image editing and macros |
 | Inkscape + Potrace | `1.4.4` + Potrace `1.16`; SVG export/editing/vectorization |
 | Playwright | Chromium cached under `~/.cache/ms-playwright`; presentation PDF |
@@ -196,8 +198,14 @@ pnpm cli ocr --image /abs/page.png
 # Video
 pnpm cli video --input /abs/clip.mp4 --frames 12 --summary
 
-# Documents and images
+# Documents, images, and media
 pnpm cli convert --input /abs/report.docx --to pdf --out /abs/out
+pnpm cli convert --input /abs/photo.png --to webp --resize 800x600 --out /abs/out
+pnpm cli convert --input /abs/photo.tiff --to jpg --quality 85 --out /abs/out
+pnpm cli convert --input /abs/clip.mp4 --to mp3 --out /abs/out
+pnpm cli convert --input /abs/clip.mp4 --frames 12 --out /abs/out
+pnpm cli convert --input /abs/clip.mp4 --to mp4 \
+  --start 10 --duration 5 --scale 1280:-2 --mute --out /abs/out
 pnpm cli gimp resize --input /abs/in.png --output /abs/out.png --width 1200
 pnpm cli inkscape export --input /abs/logo.svg --output /abs/logo.png --dpi 300
 pnpm cli inkscape vectorize --input /abs/logo.png --output /abs/logo.svg

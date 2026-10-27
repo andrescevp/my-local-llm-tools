@@ -4,6 +4,7 @@ import { homedir, release } from "node:os"
 import { join } from "node:path"
 
 import { binaryVersion, commandPath, hasCommand, runCommand } from "../../lib/exec.mjs"
+import { resolveImageMagick } from "../../lib/imagemagick.mjs"
 import { probeLibreOffice, resolveLibreOffice } from "../../lib/libreoffice.mjs"
 import { voiceStatus } from "../../lib/piper.mjs"
 import { evaluateFeatures } from "./features.mjs"
@@ -84,6 +85,7 @@ export function detectTools() {
     piper: { ok: Boolean(piper), version: piper ? "found" : "", path: piper },
     voice_model: { ok: voice.exists, path: voice.path },
     libreoffice,
+    imagemagick: resolveImageMagick(),
     gimp: binaryVersion("gimp", ["--version"]),
     inkscape: binaryVersion("inkscape", ["--version"]),
     potrace: binaryVersion("potrace", ["--version"]),
@@ -128,7 +130,10 @@ export async function collect({ ollamaUrl = DEFAULT_OLLAMA } = {}) {
   else if (ollama.models.missing.length)
     warnings.push(`Missing Ollama models: ${ollama.models.missing.join(", ")}`)
   if (!tools.tesseract.ok) warnings.push("Tesseract not found (OCR fallback unavailable)")
+  if (!tools.ffmpeg.ok || !tools.ffprobe.ok)
+    warnings.push("ffmpeg/ffprobe not found (video analysis and media conversion unavailable)")
   if (!tools.libreoffice.ok) warnings.push("LibreOffice not found (convert-files unavailable)")
+  if (!tools.imagemagick?.ok) warnings.push("ImageMagick not found (image conversion unavailable)")
   if (!tools.gimp.ok) warnings.push("GIMP not found (autoedit-with-gimp unavailable)")
   if (!tools.inkscape.ok) warnings.push("Inkscape not found (autoedit-with-inkscape unavailable)")
   if (!tools.playwright.ok)

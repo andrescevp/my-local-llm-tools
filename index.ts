@@ -27,7 +27,8 @@ const SUMMARIES: Record<string, string> = {
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
   speak: "text-to-speech in the system language via local piper-tts",
-  "convert-files": "convert documents with local LibreOffice",
+  "convert-files":
+    "convert documents, images, audio, and video with LibreOffice, ImageMagick, and ffmpeg",
   "autoedit-with-gimp": "resize, convert, optimize, and edit images with GIMP",
   "autoedit-with-inkscape": "export, clean, edit, and vectorize SVG files",
   "image-background-removal": "remove image backgrounds locally with U2Net",

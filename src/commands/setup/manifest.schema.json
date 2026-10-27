@@ -75,6 +75,7 @@
         "piper",
         "voice_model",
         "libreoffice",
+        "imagemagick",
         "gimp",
         "inkscape",
         "potrace",
@@ -100,6 +101,7 @@
           }
         },
         "libreoffice": { "$ref": "#/$defs/binary" },
+        "imagemagick": { "$ref": "#/$defs/binary" },
         "gimp": { "$ref": "#/$defs/binary" },
         "inkscape": { "$ref": "#/$defs/binary" },
         "potrace": { "$ref": "#/$defs/binary" },

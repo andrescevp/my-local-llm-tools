@@ -54,8 +54,8 @@ Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 - `libre_office_path`: resolved LibreOffice binary.
 - `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
-  voice model, LibreOffice, GIMP, Inkscape, Potrace, `pdftoppm`, Chrome,
-  Playwright, and the U2Net model, each with its resolved `path`.
+  voice model, LibreOffice, ImageMagick, GIMP, Inkscape, Potrace, `pdftoppm`,
+  Chrome, Playwright, and the U2Net model, each with its resolved `path`.
 - `ollama`: host, reachability, version, models.
 - `features`: per-skill `ok` plus the requirements that passed or failed.
 - `warnings`: human-readable gaps.
@@ -83,7 +83,7 @@ ID when invoking the skill tool.
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `ccreate-skill`, `ccreate-agent`, `autoskills` | Node only | — |
 | `execute-command` | POSIX shell with `head`/`tail` | — |
-| `convert-files` | LibreOffice | — |
+| `convert-files` | LibreOffice; ImageMagick for images; ffmpeg/ffprobe for media | — |
 | `autoedit-with-gimp` | GIMP | — |
 | `autoedit-with-inkscape` | Inkscape | Potrace for vectorize |
 | `image-background-removal` | U2Net ONNX model | GIMP for refine |
@@ -112,14 +112,17 @@ managers as root):
 - **Tesseract** — OCR fallback. Linux: distro package + `tesseract-data-eng`,
   `tesseract-data-spa`; macOS: `brew install tesseract tesseract-lang`; Windows:
   UB Mannheim installer.
-- **ffmpeg/ffprobe** — required by `video-analysis`; install from
-  <https://ffmpeg.org/download.html> or the platform package manager.
+- **ffmpeg/ffprobe** — required by `video-analysis` and media operations in
+  `convert-files`; install from <https://ffmpeg.org/download.html> or the
+  platform package manager.
 - **piper + voice** — <https://github.com/rhasspy/piper/releases>; setup
   downloads the voice for the system language into `~/.mllt/piper-voices`, or
   English when the language is unavailable. Set `PIPER_BIN`/`PIPER_VOICE` for
   custom installs; `voice ensure` refreshes the voice.
 - **LibreOffice** — system package first; portable fallback under
   `~/.mllt/libreoffice` (macOS: `LibreOffice.app`).
+- **ImageMagick** — install `magick` (ImageMagick 7) or `convert` (ImageMagick
+  6); used for image conversion and simple edits in `convert-files`.
 - **GIMP** — install from the OS package manager; used by
   `autoedit-with-gimp` and optional background refinement.
 - **Inkscape + Potrace** — Inkscape for SVG export/edit; Potrace for

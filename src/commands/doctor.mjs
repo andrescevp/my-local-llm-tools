@@ -111,6 +111,11 @@ export async function doctor(argv) {
       manifest.tools.libreoffice.ok,
       manifest.tools.libreoffice.path || "missing (optional)",
     )
+    line(
+      "imagemagick",
+      manifest.tools.imagemagick?.ok,
+      manifest.tools.imagemagick?.version || "missing (optional)",
+    )
     line("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "missing (optional)")
     line(
       "chrome",

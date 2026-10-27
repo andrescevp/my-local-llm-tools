@@ -57,6 +57,11 @@ function printSummary(manifest, target) {
     manifest.tools.libreoffice.ok,
     manifest.tools.libreoffice.path || "not found (convert-files unavailable)",
   )
+  statusLine(
+    "imagemagick",
+    manifest.tools.imagemagick?.ok,
+    manifest.tools.imagemagick?.version || "not found (image conversion unavailable)",
+  )
   statusLine("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "not found (optional)")
   statusLine(
     "chrome",

@@ -75,6 +75,12 @@ function machineManifest() {
       piper: { ok: false, version: "", path: "" },
       voice_model: { ok: false, path: "" },
       libreoffice: { ok: true, version: "LibreOffice 26", path: "/usr/bin/soffice" },
+      imagemagick: {
+        ok: true,
+        version: "ImageMagick 7",
+        path: "/usr/bin/magick",
+        source: "magick",
+      },
       gimp: { ok: true, version: "GIMP 3", path: "/usr/bin/gimp" },
       inkscape: { ok: true, version: "Inkscape 1.4", path: "/usr/bin/inkscape" },
       potrace: { ok: true, version: "potrace 1.16", path: "/usr/bin/potrace" },

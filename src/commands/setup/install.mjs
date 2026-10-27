@@ -2,6 +2,7 @@ import { existsSync } from "node:fs"
 import { join } from "node:path"
 
 import { runCommand } from "../../lib/exec.mjs"
+import { imagemagickHint } from "../../lib/imagemagick.mjs"
 import { voiceStatus } from "../../lib/piper.mjs"
 
 const OLLAMA_URL = "https://ollama.com/download"
@@ -105,7 +106,7 @@ export function planInstall(manifest, root, platform = process.platform) {
     add({
       id: "ffmpeg",
       kind: "manual",
-      description: "Install ffmpeg/ffprobe (video analysis)",
+      description: "Install ffmpeg/ffprobe (video analysis and media conversion)",
       detail: ffmpegHint(platform),
       url: "https://ffmpeg.org/download.html",
     })
@@ -135,9 +136,18 @@ export function planInstall(manifest, root, platform = process.platform) {
     add({
       id: "libreoffice",
       kind: "manual",
-      description: "Install LibreOffice (convert-files)",
+      description: "Install LibreOffice (convert-files documents)",
       detail: libreofficeHint(platform),
       url: "https://www.libreoffice.org/download/download-libreoffice/",
+    })
+  }
+  if (!tools.imagemagick?.ok) {
+    add({
+      id: "imagemagick",
+      kind: "manual",
+      description: "Install ImageMagick (convert-files images)",
+      detail: imagemagickHint(platform),
+      url: "https://imagemagick.org/script/download.php",
     })
   }
   if (!tools.gimp?.ok) {
