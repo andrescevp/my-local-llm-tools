@@ -78,6 +78,9 @@ export function detectTools() {
   return {
     node: { ok: true, version: process.version, path: process.execPath },
     pnpm: binaryVersion("pnpm"),
+    uv: binaryVersion("uv", ["--version"]),
+    php: binaryVersion("php", ["--version"]),
+    phpenv: binaryVersion("phpenv", ["--version"]),
     docker: binaryVersion("docker"),
     tesseract: { ...tesseract, languages: tesseractLanguages() },
     ffmpeg: binaryVersion("ffmpeg", ["-version"]),
@@ -86,6 +89,7 @@ export function detectTools() {
     voice_model: { ok: voice.exists, path: voice.path },
     libreoffice,
     imagemagick: resolveImageMagick(),
+    hyprwhspr: binaryVersion("hyprwhspr", ["--version"]),
     gimp: binaryVersion("gimp", ["--version"]),
     inkscape: binaryVersion("inkscape", ["--version"]),
     potrace: binaryVersion("potrace", ["--version"]),
@@ -130,10 +134,13 @@ export async function collect({ ollamaUrl = DEFAULT_OLLAMA } = {}) {
   else if (ollama.models.missing.length)
     warnings.push(`Missing Ollama models: ${ollama.models.missing.join(", ")}`)
   if (!tools.tesseract.ok) warnings.push("Tesseract not found (OCR fallback unavailable)")
+  if (!tools.uv?.ok) warnings.push("uv not found (Python environments unavailable)")
+  if (!tools.php?.ok) warnings.push("PHP not found (PHP environments unavailable)")
   if (!tools.ffmpeg.ok || !tools.ffprobe.ok)
     warnings.push("ffmpeg/ffprobe not found (video analysis and media conversion unavailable)")
   if (!tools.libreoffice.ok) warnings.push("LibreOffice not found (convert-files unavailable)")
   if (!tools.imagemagick?.ok) warnings.push("ImageMagick not found (image conversion unavailable)")
+  if (!tools.hyprwhspr?.ok) warnings.push("hyprwhspr not found (transcript-audio unavailable)")
   if (!tools.gimp.ok) warnings.push("GIMP not found (autoedit-with-gimp unavailable)")
   if (!tools.inkscape.ok) warnings.push("Inkscape not found (autoedit-with-inkscape unavailable)")
   if (!tools.playwright.ok)

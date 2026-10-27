@@ -27,6 +27,7 @@ const SUMMARIES: Record<string, string> = {
   setup: "detect dependencies, write the machine manifest, and diagnose the harness",
   "video-analysis": "describe and summarize local videos with minicpm frame sampling",
   speak: "text-to-speech in the system language via local piper-tts",
+  "transcript-audio": "transcribe audio or video with local hyprwhspr, chunking long recordings",
   "convert-files":
     "convert documents, images, audio, and video with LibreOffice, ImageMagick, and ffmpeg",
   "autoedit-with-gimp": "resize, convert, optimize, and edit images with GIMP",

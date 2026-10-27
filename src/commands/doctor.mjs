@@ -79,6 +79,9 @@ export async function doctor(argv) {
     console.log(`Platform       ${manifest.platform.os} ${manifest.platform.arch}`)
     line("node", manifest.tools.node.ok, manifest.tools.node.version)
     line("pnpm", manifest.tools.pnpm.ok, manifest.tools.pnpm.version || "missing")
+    line("uv", manifest.tools.uv?.ok, manifest.tools.uv?.version || "missing")
+    line("php", manifest.tools.php?.ok, manifest.tools.php?.version || "missing")
+    line("phpenv", manifest.tools.phpenv?.ok, manifest.tools.phpenv?.version || "missing")
     line(
       "docker",
       manifest.tools.docker.ok,
@@ -115,6 +118,11 @@ export async function doctor(argv) {
       "imagemagick",
       manifest.tools.imagemagick?.ok,
       manifest.tools.imagemagick?.version || "missing (optional)",
+    )
+    line(
+      "hyprwhspr",
+      manifest.tools.hyprwhspr?.ok,
+      manifest.tools.hyprwhspr?.version || "missing (transcript-audio unavailable)",
     )
     line("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "missing (optional)")
     line(

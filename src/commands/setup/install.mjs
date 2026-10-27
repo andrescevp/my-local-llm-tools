@@ -1,67 +1,71 @@
 import { existsSync } from "node:fs"
 import { join } from "node:path"
 
-import { runCommand } from "../../lib/exec.mjs"
-import { imagemagickHint } from "../../lib/imagemagick.mjs"
+import { hasCommand, runCommand } from "../../lib/exec.mjs"
 import { voiceStatus } from "../../lib/piper.mjs"
+import { detectPackageManager, packageCommand } from "./packages.mjs"
 
 const OLLAMA_URL = "https://ollama.com/download"
 const PIPER_URL = "https://github.com/rhasspy/piper/releases"
-
-function tesseractHint(platform) {
-  if (platform === "darwin") return "brew install tesseract tesseract-lang"
-  if (platform === "win32")
-    return "Install UB Mannheim Tesseract: https://github.com/UB-Mannheim/tesseract/wiki"
-  return "sudo pacman -S tesseract tesseract-data-eng tesseract-data-spa (or your distro packages)"
+function commandHint(tool, platform, manager, fallback) {
+  return packageCommand(tool, platform, manager) || fallback
 }
 
-function ffmpegHint(platform) {
-  if (platform === "darwin") return "brew install ffmpeg"
-  if (platform === "win32")
-    return "winget install Gyan.FFmpeg (or https://ffmpeg.org/download.html)"
-  return "sudo pacman -S ffmpeg (or your distro package)"
+function libreofficeHint(platform, manager) {
+  const command = packageCommand("libreoffice", platform, manager)
+  const portable =
+    platform === "darwin"
+      ? "copy LibreOffice.app to ~/.mllt"
+      : platform === "win32"
+        ? "extract a portable copy to %USERPROFILE%\\.mllt\\libreoffice"
+        : "extract the AppImage to ~/.mllt/libreoffice"
+  return command
+    ? `${command}\nPortable fallback: ${portable}`
+    : `Install LibreOffice (${portable})`
 }
 
-function libreofficeHint(platform) {
-  if (platform === "darwin")
-    return "brew install --cask libreoffice (or copy LibreOffice.app to ~/.mllt)"
-  if (platform === "win32")
-    return "winget install TheDocumentFoundation.LibreOffice (or extract portable to %USERPROFILE%\\.mllt\\libreoffice)"
-  return "sudo pacman -S libreoffice-fresh (or extract the AppImage to ~/.mllt/libreoffice)"
+function hyprwhsprHint(platform) {
+  return platform === "linux"
+    ? "Install hyprwhspr from the AUR, then run: hyprwhspr setup"
+    : "hyprwhspr is Linux/Hyprland-only; transcript-audio is unavailable on this OS"
 }
 
-function gimpHint(platform) {
-  if (platform === "darwin") return "brew install --cask gimp"
-  if (platform === "win32") return "winget install GIMP.GIMP"
-  return "sudo pacman -S gimp (or your distro package)"
-}
-
-function inkscapeHint(platform) {
-  if (platform === "darwin") return "brew install --cask inkscape"
-  if (platform === "win32") return "winget install Inkscape.Inkscape"
-  return "sudo pacman -S inkscape (or your distro package)"
-}
-
-function popplerHint(platform) {
-  if (platform === "darwin") return "brew install poppler"
-  if (platform === "win32")
-    return "Extract Poppler for Windows to %USERPROFILE%\\.mllt\\poppler and add its bin directory to PATH"
-  return "sudo pacman -S poppler (or apt install poppler-utils)"
-}
-
-export function planInstall(manifest, root, platform = process.platform) {
+export function planInstall(
+  manifest,
+  root,
+  platform = process.platform,
+  { manager = detectPackageManager(platform) } = {},
+) {
   const actions = []
   const { tools, ollama } = manifest
   const add = (action) => actions.push(action)
 
   if (!tools.pnpm.ok) {
-    add({
-      id: "pnpm",
-      kind: "manual",
-      description: "Install pnpm (Node package manager)",
-      detail: "corepack enable && corepack prepare pnpm@latest --activate",
-      url: "https://pnpm.io/installation",
-    })
+    if (hasCommand("corepack")) {
+      const corepack = platform === "win32" ? "corepack.cmd" : "corepack"
+      add({
+        id: "corepack",
+        kind: "command",
+        description: "Enable Corepack",
+        command: corepack,
+        args: ["enable"],
+      })
+      add({
+        id: "pnpm",
+        kind: "command",
+        description: "Install pnpm via Corepack",
+        command: corepack,
+        args: ["prepare", "pnpm@latest", "--activate"],
+      })
+    } else {
+      add({
+        id: "pnpm",
+        kind: "manual",
+        description: "Install pnpm (Node package manager)",
+        detail: "Install Corepack, then run: corepack prepare pnpm@latest --activate",
+        url: "https://pnpm.io/installation",
+      })
+    }
   } else if (!existsSync(join(root, "node_modules"))) {
     add({
       id: "deps",
@@ -72,12 +76,51 @@ export function planInstall(manifest, root, platform = process.platform) {
     })
   }
 
+  if (!tools.uv?.ok) {
+    add({
+      id: "uv",
+      kind: "command",
+      description: "Install uv (Python environment manager)",
+      command: platform === "win32" ? "powershell" : "sh",
+      args:
+        platform === "win32"
+          ? ["-NoProfile", "-Command", "irm https://astral.sh/uv/install.ps1 | iex"]
+          : ["-c", "curl -LsSf https://astral.sh/uv/install.sh | sh"],
+      url: "https://docs.astral.sh/uv/getting-started/installation/",
+    })
+  }
+
+  if (!tools.php?.ok) {
+    add({
+      id: "php",
+      kind: "manual",
+      description: "Install PHP (PHP environment)",
+      detail: commandHint("php", platform, manager, "Install PHP for this OS"),
+      url: "https://www.php.net/downloads.php",
+    })
+  }
+
+  if (!tools.phpenv?.ok) {
+    add({
+      id: "phpenv",
+      kind: "manual",
+      description: "Install phpenv (PHP version manager)",
+      detail:
+        platform === "win32"
+          ? "phpenv is Unix-oriented; use the PHP package directly on Windows"
+          : "git clone https://github.com/phpenv/phpenv.git ~/.phpenv",
+      url: "https://github.com/phpenv/phpenv",
+    })
+  }
+
   if (!ollama.reachable) {
     add({
       id: "ollama",
       kind: "manual",
       description: `Install and start Ollama, or pass --ollama-url if you already have an instance`,
-      detail: `Default host: ${ollama.host}`,
+      detail:
+        commandHint("ollama", platform, manager, "Download Ollama from the official site") +
+        `\nDefault host: ${ollama.host}`,
       url: OLLAMA_URL,
     })
   } else {
@@ -97,7 +140,12 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "tesseract",
       kind: "manual",
       description: "Install Tesseract (OCR fallback)",
-      detail: tesseractHint(platform),
+      detail: commandHint(
+        "tesseract",
+        platform,
+        manager,
+        "Install Tesseract from the official installation guide",
+      ),
       url: "https://tesseract-ocr.github.io/tessdoc/Installation.html",
     })
   }
@@ -107,7 +155,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "ffmpeg",
       kind: "manual",
       description: "Install ffmpeg/ffprobe (video analysis and media conversion)",
-      detail: ffmpegHint(platform),
+      detail: commandHint("ffmpeg", platform, manager, "Install ffmpeg/ffprobe for this OS"),
       url: "https://ffmpeg.org/download.html",
     })
   }
@@ -137,7 +185,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "libreoffice",
       kind: "manual",
       description: "Install LibreOffice (convert-files documents)",
-      detail: libreofficeHint(platform),
+      detail: libreofficeHint(platform, manager),
       url: "https://www.libreoffice.org/download/download-libreoffice/",
     })
   }
@@ -146,8 +194,17 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "imagemagick",
       kind: "manual",
       description: "Install ImageMagick (convert-files images)",
-      detail: imagemagickHint(platform),
+      detail: commandHint("imagemagick", platform, manager, "Install ImageMagick for this OS"),
       url: "https://imagemagick.org/script/download.php",
+    })
+  }
+  if (!tools.hyprwhspr?.ok) {
+    add({
+      id: "hyprwhspr",
+      kind: "manual",
+      description: "Install hyprwhspr (transcript-audio)",
+      detail: hyprwhsprHint(platform),
+      url: "https://github.com/goodroot/hyprwhspr",
     })
   }
   if (!tools.gimp?.ok) {
@@ -155,7 +212,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "gimp",
       kind: "manual",
       description: "Install GIMP (autoedit-with-gimp)",
-      detail: gimpHint(platform),
+      detail: commandHint("gimp", platform, manager, "Install GIMP for this OS"),
       url: "https://www.gimp.org/downloads/",
     })
   }
@@ -164,7 +221,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "inkscape",
       kind: "manual",
       description: "Install Inkscape (autoedit-with-inkscape)",
-      detail: inkscapeHint(platform),
+      detail: commandHint("inkscape", platform, manager, "Install Inkscape for this OS"),
       url: "https://inkscape.org/release/",
     })
   }
@@ -173,7 +230,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "potrace",
       kind: "manual",
       description: "Install Potrace (bitmap vectorization)",
-      detail: "Install potrace from your package manager",
+      detail: commandHint("potrace", platform, manager, "Install Potrace for this OS"),
       url: "https://potrace.sourceforge.net/",
     })
   }
@@ -182,7 +239,7 @@ export function planInstall(manifest, root, platform = process.platform) {
       id: "poppler",
       kind: "manual",
       description: "Install Poppler (PDF page rendering)",
-      detail: popplerHint(platform),
+      detail: commandHint("poppler", platform, manager, "Install Poppler for this OS"),
       url: "https://poppler.freedesktop.org/",
     })
   }

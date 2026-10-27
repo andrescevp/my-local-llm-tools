@@ -19,10 +19,15 @@ export const SETUP_HELP = `Usage: node src/cli.mjs setup [options]
 
 Detect dependencies, write the machine manifest, and optionally install.
 
+Node.js is required to run setup itself; install Node.js first if it is missing.
+
 Options:
   --ollama-url URL   Existing Ollama URL (default: ${DEFAULT_OLLAMA})
-  --install          Print the install plan (requires --yes to execute)
-  --yes              Confirm unattended installs (pnpm install, ollama pull)
+  --install          Print the install plan (requires --yes to execute safe steps)
+  --yes              Confirm unattended pnpm, Ollama, and voice downloads
+                     System packages remain manual and are printed with the
+                     matching package-manager command.
+
   --json             Print the manifest as JSON
 `
 
@@ -35,6 +40,9 @@ function printSummary(manifest, target) {
   console.log(`Platform     ${manifest.platform.os} ${manifest.platform.arch}`)
   statusLine("node", manifest.tools.node.ok, manifest.tools.node.version)
   statusLine("pnpm", manifest.tools.pnpm.ok, manifest.tools.pnpm.version || "missing")
+  statusLine("uv", manifest.tools.uv?.ok, manifest.tools.uv?.version || "missing")
+  statusLine("php", manifest.tools.php?.ok, manifest.tools.php?.version || "missing")
+  statusLine("phpenv", manifest.tools.phpenv?.ok, manifest.tools.phpenv?.version || "missing")
   statusLine(
     "docker",
     manifest.tools.docker.ok,
@@ -61,6 +69,11 @@ function printSummary(manifest, target) {
     "imagemagick",
     manifest.tools.imagemagick?.ok,
     manifest.tools.imagemagick?.version || "not found (image conversion unavailable)",
+  )
+  statusLine(
+    "hyprwhspr",
+    manifest.tools.hyprwhspr?.ok,
+    manifest.tools.hyprwhspr?.version || "not found (transcript-audio unavailable)",
   )
   statusLine("gimp", manifest.tools.gimp.ok, manifest.tools.gimp.version || "not found (optional)")
   statusLine(

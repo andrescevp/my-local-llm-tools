@@ -1,6 +1,6 @@
 # my-local-llm-tools
 
-Local-first, low-cost AI toolbelt for OpenCode V2. Eighteen skills that use
+Local-first, low-cost AI toolbelt for OpenCode V2. Nineteen skills that use
 software already on this machine — no cloud APIs, no per-token billing, no
 image uploads. Tooling is JavaScript (ESM) and dependencies are managed with
 `pnpm`; every skill is authored and versioned here.
@@ -23,6 +23,7 @@ Ollama :11434   llama.cpp :8080 (optional)
 | `setup` | Detect dependencies, write the machine manifest, diagnose the harness | Node + pnpm |
 | `video-analysis` | Sample frames and describe/summarize local videos | `ffmpeg` + Ollama + `minicpm-v4.6` |
 | `speak` | Speak text aloud in the system language (English fallback) | `piper` + voice model |
+| `transcript-audio` | Transcribe audio/video, with chunking for long recordings | `hyprwhspr` + ffmpeg |
 | `convert-files` | Convert/edit documents, images, audio, and video | LibreOffice + ImageMagick + ffmpeg |
 | `autoedit-with-gimp` | Resize, convert, optimize, and edit images; custom macros | GIMP |
 | `autoedit-with-inkscape` | Export/clean/edit SVG and vectorize bitmaps | Inkscape, optional Potrace |
@@ -138,9 +139,11 @@ pnpm cli doctor --skill ocr     # exit 1 if the skill cannot run
 ```
 
 The manifest lives at `~/.mllt/manifest.json` (`%USERPROFILE%\.mllt` on
-Windows) and includes the Ollama host, available models, and resolved
-`tesseract`/`ffmpeg`/`ffprobe`/`piper` paths, plus per-skill readiness. It is
-validated against `src/commands/setup/manifest.schema.json` on write and read.
+Windows) and includes the Ollama host, available models, and resolved tool
+paths, plus per-skill readiness. It is validated against
+`src/commands/setup/manifest.schema.json` on write and read. `setup --install`
+prints package-manager commands for missing system binaries; it never runs
+`sudo` or a package manager automatically.
 
 ### QA toolchain
 
@@ -161,10 +164,13 @@ validated against `src/commands/setup/manifest.schema.json` on write and read.
 |---|---|
 | Node.js | `24.18.0` (via `nvm`) |
 | pnpm | `11.9.0` |
+| uv | Python environment manager; official installer through `setup` |
+| PHP | `8.4.21` (via `phpenv`); PHP package from the platform manager |
 | Supported OS | Linux, macOS, Windows (Node paths and audio backends adapt) |
 | Ollama | `0.40.10`, systemd `ollama.service`, `127.0.0.1:11434` |
 | Ollama models | `minicpm-v4.6`, `MedAIBase/PaddleOCR-VL:0.9b`, `all-minilm`, `nomic-embed-text-v2-moe` |
 | Piper | `~/.local/bin/piper` + system-language voice in `~/.mllt/piper-voices` |
+| hyprwhspr | System speech-to-text service; file transcription and long-audio chunking |
 | Tesseract | `5.5.3` with `eng` + `spa` data; optional OCR correction context |
 | LibreOffice | `/usr/sbin/soffice`; converts documents |
 | ImageMagick | `/usr/sbin/magick`; converts and edits images |
@@ -173,8 +179,9 @@ validated against `src/commands/setup/manifest.schema.json` on write and read.
 | Inkscape + Potrace | `1.4.4` + Potrace `1.16`; SVG export/editing/vectorization |
 | Playwright | Chromium cached under `~/.cache/ms-playwright`; presentation PDF |
 
-No Python runtime is required: all skill tooling is Node.js. GIMP batch mode
-uses GIMP's own embedded Python-Fu interpreter, not a project Python script.
+No Python runtime is required by skill tooling: all skill tooling is Node.js.
+`setup` also installs `uv` for general Python environment management. GIMP batch
+mode uses GIMP's own embedded Python-Fu interpreter, not a project Python script.
 
 ## Usage
 
@@ -197,6 +204,9 @@ pnpm cli ocr --image /abs/page.png
 
 # Video
 pnpm cli video --input /abs/clip.mp4 --frames 12 --summary
+
+# Transcription
+pnpm cli transcribe --input /abs/interview.mp4 --out /abs/interview.transcript.md
 
 # Documents, images, and media
 pnpm cli convert --input /abs/report.docx --to pdf --out /abs/out
@@ -266,6 +276,7 @@ registration. From the repo root, `pnpm cli` is equivalent.
 │   ├── presentations-generator/
 │   ├── setup/
 │   ├── speak/
+│   ├── transcript-audio/
 │   ├── use-my-browser/
 │   ├── use-my-browser-learn/
 │   ├── use-my-browser-record/

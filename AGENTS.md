@@ -8,7 +8,7 @@ and dependencies are managed with `pnpm`.
 
 ## Ground rules
 
-- All eighteen skills are canonical here; edit `skills/<name>/` directly.
+- All nineteen skills are canonical here; edit `skills/<name>/` directly.
 - Skills are discovered from `skills/*/SKILL.md` at plugin load; there is no
   registration manifest to generate or edit.
 - All executable skill tooling lives in the single CLI at `src/`; do not add

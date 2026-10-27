@@ -14,6 +14,7 @@ export const FEATURES = {
   "ccreate-agent": { requires: [] },
   autoskills: { requires: [] },
   "execute-command": { requires: [] },
+  "transcript-audio": { requires: ["hyprwhspr", "ffmpeg", "ffprobe"] },
   "convert-files": {
     requires: ["libreoffice"],
     optional: ["imagemagick", "ffmpeg", "ffprobe"],

@@ -15,6 +15,7 @@ import { removeBg } from "./commands/remove-bg.mjs"
 import { setup } from "./commands/setup.mjs"
 import { skill } from "./commands/skill.mjs"
 import { speak } from "./commands/speak.mjs"
+import { transcribe } from "./commands/transcribe.mjs"
 import { validate } from "./commands/validate.mjs"
 import { video } from "./commands/video.mjs"
 import { voice } from "./commands/voice.mjs"
@@ -33,6 +34,7 @@ const COMMANDS = {
   setup,
   skill,
   speak,
+  transcribe,
   validate,
   video,
   voice,
@@ -49,6 +51,7 @@ Commands:
   ocr --image PATH [options]                        extract text from images
   video --input PATH [options]                      analyze a local video
   speak [options] [text]                            system-language TTS via piper
+  transcribe --input PATH [options]                 audio/video to transcript with hyprwhspr
   setup [options]                                   detect deps + write machine manifest
   doctor [options]                                  diagnose the harness (read-only)
   install [--dry-run]                               link the plugin into OpenCode

@@ -54,8 +54,9 @@ Override with `MY_LOCAL_LLM_TOOLS_CONFIG_DIR`. The manifest contains:
 - `libre_office_path`: resolved LibreOffice binary.
 - `paths`: `tesseract`, `ffmpeg`, `ffprobe`, `piper` binaries.
 - `tools`: node, pnpm, docker, tesseract (+ languages), ffmpeg, ffprobe, piper,
-  voice model, LibreOffice, ImageMagick, GIMP, Inkscape, Potrace, `pdftoppm`,
-  Chrome, Playwright, and the U2Net model, each with its resolved `path`.
+  voice model, LibreOffice, ImageMagick, hyprwhspr, GIMP, Inkscape, Potrace,
+  `pdftoppm`, Chrome, Playwright, the U2Net model, uv, PHP, and phpenv, each
+  with its resolved `path`.
 - `ollama`: host, reachability, version, models.
 - `features`: per-skill `ok` plus the requirements that passed or failed.
 - `warnings`: human-readable gaps.
@@ -80,6 +81,7 @@ ID when invoking the skill tool.
 | `ocr` | Ollama + `MedAIBase/PaddleOCR-VL:0.9b` | Tesseract |
 | `video-analysis` | Ollama + `minicpm-v4.6:latest`, ffmpeg, ffprobe | — |
 | `speak` | piper + system-language voice model | English fallback |
+| `transcript-audio` | hyprwhspr, ffmpeg, ffprobe | Cleaned text |
 | `openai-api-usage` | — | OpenAI key or compatible server |
 | `ccreate-skill`, `ccreate-agent`, `autoskills` | Node only | — |
 | `execute-command` | POSIX shell with `head`/`tail` | — |
@@ -101,24 +103,35 @@ Safe automated steps (`--yes`):
 
 - `pnpm install` when `node_modules` is missing.
 - `ollama pull <model>` for the required models.
+- Piper voice download when Piper is already installed.
 
 Manual steps (the command prints the exact URL/command; it never runs package
 managers as root):
 
-- **pnpm** — <https://pnpm.io/installation>
+- `setup --install` detects the package manager and prints the matching command:
+  `pacman`, `apt-get`, `dnf`, `zypper`, `apk`, Homebrew, `winget`, Chocolatey,
+  or Scoop.
+- **Node.js** — prerequisite to run `setup`; install it with the OS package
+  manager or the official installer first. Setup cannot bootstrap Node.
+- **pnpm** — `setup --install --yes` enables Corepack and prepares
+  `pnpm@latest` when Corepack is available; otherwise use the package manager.
+- **uv** — Python environment manager. `setup --install --yes` runs the official
+  uv installer on Linux/macOS (`curl … | sh`) or Windows (`irm … | iex`).
+- **PHP + phpenv** — install PHP with the platform package manager; phpenv is
+  Unix-oriented and is cloned from `https://github.com/phpenv/phpenv`.
 - **Ollama** — <https://ollama.com/download>. Ask for an existing URL first; if
   the user has an instance, pass `--ollama-url` and skip installation. The
   models are CPU-friendly, so no GPU is required.
-- **Tesseract** — OCR fallback. Linux: distro package + `tesseract-data-eng`,
-  `tesseract-data-spa`; macOS: `brew install tesseract tesseract-lang`; Windows:
-  UB Mannheim installer.
+- **Tesseract** — OCR fallback. Setup prints the distro package plus
+  `eng`/`spa` language packages, Homebrew formula, or the Windows installer.
 - **ffmpeg/ffprobe** — required by `video-analysis` and media operations in
-  `convert-files`; install from <https://ffmpeg.org/download.html> or the
-  platform package manager.
+  `convert-files`; setup prints the platform package command.
 - **piper + voice** — <https://github.com/rhasspy/piper/releases>; setup
   downloads the voice for the system language into `~/.mllt/piper-voices`, or
   English when the language is unavailable. Set `PIPER_BIN`/`PIPER_VOICE` for
   custom installs; `voice ensure` refreshes the voice.
+- **hyprwhspr** — Linux/Hyprland only; install from the AUR, then run
+  `hyprwhspr setup`. `transcript-audio` is unavailable on macOS and Windows.
 - **LibreOffice** — system package first; portable fallback under
   `~/.mllt/libreoffice` (macOS: `LibreOffice.app`).
 - **ImageMagick** — install `magick` (ImageMagick 7) or `convert` (ImageMagick
@@ -126,13 +139,15 @@ managers as root):
 - **GIMP** — install from the OS package manager; used by
   `autoedit-with-gimp` and optional background refinement.
 - **Inkscape + Potrace** — Inkscape for SVG export/edit; Potrace for
-  `inkscape vectorize`.
+  `inkscape vectorize`. Setup prints the package command when available and a
+  download URL otherwise.
 - **Playwright Chromium** — run `pnpm exec playwright install chromium` for
   presentation PDF output and browser fallback.
 - **System Chrome/Chromium** — optional; the browser skills prefer it and fall
   back to Playwright Chromium.
 - **U2Net model** — place `u2net.onnx` at `~/.mllt/models/u2net.onnx` or set
   `TOOLBOX_U2NET_MODEL`; it is never downloaded automatically.
+
 ## Cross-platform notes
 
 - Node paths come from `node:os`; no fixed `/tmp`, `/proc`, or `which`.

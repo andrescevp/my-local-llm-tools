@@ -32,6 +32,9 @@ function validManifest() {
     tools: {
       node: { ok: true, version: "v24", path: "/usr/bin/node" },
       pnpm: { ok: true, version: "11", path: "/usr/bin/pnpm", error: "" },
+      uv: { ok: true, version: "0.11", path: "/usr/bin/uv", error: "" },
+      php: { ok: true, version: "8.4", path: "/usr/bin/php", error: "" },
+      phpenv: { ok: true, version: "1.0", path: "/usr/bin/phpenv", error: "" },
       docker: { ok: false, version: "", path: "", error: "not found" },
       tesseract: {
         ok: true,
@@ -56,6 +59,7 @@ function validManifest() {
         path: "/usr/bin/magick",
         source: "magick",
       },
+      hyprwhspr: { ok: true, version: "hyprwhspr unknown", path: "/usr/bin/hyprwhspr" },
       gimp: { ok: true, version: "GIMP 3", path: "/usr/bin/gimp" },
       inkscape: { ok: true, version: "Inkscape 1.4", path: "/usr/bin/inkscape" },
       potrace: { ok: true, version: "potrace 1.16", path: "/usr/bin/potrace" },
